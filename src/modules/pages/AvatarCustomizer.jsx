@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as THREE from "three";
 import { API_BASE } from "../../config";
+import ReclutaPrincipal from "../../assets/amongus/recluta principal personaje solo.png";
 import "../../styles/Panel.css";
 
 export default function AvatarCustomizer() {
   const navigate = useNavigate();
-  const canvasRef = useRef(null);
-  const containerRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,32 +14,30 @@ export default function AvatarCustomizer() {
   const [user, setUser] = useState(null);
 
   // Customization state variables
-  const [suitColor, setSuitColor] = useState("#ffffff"); // White
-  const [visorColor, setVisorColor] = useState("#00f5ff"); // Neon Cyan
+  const [suitColor, setSuitColor] = useState("#2ec4b6"); // Cyan
+  const [visorColor, setVisorColor] = useState("#a3e2f7"); // Visor Cyan
   const [accessory, setAccessory] = useState("none"); // "none", "antenna", "ring", "goggles"
   const [decal, setDecal] = useState("none"); // "none", "star", "heart", "planet"
-  const [manualRotation, setManualRotation] = useState(0); // slider (0 to 2*PI)
-  const [autoRotate, setAutoRotate] = useState(true);
-
-  // References to update Three.js objects in real-time
-  const materialsRef = useRef({ suit: null, visor: null });
-  const meshesRef = useRef({ antenna: null, ring: null, goggles: null, star: null, heart: null, planet: null });
-  const avatarGroupRef = useRef(null);
 
   const token = localStorage.getItem("basescrib_token") || "";
 
-  // Color options maps
+  // Color options maps with CSS hue filters
   const suitColorsList = [
-    { name: "Astronaut White", hex: "#ffffff" },
-    { name: "Dark Navy Blue", hex: "#0b2545" },
-    { name: "Mars Orange", hex: "#ff6b35" },
-    { name: "Toxic Green", hex: "#00ff87" }
+    { name: "Cyan Tripulante", hex: "#2ec4b6", filter: "none" },
+    { name: "Rojo Impostor", hex: "#ff6b6b", filter: "hue-rotate(130deg) saturate(1.5)" },
+    { name: "Amarillo Tarea", hex: "#ffd166", filter: "hue-rotate(45deg) saturate(1.5) brightness(1.1)" },
+    { name: "Naranja Marte", hex: "#ff6b35", filter: "hue-rotate(20deg) saturate(1.4)" },
+    { name: "Verde Tóxico", hex: "#00ff87", filter: "hue-rotate(85deg) saturate(1.6)" },
+    { name: "Violeta Cósmico", hex: "#ab47bc", filter: "hue-rotate(250deg) saturate(1.3)" },
+    { name: "Blanco Astronauta", hex: "#ffffff", filter: "saturate(0) brightness(1.7)" },
+    { name: "Negro Espacio", hex: "#1a1a1a", filter: "brightness(0.3) contrast(1.3)" }
   ];
 
   const visorColorsList = [
-    { name: "Neon Cyan", hex: "#00f5ff" },
-    { name: "Cyber Gold", hex: "#ffd700" },
-    { name: "Ruby Red", hex: "#ff0055" }
+    { name: "Celeste Clásico", hex: "#a3e2f7" },
+    { name: "Oro Cibernético", hex: "#ffd700" },
+    { name: "Fucsia Neón", hex: "#ff0055" },
+    { name: "Verde Radiactivo", hex: "#39ff14" }
   ];
 
   // Fetch initial profile
@@ -93,314 +89,9 @@ export default function AvatarCustomizer() {
     fetchProfile();
   }, [token]);
 
-  // Setup Three.js scene
-  useEffect(() => {
-    if (loading || error) return;
-
-    // 1. Scene setup
-    const scene = new THREE.Scene();
-
-    // 2. Camera setup
-    const width = containerRef.current.clientWidth || 400;
-    const height = containerRef.current.clientHeight || 400;
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0.8, 4);
-
-    // 3. Renderer setup
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true, alpha: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    // 4. Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(5, 10, 7);
-    scene.add(dirLight);
-
-    const blueLight = new THREE.PointLight(0x00f5ff, 1.2, 10);
-    blueLight.position.set(-2, 1, 2);
-    scene.add(blueLight);
-
-    // 5. Build Procedural Astronaut Model Group
-    const avatarGroup = new THREE.Group();
-    avatarGroupRef.current = avatarGroup;
-
-    // Materials definition
-    const suitMaterial = new THREE.MeshStandardMaterial({
-      color: suitColor,
-      roughness: 0.2,
-      metalness: 0.1
-    });
-    const visorMaterial = new THREE.MeshStandardMaterial({
-      color: visorColor,
-      roughness: 0.05,
-      metalness: 0.9,
-      emissive: visorColor,
-      emissiveIntensity: 0.4
-    });
-    const secondaryMaterial = new THREE.MeshStandardMaterial({
-      color: 0x222222,
-      roughness: 0.5
-    });
-
-    materialsRef.current = { suit: suitMaterial, visor: visorMaterial };
-
-    // Body (Suit Chest)
-    const bodyGeom = new THREE.CylinderGeometry(0.35, 0.25, 0.8, 16);
-    const bodyMesh = new THREE.Mesh(bodyGeom, suitMaterial);
-    bodyMesh.position.y = 0.4;
-    avatarGroup.add(bodyMesh);
-
-    // Helmet (Head)
-    const headGeom = new THREE.SphereGeometry(0.32, 24, 24);
-    const headMesh = new THREE.Mesh(headGeom, suitMaterial);
-    headMesh.position.y = 0.92;
-    avatarGroup.add(headMesh);
-
-    // Visor (Face Shield)
-    const visorGeom = new THREE.SphereGeometry(0.22, 16, 16);
-    // Scale it down on Z axis to make it flatter
-    visorGeom.scale(1, 0.8, 0.5);
-    const visorMesh = new THREE.Mesh(visorGeom, visorMaterial);
-    visorMesh.position.set(0, 0.95, 0.22);
-    avatarGroup.add(visorMesh);
-
-    // Backpack (Dual Jetpack cylinders)
-    const packGroup = new THREE.Group();
-    const packCylGeom = new THREE.CylinderGeometry(0.12, 0.12, 0.6, 12);
-    
-    const leftPack = new THREE.Mesh(packCylGeom, secondaryMaterial);
-    leftPack.position.set(-0.16, 0.45, -0.25);
-    packGroup.add(leftPack);
-
-    const rightPack = new THREE.Mesh(packCylGeom, secondaryMaterial);
-    rightPack.position.set(0.16, 0.45, -0.25);
-    packGroup.add(rightPack);
-
-    avatarGroup.add(packGroup);
-
-    // Limbs (Arms & Legs)
-    const limbGeom = new THREE.CylinderGeometry(0.08, 0.08, 0.45, 12);
-    
-    // Left Arm
-    const leftArm = new THREE.Mesh(limbGeom, suitMaterial);
-    leftArm.position.set(-0.45, 0.5, 0);
-    leftArm.rotation.z = Math.PI / 6;
-    avatarGroup.add(leftArm);
-
-    // Right Arm
-    const rightArm = new THREE.Mesh(limbGeom, suitMaterial);
-    rightArm.position.set(0.45, 0.5, 0);
-    rightArm.rotation.z = -Math.PI / 6;
-    avatarGroup.add(rightArm);
-
-    // Left Leg
-    const leftLeg = new THREE.Mesh(limbGeom, suitMaterial);
-    leftLeg.position.set(-0.16, -0.05, 0);
-    avatarGroup.add(leftLeg);
-
-    // Right Leg
-    const rightLeg = new THREE.Mesh(limbGeom, suitMaterial);
-    rightLeg.position.set(0.16, -0.05, 0);
-    avatarGroup.add(rightLeg);
-
-    // 6. Accessories Group
-    // Torus / Ring Around Neck
-    const ringGeom = new THREE.TorusGeometry(0.24, 0.04, 8, 24);
-    ringGeom.rotateX(Math.PI / 2);
-    const ringMesh = new THREE.Mesh(ringGeom, secondaryMaterial);
-    ringMesh.position.y = 0.76;
-    ringMesh.visible = false;
-    avatarGroup.add(ringMesh);
-
-    // Helmet Antenna
-    const antennaGroup = new THREE.Group();
-    const rodGeom = new THREE.CylinderGeometry(0.015, 0.015, 0.25, 8);
-    const rod = new THREE.Mesh(rodGeom, secondaryMaterial);
-    rod.position.y = 0.125;
-    antennaGroup.add(rod);
-
-    const tipGeom = new THREE.SphereGeometry(0.04, 8, 8);
-    const tipMaterial = new THREE.MeshBasicMaterial({ color: 0xff0055 });
-    const tip = new THREE.Mesh(tipGeom, tipMaterial);
-    tip.position.y = 0.25;
-    antennaGroup.add(tip);
-
-    antennaGroup.position.set(0, 1.2, 0);
-    antennaGroup.visible = false;
-    avatarGroup.add(antennaGroup);
-
-    // Goggles
-    const gogglesGroup = new THREE.Group();
-    const bandGeom = new THREE.TorusGeometry(0.325, 0.015, 6, 24);
-    bandGeom.rotateX(Math.PI / 2);
-    const band = new THREE.Mesh(bandGeom, secondaryMaterial);
-    gogglesGroup.add(band);
-
-    const glassGeom = new THREE.CylinderGeometry(0.06, 0.06, 0.06, 8);
-    glassGeom.rotateX(Math.PI / 2);
-    const glassL = new THREE.Mesh(glassGeom, visorMaterial);
-    glassL.position.set(-0.1, 0, 0.3);
-    const glassR = new THREE.Mesh(glassGeom, visorMaterial);
-    glassR.position.set(0.1, 0, 0.3);
-    gogglesGroup.add(glassL);
-    gogglesGroup.add(glassR);
-
-    gogglesGroup.position.set(0, 0.95, 0);
-    gogglesGroup.visible = false;
-    avatarGroup.add(gogglesGroup);
-
-    // 7. Decals
-    // Star Decal
-    const starGeom = new THREE.ConeGeometry(0.07, 0.15, 4);
-    const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffd700 });
-    const star = new THREE.Mesh(starGeom, starMaterial);
-    star.position.set(0, 0.45, 0.36);
-    star.rotation.x = Math.PI / 2.5;
-    star.visible = false;
-    avatarGroup.add(star);
-
-    // Heart Decal
-    const heartGeom = new THREE.BoxGeometry(0.08, 0.08, 0.04);
-    const heartMaterial = new THREE.MeshBasicMaterial({ color: 0xff0055 });
-    const heart = new THREE.Mesh(heartGeom, heartMaterial);
-    heart.position.set(0, 0.45, 0.36);
-    heart.rotation.y = 0;
-    heart.visible = false;
-    avatarGroup.add(heart);
-
-    // Planet Decal
-    const planetGroup = new THREE.Group();
-    const sphereGeom = new THREE.SphereGeometry(0.05, 8, 8);
-    const pSphere = new THREE.Mesh(sphereGeom, new THREE.MeshBasicMaterial({ color: 0x00f5ff }));
-    planetGroup.add(pSphere);
-
-    const pRingGeom = new THREE.TorusGeometry(0.08, 0.008, 4, 16);
-    pRingGeom.rotateX(Math.PI / 3);
-    const pRing = new THREE.Mesh(pRingGeom, new THREE.MeshBasicMaterial({ color: 0xffd700 }));
-    planetGroup.add(pRing);
-
-    planetGroup.position.set(0, 0.45, 0.36);
-    planetGroup.visible = false;
-    avatarGroup.add(planetGroup);
-
-    // Store references to dynamically toggle meshes
-    meshesRef.current = {
-      antenna: antennaGroup,
-      ring: ringMesh,
-      goggles: gogglesGroup,
-      star: star,
-      heart: heart,
-      planet: planetGroup
-    };
-
-    scene.add(avatarGroup);
-
-    // Adjust visibility according to state variables
-    antennaGroup.visible = accessory === "antenna";
-    ringMesh.visible = accessory === "ring";
-    gogglesGroup.visible = accessory === "goggles";
-    star.visible = decal === "star";
-    heart.visible = decal === "heart";
-    planetGroup.visible = decal === "planet";
-
-    // 8. Animation Loop
-    let animationFrameId;
-    const animate = () => {
-      // Rotation logic
-      if (autoRotate) {
-        avatarGroup.rotation.y += 0.005;
-        // Keep manual slider in sync (mod 2*PI)
-        setManualRotation(avatarGroup.rotation.y % (Math.PI * 2));
-      } else {
-        avatarGroup.rotation.y = manualRotation;
-      }
-
-      // Slow hover/breath bobbing
-      avatarGroup.position.y = Math.sin(Date.now() * 0.0015) * 0.05;
-
-      renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    // 9. Resize handler
-    const handleResize = () => {
-      if (!containerRef.current) return;
-      const w = containerRef.current.clientWidth;
-      const h = containerRef.current.clientHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", handleResize);
-      renderer.dispose();
-      bodyGeom.dispose();
-      headGeom.dispose();
-      visorGeom.dispose();
-      packCylGeom.dispose();
-      limbGeom.dispose();
-      ringGeom.dispose();
-      rodGeom.dispose();
-      tipGeom.dispose();
-      bandGeom.dispose();
-      glassGeom.dispose();
-      starGeom.dispose();
-      heartGeom.dispose();
-      sphereGeom.dispose();
-      pRingGeom.dispose();
-    };
-  }, [loading, error]);
-
-  // Sync color changes to Three.js materials
-  useEffect(() => {
-    if (materialsRef.current.suit) {
-      materialsRef.current.suit.color.set(suitColor);
-    }
-  }, [suitColor]);
-
-  useEffect(() => {
-    if (materialsRef.current.visor) {
-      materialsRef.current.visor.color.set(visorColor);
-      materialsRef.current.visor.emissive.set(visorColor);
-    }
-  }, [visorColor]);
-
-  // Sync accessory changes
-  useEffect(() => {
-    const meshes = meshesRef.current;
-    if (meshes.antenna) {
-      meshes.antenna.visible = accessory === "antenna";
-      meshes.ring.visible = accessory === "ring";
-      meshes.goggles.visible = accessory === "goggles";
-    }
-  }, [accessory]);
-
-  // Sync decal changes
-  useEffect(() => {
-    const meshes = meshesRef.current;
-    if (meshes.star) {
-      meshes.star.visible = decal === "star";
-      meshes.heart.visible = decal === "heart";
-      meshes.planet.visible = decal === "planet";
-    }
-  }, [decal]);
-
-  // Sync slider rotation
-  useEffect(() => {
-    if (!autoRotate && avatarGroupRef.current) {
-      avatarGroupRef.current.rotation.y = manualRotation;
-    }
-  }, [manualRotation, autoRotate]);
+  // Find active color filter from the list
+  const activeColor = suitColorsList.find(c => c.hex === suitColor) || suitColorsList[0];
+  const colorFilter = activeColor.filter;
 
   // Save selection to backend profile
   const handleSave = async () => {
@@ -441,9 +132,9 @@ export default function AvatarCustomizer() {
   if (loading) {
     return (
       <div className="container space-bg" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-        <div className="auth-card">
-          <h2>Cargando simulador 3D...</h2>
-          <p className="tagline">Encendiendo motores gráficos...</p>
+        <div className="glass-console auth-card" style={{ maxWidth: 450 }}>
+          <h2>Cargando personalizador...</h2>
+          <p className="tagline">Preparando cabina de vestuario...</p>
         </div>
       </div>
     );
@@ -451,19 +142,21 @@ export default function AvatarCustomizer() {
 
   return (
     <div className="container space-bg" style={{ maxWidth: 1000 }}>
+      {/* Scanline Overlay */}
+      <div className="scan-line" />
+
       <header className="panel-header">
-        <h1>Diseñador de Avatar 3D</h1>
+        <h1>DISEÑADOR DE TRIPULANTE (2D)</h1>
         <p className="tagline">Personaliza tu traje de exploración espacial</p>
       </header>
 
       {error && <div className="error-message" style={{ width: "100%", maxWidth: 900 }}>{error}</div>}
       {success && <div className="success-message" style={{ width: "100%", maxWidth: 900, background: "rgba(46,196,182,0.15)", border: "1px solid #2ec4b6", color: "#b8fff9", padding: 15, borderRadius: 8, textAlign: "center", marginBottom: 20 }}>{success}</div>}
 
-      <div className="avatar-workspace" style={{ display: "flex", gap: 30, width: "100%", flexWrap: "wrap" }}>
-        {/* Left Side: 3D Canvas */}
+      <div className="avatar-workspace" style={{ display: "flex", gap: 30, width: "100%", maxWidth: 1000, flexWrap: "wrap", zIndex: 10 }}>
+        {/* Left Side: 2D Preview with User Character */}
         <div 
-          ref={containerRef} 
-          className="auth-card" 
+          className="glass-console auth-card" 
           style={{ 
             flex: "1 1 400px", 
             minHeight: 400, 
@@ -471,56 +164,69 @@ export default function AvatarCustomizer() {
             flexDirection: "column", 
             alignItems: "center", 
             justifyContent: "center",
-            padding: 20,
-            background: "radial-gradient(circle, rgba(15, 58, 71, 0.6) 0%, rgba(5, 24, 32, 0.4) 100%)"
+            padding: 30,
+            background: "radial-gradient(circle, rgba(15, 58, 71, 0.4) 0%, rgba(5, 24, 32, 0.25) 100%)"
           }}
         >
-          <canvas ref={canvasRef} style={{ width: "100%", height: 350, display: "block" }} />
-
-          {/* Interactive controls */}
-          <div style={{ width: "100%", marginTop: 15 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <label style={{ fontSize: "0.85rem", color: "#9be6df" }}>Girar personaje: {Math.round((manualRotation * 180) / Math.PI)}°</label>
-              <button 
-                onClick={() => setAutoRotate(!autoRotate)}
+          <div className="avatar-preview-2d" style={{ width: 320, height: 380, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div className="floating-crewmate" style={{ position: "relative", width: 200, height: 230 }}>
+              
+              {/* Custom Character Base Body with Hue Filter */}
+              <img 
+                src={ReclutaPrincipal} 
+                className="avatar-layer" 
+                alt="Recluta Principal"
                 style={{ 
-                  margin: 0, 
-                  padding: "4px 10px", 
-                  fontSize: "0.75rem", 
-                  borderRadius: 4, 
-                  background: autoRotate ? "rgba(46, 196, 182, 0.2)" : "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(184, 255, 249, 0.3)"
+                  filter: `${colorFilter} drop-shadow(0 0 8px ${suitColor})`,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain"
                 }}
-              >
-                {autoRotate ? "⏸️ Pausar Giro" : "▶️ Auto-giro"}
-              </button>
+              />
+
+              {/* Layer: Badges (Decals) */}
+              {decal === "star" && (
+                <div style={{ position: "absolute", top: "108px", left: "50px", fontSize: "2.5rem", zIndex: 12 }}>⭐</div>
+              )}
+              {decal === "heart" && (
+                <div style={{ position: "absolute", top: "108px", left: "50px", fontSize: "2.5rem", zIndex: 12 }}>❤️</div>
+              )}
+              {decal === "planet" && (
+                <div style={{ position: "absolute", top: "108px", left: "50px", fontSize: "2.5rem", zIndex: 12 }}>🪐</div>
+              )}
+
+              {/* Layer: Accessories */}
+              {accessory === "antenna" && (
+                <div style={{ position: "absolute", top: "-25px", left: "50%", transform: "translateX(-50%)", fontSize: "3.2rem", zIndex: 15 }}>📡</div>
+              )}
+
+              {accessory === "ring" && (
+                <div style={{ position: "absolute", top: "86px", left: "50%", transform: "translateX(-50%)", fontSize: "3.5rem", zIndex: 9 }}>⭕</div>
+              )}
+
+              {accessory === "goggles" && (
+                <div style={{ position: "absolute", top: "36px", left: "55%", transform: "translateX(-50%)", fontSize: "2.6rem", zIndex: 15 }}>🥽</div>
+              )}
+
             </div>
-            <input 
-              type="range" 
-              min={0} 
-              max={Math.PI * 2} 
-              step={0.05} 
-              value={manualRotation}
-              onChange={(e) => {
-                setManualRotation(Number(e.target.value));
-                setAutoRotate(false);
-              }}
-              style={{ width: "100%", cursor: "pointer" }}
-            />
+          </div>
+
+          <div style={{ width: "100%", marginTop: 25, color: "#9be6df", fontSize: "0.9rem", fontWeight: "bold" }}>
+            🤖 ESTADO: TRIPULANTE LISTO PARA EL DESPEGUE
           </div>
         </div>
 
         {/* Right Side: Options Panel */}
-        <div className="auth-card" style={{ flex: "1 1 400px", padding: 30, textAlign: "left" }}>
-          <h2 style={{ borderBottom: "1px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10, marginTop: 0 }}>
-            Panel de Vestuario
+        <div className="glass-console auth-card" style={{ flex: "1 1 400px", padding: 30, textAlign: "left" }}>
+          <h2 style={{ borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10, marginTop: 0, color: "#b8fff9" }}>
+            🛠️ Panel de Personalización
           </h2>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 15 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 20 }}>
             {/* Color of Suit */}
             <div>
-              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem" }}>👕 Color del Traje Espacial</h4>
-              <div style={{ display: "flex", gap: 10 }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem", fontWeight: "bold" }}>👕 Color del Traje</h4>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {suitColorsList.map((c) => (
                   <button
                     key={c.hex}
@@ -530,12 +236,14 @@ export default function AvatarCustomizer() {
                       height: 38,
                       borderRadius: "50%",
                       backgroundColor: c.hex,
-                      border: suitColor === c.hex ? "3px solid #00f5ff" : "1px solid rgba(255,255,255,0.3)",
+                      border: suitColor === c.hex ? "3px solid #b8fff9" : "2.5px solid #000",
                       padding: 0,
                       cursor: "pointer",
                       margin: 0,
-                      boxShadow: suitColor === c.hex ? "0 0 10px #00f5ff" : "none"
+                      boxShadow: suitColor === c.hex ? `0 0 12px ${c.hex}` : "none",
+                      transition: "transform 0.15s ease"
                     }}
+                    className="avatar-opt-color"
                     title={c.name}
                   />
                 ))}
@@ -544,8 +252,8 @@ export default function AvatarCustomizer() {
 
             {/* Visor Color */}
             <div>
-              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem" }}>🕶️ Cristal del Visor</h4>
-              <div style={{ display: "flex", gap: 10 }}>
+              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem", fontWeight: "bold" }}>🕶️ Color de Visor</h4>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {visorColorsList.map((c) => (
                   <button
                     key={c.hex}
@@ -555,11 +263,12 @@ export default function AvatarCustomizer() {
                       height: 38,
                       borderRadius: "50%",
                       backgroundColor: c.hex,
-                      border: visorColor === c.hex ? "3px solid #b8fff9" : "1px solid rgba(255,255,255,0.3)",
+                      border: visorColor === c.hex ? "3px solid #ffffff" : "2.5px solid #000",
                       padding: 0,
                       cursor: "pointer",
                       margin: 0,
-                      boxShadow: visorColor === c.hex ? `0 0 12px ${c.hex}` : "none"
+                      boxShadow: visorColor === c.hex ? `0 0 12px ${c.hex}` : "none",
+                      transition: "transform 0.15s ease"
                     }}
                     title={c.name}
                   />
@@ -569,26 +278,28 @@ export default function AvatarCustomizer() {
 
             {/* Accessories Option */}
             <div>
-              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem" }}>👒 Accesorios del Casco</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem", fontWeight: "bold" }}>👒 Accesorios (Sombreros)</h4>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
                   { id: "none", name: "Ninguno", emoji: "❌" },
                   { id: "antenna", name: "Antena", emoji: "📡" },
-                  { id: "ring", name: "Aro de Cuello", emoji: "⭕" },
-                  { id: "goggles", name: "Visores Gafas", emoji: "🥽" }
+                  { id: "ring", name: "Aro Espacial", emoji: "⭕" },
+                  { id: "goggles", name: "Gafas Cyber", emoji: "🥽" }
                 ].map((a) => (
                   <button
                     key={a.id}
                     onClick={() => setAccessory(a.id)}
                     style={{
-                      padding: "8px 12px",
-                      borderRadius: 6,
-                      border: accessory === a.id ? "2px solid #00f5ff" : "1px solid rgba(255,255,255,0.15)",
-                      background: accessory === a.id ? "rgba(0, 245, 255, 0.15)" : "rgba(255,255,255,0.04)",
+                      padding: "10px 14px",
+                      borderRadius: 8,
+                      border: accessory === a.id ? "2px solid #b8fff9" : "1px solid rgba(255,255,255,0.15)",
+                      background: accessory === a.id ? "rgba(46, 196, 182, 0.18)" : "rgba(255,255,255,0.04)",
                       color: accessory === a.id ? "#b8fff9" : "#e6f7ff",
                       fontSize: "0.85rem",
+                      fontWeight: "600",
                       cursor: "pointer",
-                      margin: 0
+                      margin: 0,
+                      transition: "all 0.2s ease"
                     }}
                   >
                     {a.emoji} {a.name}
@@ -599,26 +310,28 @@ export default function AvatarCustomizer() {
 
             {/* Emblem Option */}
             <div>
-              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem" }}>🛡️ Emblema de Pecho</h4>
+              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "0.95rem", fontWeight: "bold" }}>🛡️ Insignia de Pecho</h4>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
                   { id: "none", name: "Vacío", emoji: "🚫" },
-                  { id: "star", name: "Estrella Dorada", emoji: "⭐" },
-                  { id: "heart", name: "Corazón Ruby", emoji: "❤️" },
-                  { id: "planet", name: "Planeta Celeste", emoji: "🪐" }
+                  { id: "star", name: "Estrella", emoji: "⭐" },
+                  { id: "heart", name: "Corazón", emoji: "❤️" },
+                  { id: "planet", name: "Saturno", emoji: "🪐" }
                 ].map((d) => (
                   <button
                     key={d.id}
                     onClick={() => setDecal(d.id)}
                     style={{
-                      padding: "8px 12px",
-                      borderRadius: 6,
-                      border: decal === d.id ? "2px solid #00f5ff" : "1px solid rgba(255,255,255,0.15)",
-                      background: decal === d.id ? "rgba(0, 245, 255, 0.15)" : "rgba(255,255,255,0.04)",
+                      padding: "10px 14px",
+                      borderRadius: 8,
+                      border: decal === d.id ? "2px solid #b8fff9" : "1px solid rgba(255,255,255,0.15)",
+                      background: decal === d.id ? "rgba(46, 196, 182, 0.18)" : "rgba(255,255,255,0.04)",
                       color: decal === d.id ? "#b8fff9" : "#e6f7ff",
                       fontSize: "0.85rem",
+                      fontWeight: "600",
                       cursor: "pointer",
-                      margin: 0
+                      margin: 0,
+                      transition: "all 0.2s ease"
                     }}
                   >
                     {d.emoji} {d.name}
@@ -632,18 +345,18 @@ export default function AvatarCustomizer() {
           <div style={{ display: "flex", gap: 15, marginTop: 35 }}>
             <button 
               className="btn-cancel" 
-              style={{ flex: 1 }} 
+              style={{ flex: 1, padding: 14 }} 
               onClick={() => navigate("/panelprincipal")}
             >
               Volver
             </button>
             <button 
               className="btn-create" 
-              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427" }} 
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", padding: 14 }} 
               disabled={saving}
               onClick={handleSave}
             >
-              {saving ? "Guardando..." : "💾 Guardar Apariencia"}
+              {saving ? "Transmitiendo..." : "💾 Guardar Apariencia"}
             </button>
           </div>
         </div>

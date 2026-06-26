@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
+import "../../styles/Panel.css";
 
 // Helper to shuffle an array
 function shuffle(array) {
@@ -13,79 +14,178 @@ function shuffle(array) {
 
 export function SentenceLaunchGame({ activity, onComplete, onClose }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
-  const [targetSentence, setTargetSentence] = useState("");
-  const [targetWords, setTargetWords] = useState([]);
-  const [scrambledPool, setScrambledPool] = useState([]); // Array of { id, word, selected: bool }
-  const [selectedWords, setSelectedWords] = useState([]); // Array of { poolId, word }
+  const [leftNodes, setLeftNodes] = useState([]);
+  const [rightNodes, setRightNodes] = useState([]);
+  const [connections, setConnections] = useState({}); // { leftIndex: rightIndex }
+  const [selectedLeft, setSelectedLeft] = useState(null); // left index
+  
+  const [portCoords, setPortCoords] = useState({}); // { portId: {x, y} }
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const containerRef = useRef(null);
   const questions = activity.questions || [];
 
-  // Load question data
+  // Wire Colors
+  const colors = ["#ff6b6b", "#2ec4b6", "#ffd166", "#ab47bc", "#ff6b35", "#00ff87"];
+
+  // Calculate coordinates of all ports
+  const updateCoords = () => {
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newCoords = {};
+
+    leftNodes.forEach((node, idx) => {
+      const port = document.getElementById(`left-port-${idx}`);
+      if (port) {
+        const rect = port.getBoundingClientRect();
+        newCoords[`left-${idx}`] = {
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top + rect.height / 2
+        };
+      }
+    });
+
+    rightNodes.forEach((node, idx) => {
+      const port = document.getElementById(`right-port-${idx}`);
+      if (port) {
+        const rect = port.getBoundingClientRect();
+        newCoords[`right-${idx}`] = {
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top + rect.height / 2
+        };
+      }
+    });
+
+    setPortCoords(newCoords);
+  };
+
+  // Build the wire connect pairs from the correct sentence option
   useEffect(() => {
     if (questions.length === 0 || !questions[currentQIndex]) return;
 
     const question = questions[currentQIndex];
-    // Find correct option
     const correctOpt = question.options?.find(o => o.is_correct);
     if (!correctOpt) return;
 
+    // Split sentence into words
     const sentence = correctOpt.text;
-    setTargetSentence(sentence);
-
-    // Split sentence into words, keeping punctuation intact
     const words = sentence.split(" ");
-    setTargetWords(words);
 
-    // Create pool of words and scramble them
-    const pool = words.map((w, idx) => ({
+    // Generate matching sequential pairs (word_i -> word_i+1)
+    const pairs = [];
+    for (let i = 0; i < words.length - 1; i++) {
+      pairs.push({
+        leftText: words[i],
+        rightText: words[i + 1],
+        matchIndex: i // unique match identifier
+      });
+    }
+
+    // Prepare left nodes
+    const left = pairs.map((p, idx) => ({
       id: idx,
-      word: w,
-      selected: false
+      text: p.leftText,
+      matchIndex: p.matchIndex
     }));
-    setScrambledPool(shuffle(pool));
-    setSelectedWords([]);
+
+    // Prepare right nodes
+    const right = pairs.map((p, idx) => ({
+      id: idx,
+      text: p.rightText,
+      matchIndex: p.matchIndex
+    }));
+
+    // Shuffle left and right independently
+    const shuffledLeft = shuffle(left);
+    const shuffledRight = shuffle(right);
+
+    setLeftNodes(shuffledLeft);
+    setRightNodes(shuffledRight);
+    setConnections({});
+    setSelectedLeft(null);
     setIsError(false);
     setIsSuccess(false);
   }, [currentQIndex, questions]);
 
-  const handleWordClick = (poolItem) => {
-    if (poolItem.selected) return;
+  // Update port coordinates once nodes render or window resizes
+  useEffect(() => {
+    if (leftNodes.length > 0 && rightNodes.length > 0) {
+      // Small timeout to allow DOM to compute layout
+      const timer = setTimeout(updateCoords, 150);
+      window.addEventListener("resize", updateCoords);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener("resize", updateCoords);
+      };
+    }
+  }, [leftNodes, rightNodes]);
 
-    // Add to selected list
-    setSelectedWords([...selectedWords, { poolId: poolItem.id, word: poolItem.word }]);
+  // Click handler for port
+  const handleLeftClick = (idx) => {
+    if (isSuccess) return;
     
-    // Mark as selected in pool
-    setScrambledPool(prevPool =>
-      prevPool.map(item =>
-        item.id === poolItem.id ? { ...item, selected: true } : item
-      )
-    );
+    // Toggle selection
+    if (selectedLeft === idx) {
+      setSelectedLeft(null);
+    } else {
+      setSelectedLeft(idx);
+    }
   };
 
-  const handleSelectedWordClick = (selectedItem, index) => {
-    // Remove from selected list
-    setSelectedWords(prevSelected => prevSelected.filter((_, idx) => idx !== index));
+  const handleRightClick = (rightIdx) => {
+    if (isSuccess || selectedLeft === null) return;
 
-    // Mark as unselected in pool
-    setScrambledPool(prevPool =>
-      prevPool.map(item =>
-        item.id === selectedItem.poolId ? { ...item, selected: false } : item
-      )
-    );
+    // Connect selectedLeft to rightIdx
+    setConnections(prev => {
+      const next = { ...prev };
+      
+      // Remove any existing connection to this right port to enforce 1-to-1
+      Object.keys(next).forEach(leftKey => {
+        if (next[leftKey] === rightIdx) {
+          delete next[leftKey];
+        }
+      });
+
+      next[selectedLeft] = rightIdx;
+      return next;
+    });
+
+    setSelectedLeft(null);
   };
 
-  const handleReset = () => {
-    setSelectedWords([]);
-    setScrambledPool(prevPool => prevPool.map(item => ({ ...item, selected: false })));
-    setIsError(false);
+  const handleDisconnect = (leftIdx) => {
+    if (isSuccess) return;
+    setConnections(prev => {
+      const next = { ...prev };
+      delete next[leftIdx];
+      return next;
+    });
   };
 
-  const handleLaunch = () => {
-    const assembled = selectedWords.map(s => s.word).join(" ");
-    
-    if (assembled === targetSentence) {
+  const handleVerify = () => {
+    // Check if all left nodes are connected
+    if (Object.keys(connections).length !== leftNodes.length) {
+      setIsError(true);
+      setTimeout(() => setIsError(false), 2000);
+      return;
+    }
+
+    // Verify if each connection matches the correct sequence (same matchIndex)
+    let allCorrect = true;
+    Object.keys(connections).forEach(leftIdxStr => {
+      const leftIdx = Number(leftIdxStr);
+      const rightIdx = connections[leftIdx];
+      
+      const leftNode = leftNodes[leftIdx];
+      const rightNode = rightNodes[rightIdx];
+
+      if (leftNode.matchIndex !== rightNode.matchIndex) {
+        allCorrect = false;
+      }
+    });
+
+    if (allCorrect) {
       setIsSuccess(true);
       setTimeout(() => {
         if (currentQIndex < questions.length - 1) {
@@ -98,7 +198,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
       setIsError(true);
       setTimeout(() => {
         setIsError(false);
-        handleReset();
+        setConnections({}); // Reset connections on error
       }, 1500);
     }
   };
@@ -106,176 +206,226 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
   const currentQuestion = questions[currentQIndex];
 
   return (
-    <div className="auth-card panel-large animate-fadeIn" style={{ maxWidth: 700 }}>
-      <div className="panel-title-row" style={{ marginBottom: 20 }}>
-        <div>
-          <span className="dashboard-kicker">Actividad 2: Lanzamiento de Oraciones (Gramática)</span>
-          <h2>{activity.title}</h2>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 750, padding: 30, position: "relative" }}>
+      {/* Scanline Overlay */}
+      <div className="scan-line" />
+
+      <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
+        <div style={{ textAlign: "left" }}>
+          <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+            Misión 2: Panel de Conexión Eléctrica (Cables)
+          </span>
+          <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
         </div>
-        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 12px" }}>
+        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
           Cerrar X
         </button>
       </div>
 
       {currentQuestion ? (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.9rem", marginBottom: 15 }}>
-            <span>Cohete {currentQIndex + 1} de {questions.length}</span>
-            <span>Estabilidad de órbita: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.85rem", marginBottom: 15 }}>
+            <span>Fusibles: {currentQIndex + 1} de {questions.length}</span>
+            <span>Energía de Red: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
-          <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "1.1rem" }}>
-            Instrucciones: Ordena las palabras para formar la oración correcta y lanzar el cohete.
+          <h3 style={{ color: "#ffd166", marginBottom: 8, fontSize: "1.1rem", textAlign: "left" }}>
+            Instrucciones: Une los cables en el orden gramatical correcto para restablecer la corriente del cohete.
           </h3>
-          <p style={{ color: "rgba(230, 247, 255, 0.7)", fontSize: "0.9rem", marginBottom: 25 }}>
+          <p style={{ color: "rgba(230, 247, 255, 0.7)", fontSize: "0.95rem", marginBottom: 25, textAlign: "left" }}>
             {currentQuestion.text}
           </p>
 
-          {/* Spaceship launch visual zone */}
+          {/* Wire Deck Area */}
           <div 
-            className="launch-pad" 
-            style={{ 
-              background: "rgba(0, 0, 0, 0.4)", 
-              border: "1px solid rgba(184, 255, 249, 0.15)", 
-              borderRadius: 15, 
-              padding: 25, 
-              minHeight: 180, 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden"
-            }}
+            id="wire-canvas-container" 
+            ref={containerRef} 
+            className="wire-minigame-deck"
           >
-            {/* Rocket Icon with animation */}
-            <div 
-              style={{ 
-                fontSize: "3.5rem", 
-                transform: isSuccess ? "translateY(-150px) scale(0.8)" : "none",
-                transition: isSuccess ? "transform 1.2s cubic-bezier(.68,-0.55,.27,1.55)" : "none",
-                marginBottom: 15
-              }}
-            >
-              🚀
-            </div>
+            {/* SVG Canvas to render cables */}
+            <svg className="wire-svg-canvas">
+              {/* Render Established Connections */}
+              {Object.keys(connections).map((leftIdxStr) => {
+                const leftIdx = Number(leftIdxStr);
+                const rightIdx = connections[leftIdx];
+                const start = portCoords[`left-${leftIdx}`];
+                const end = portCoords[`right-${rightIdx}`];
 
-            {/* Assembled Sentence Box */}
-            <div 
-              className={`assembled-sentence-container ${isError ? "animate-shake" : ""}`}
-              style={{
-                background: "rgba(255, 255, 255, 0.05)",
-                border: isSuccess ? "2px solid #2ec4b6" : isError ? "2px solid #ff6b6b" : "1px dashed rgba(184, 255, 249, 0.4)",
-                borderRadius: 10,
-                width: "100%",
-                boxSizing: "border-box",
-                minHeight: 60,
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                padding: 10
-              }}
-            >
-              {selectedWords.length === 0 ? (
-                <span style={{ color: "rgba(230, 247, 255, 0.4)", fontStyle: "italic", fontSize: "0.95rem" }}>
-                  Haz clic en las palabras de abajo para construir la oración...
-                </span>
-              ) : (
-                selectedWords.map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleSelectedWordClick(item, idx)}
-                    style={{
-                      background: "linear-gradient(135deg, #b8fff9, #9be6df)",
-                      color: "#051820",
-                      border: "none",
-                      borderRadius: 6,
-                      padding: "8px 12px",
-                      fontSize: "1rem",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      margin: 0
-                    }}
-                  >
-                    {item.word}
-                  </button>
-                ))
+                if (!start || !end) return null;
+
+                // Wire color based on matchIndex
+                const color = colors[leftNodes[leftIdx].matchIndex % colors.length];
+
+                return (
+                  <g key={`wire-${leftIdx}`}>
+                    {/* Cable Drop Shadow (3D effect) */}
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="#000"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      opacity="0.5"
+                    />
+                    {/* Cable Glow Filter */}
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                      opacity="0.45"
+                      style={{ filter: `blur(4px)` }}
+                    />
+                    {/* Primary insulated cable */}
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    {/* Cable Specular reflection highlight */}
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.35)"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeDasharray="8,12"
+                    />
+                    {/* Glowing Electric Flow Current Overlay */}
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeDasharray="6,15"
+                      className="electric-flow-line"
+                      style={{ filter: "drop-shadow(0 0 3px #fff)" }}
+                    />
+                    {/* Glowing sparks at left socket */}
+                    <circle cx={start.x} cy={start.y} r="8" fill="#ffd166">
+                      <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
+                    </circle>
+                    {/* Glowing sparks at right socket */}
+                    <circle cx={end.x} cy={end.y} r="8" fill="#2ec4b6">
+                      <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
+                    </circle>
+                  </g>
+                );
+              })}
+
+              {/* Render active connection being drawn */}
+              {selectedLeft !== null && portCoords[`left-${selectedLeft}`] && (
+                <line
+                  x1={portCoords[`left-${selectedLeft}`].x}
+                  y1={portCoords[`left-${selectedLeft}`].y}
+                  x2={portCoords[`left-${selectedLeft}`].x + 40} // temporary indicator direction
+                  y2={portCoords[`left-${selectedLeft}`].y}
+                  stroke="#fff"
+                  strokeWidth="3.5"
+                  strokeDasharray="6,6"
+                  className="electric-flow-line"
+                  style={{ filter: "drop-shadow(0 0 5px #ffd166)" }}
+                  opacity="0.85"
+                />
               )}
+            </svg>
+
+            {/* Left Column Wires */}
+            <div className="wire-column">
+              {leftNodes.map((node, idx) => {
+                const isSelected = selectedLeft === idx;
+                const isConnected = connections[idx] !== undefined;
+                const wireColor = colors[node.matchIndex % colors.length];
+
+                return (
+                  <div className="wire-node" key={`left-node-${idx}`}>
+                    <div 
+                      id={`left-port-${idx}`}
+                      className={`wire-port ${isConnected ? "connected" : ""} ${isSelected ? "selected-port-spark" : ""}`}
+                      onClick={() => handleLeftClick(idx)}
+                      style={{
+                        backgroundColor: isSelected ? "#fff" : wireColor,
+                        boxShadow: isSelected ? `0 0 15px #fff` : `0 0 8px ${wireColor}`,
+                        border: isSelected ? "3px solid #000" : "4px solid #000"
+                      }}
+                    />
+                    <div className="wire-label">
+                      {node.text}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Column Terminals */}
+            <div className="wire-column" style={{ alignItems: "flex-end" }}>
+              {rightNodes.map((node, idx) => {
+                // Check if any left node is connected to this right node
+                const connectedLeftKey = Object.keys(connections).find(key => connections[key] === idx);
+                const isConnected = connectedLeftKey !== undefined;
+                const wireColor = isConnected ? colors[leftNodes[Number(connectedLeftKey)].matchIndex % colors.length] : "#141f32";
+
+                return (
+                  <div className="wire-node" key={`right-node-${idx}`} style={{ flexDirection: "row-reverse" }}>
+                    <div 
+                      id={`right-port-${idx}`}
+                      className={`wire-port ${isConnected ? "connected" : ""}`}
+                      onClick={() => handleRightClick(idx)}
+                      style={{
+                        backgroundColor: wireColor,
+                        boxShadow: isConnected ? `0 0 12px ${wireColor}` : "none",
+                        border: "4px solid #000"
+                      }}
+                    />
+                    <div className="wire-label" style={{ textAlign: "right" }}>
+                      {node.text}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Word Pool Zone */}
-          <div style={{ marginTop: 25, textAlign: "center" }}>
-            <div 
-              style={{ 
-                display: "flex", 
-                flexWrap: "wrap", 
-                justifyContent: "center", 
-                gap: 10,
-                minHeight: 60 
-              }}
-            >
-              {scrambledPool.map((poolItem) => (
-                <button
-                  key={poolItem.id}
-                  disabled={poolItem.selected}
-                  onClick={() => handleWordClick(poolItem)}
-                  style={{
-                    background: poolItem.selected ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
-                    borderRadius: 8,
-                    color: poolItem.selected ? "rgba(255,255,255,0.15)" : "#e6f7ff",
-                    padding: "10px 16px",
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    cursor: poolItem.selected ? "default" : "pointer",
-                    margin: 0,
-                    transition: "all 0.2s ease"
-                  }}
-                  className={poolItem.selected ? "" : "word-pool-btn"}
-                >
-                  {poolItem.word}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Game controls */}
+          {/* Action buttons */}
           <div style={{ display: "flex", gap: 15, marginTop: 30 }}>
             <button 
               className="btn-cancel" 
-              style={{ flex: 1 }} 
-              onClick={handleReset}
-              disabled={selectedWords.length === 0 || isSuccess}
+              style={{ flex: 1, margin: 0 }} 
+              onClick={() => setConnections({})}
+              disabled={Object.keys(connections).length === 0 || isSuccess}
             >
-              🔄 Reiniciar
+              🔄 Limpiar Cables
             </button>
             <button 
               className="btn-create" 
-              style={{ flex: 2, background: "linear-gradient(135deg, #ffd166, #ffb84d)", color: "#1a1a00" }} 
-              onClick={handleLaunch}
-              disabled={selectedWords.length !== targetWords.length || isSuccess}
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0 }} 
+              onClick={handleVerify}
+              disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
             >
-              🚀 ¡Lanzar Cohete!
+              ⚡ Conectar Energía
             </button>
           </div>
 
           {isError && (
-            <div style={{ marginTop: 15, color: "#ff6b6b", fontWeight: "bold", textAlign: "center" }}>
-              💥 ¡Falla en el lanzamiento! La secuencia de palabras es incorrecta.
+            <div style={{ marginTop: 20, color: "#ff6b6b", fontWeight: "bold", textAlign: "center" }} className="animate-shake">
+              💥 ¡CORTOCIRCUITO! Una o más conexiones son incorrectas.
             </div>
           )}
 
           {isSuccess && (
-            <div style={{ marginTop: 15, color: "#2ec4b6", fontWeight: "bold", textAlign: "center" }}>
-              ✨ ¡Lanzamiento exitoso! Trayectoria correcta establecida.
+            <div style={{ marginTop: 20, color: "#2ec4b6", fontWeight: "bold", textAlign: "center" }}>
+              ✨ ¡SISTEMA RESTABLECIDO! Energía eléctrica normalizada.
             </div>
           )}
         </div>
       ) : (
-        <p>Cargando preguntas de Sentence Launch...</p>
+        <p>Cargando cables de Sentence Launch...</p>
       )}
     </div>
   );

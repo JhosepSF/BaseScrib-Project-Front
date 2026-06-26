@@ -20,6 +20,8 @@ export function PanelPrincipal() {
   const [createdRoom, setCreatedRoom] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [warpTransition, setWarpTransition] = useState(false);
+  const [warpText, setWarpText] = useState("⚡ VIAJANDO...");
 
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
@@ -109,8 +111,29 @@ export function PanelPrincipal() {
 
     const data = await res.json();
     const accessToken = data.access;
+    
+    // Play hyperspace warp speed jump animation
+    setWarpText("⚡ VIAJANDO A LOS DORMITORIOS DE LA BASE... ⚡");
+    setWarpTransition(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    
     setToken(accessToken);
     localStorage.setItem("basescrib_token", accessToken);
+    setWarpTransition(false);
+  };
+
+  const changeStepWithWarp = async (newStep) => {
+    if (newStep === "login") {
+      setWarpText("🚀 INGRESANDO A LA CABINA DE MANDO... 🚀");
+    } else if (newStep === "register") {
+      setWarpText("📋 PREPARANDO PROTOCOLO DE REGISTRO... 📋");
+    } else {
+      setWarpText("⚡ ACCEDIENDO AL SISTEMA... ⚡");
+    }
+    setWarpTransition(true);
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    setStep(newStep);
+    setWarpTransition(false);
   };
 
   const handleLogin = async (e) => {
@@ -258,9 +281,30 @@ export function PanelPrincipal() {
   };
 
   return (
-    <div className="container space-bg">
+    <div className={`container space-bg ${
+      step === "in-room" ? "user-room-bg" : 
+      token ? "user-dormitories-bg" : 
+      step === "login" ? "user-cabin-bg" : 
+      "user-lobby-bg"
+    }`}>
+      {/* Dynamic comets layer */}
+      <div className="comet-layer">
+        <div className="comet comet-1" />
+        <div className="comet comet-2" />
+        <div className="comet comet-3" />
+        <div className="comet comet-4" />
+        <div className="comet comet-5" />
+      </div>
+
+      {/* Sci-fi transition overlay */}
+      {warpTransition && (
+        <div className="warp-transition-overlay">
+          <div className="warp-lines" />
+          <div className="warp-text">{warpText}</div>
+        </div>
+      )}
       <header className="panel-header">
-        <h1>BaseScrib</h1>
+        <h1 className={!token ? "home-title-comic" : ""}>BaseScrib</h1>
         <p className="tagline">Gamified writing practice — Student & Teacher portal</p>
         {user && (
           <div className="user-info">
@@ -292,7 +336,7 @@ export function PanelPrincipal() {
 
       {error && <div className="error-message">{error}</div>}
 
-      {step === "home" && !token && <AuthHome setStep={setStep} setRegisterRole={setRegisterRole} />}
+      {step === "home" && !token && <AuthHome setStep={changeStepWithWarp} setRegisterRole={setRegisterRole} />}
       {step === "login" && !token && (
         <LoginForm
           authUsername={authUsername}

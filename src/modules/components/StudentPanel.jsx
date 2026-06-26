@@ -15,10 +15,10 @@ export function StudentPanel({
   const navigate = useNavigate();
 
   return (
-    <div className="student-panel">
-      <h2>Panel estudiante</h2>
+    <div className="glass-console student-panel" style={{ padding: 30 }}>
+      <h2 style={{ color: "#b8fff9" }}>Panel estudiante</h2>
       {joinedRoom ? (
-        <div className="room-card">
+        <div className="room-card" style={{ background: "rgba(0,0,0,0.25)", padding: 20, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)" }}>
           <h3>{joinedRoom.name}</h3>
           <p>Código: <code>{joinedRoom.code}</code></p>
           <p>Clave: <code>{joinedRoom.key}</code></p>
@@ -32,6 +32,7 @@ export function StudentPanel({
           <label>Código de room</label>
           <input
             required
+            className="neon-input"
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             placeholder="Código proporcionado por tu docente"
@@ -40,6 +41,7 @@ export function StudentPanel({
           <label>Clave</label>
           <input
             required
+            className="neon-input"
             value={joinKey}
             onChange={(e) => setJoinKey(e.target.value)}
             placeholder="Clave proporcionada por tu docente"
@@ -65,7 +67,7 @@ export function StudentPanel({
             color: "#e6f7ff" 
           }}
         >
-          🎨 Personalizar mi Astronauta 3D
+          🎨 Personalizar mi Recluta 2D
         </button>
       </div>
     </div>

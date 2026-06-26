@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
+import "../../styles/Panel.css";
 
 export function WritingGame({ activity, userId, onComplete, onClose }) {
   const [text, setText] = useState("");
@@ -57,40 +58,44 @@ export function WritingGame({ activity, userId, onComplete, onClose }) {
   };
 
   return (
-    <div className="auth-card panel-large animate-fadeIn" style={{ maxWidth: 700 }}>
-      <div className="panel-title-row" style={{ marginBottom: 20 }}>
-        <div>
-          <span className="dashboard-kicker">Actividad 5: Transmisión Escrita (Laboratorio)</span>
-          <h2>{activity.title}</h2>
+    <div className="glass-console auth-card panel-large retro-terminal animate-fadeIn" style={{ maxWidth: 750, padding: 30, position: "relative" }}>
+      {/* Scanline Overlay */}
+      <div className="scan-line" />
+
+      <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid #153a1a", paddingBottom: 15 }}>
+        <div style={{ textAlign: "left" }}>
+          <span className="dashboard-kicker retro-text" style={{ textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+            Misión 5: Terminal de Comunicaciones Comms
+          </span>
+          <h2 className="retro-text" style={{ margin: "5px 0 0 0", fontSize: "1.6rem" }}>{activity.title}</h2>
         </div>
-        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 12px" }}>
+        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "#153a1a", border: "1px solid #39ff14", color: "#39ff14" }}>
           Cerrar X
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-message" style={{ background: "rgba(255, 107, 107, 0.1)", border: "1px solid #ff6b6b", color: "#ff6b6b" }}>{error}</div>}
 
       {currentQuestion ? (
         <div>
-          <h3 style={{ color: "#ffd166", marginBottom: 15, fontSize: "1.1rem" }}>
-            Instrucciones: Escribe tu presentación personal en inglés y transmítela a tu docente para su revisión y calificación.
+          <h3 className="retro-text" style={{ marginBottom: 15, fontSize: "1.05rem", textAlign: "left" }}>
+            &gt; INSTRUCCIONES: Escribe tu reporte en inglés en la terminal y transmite al comando de la Tierra.
           </h3>
 
           {/* Writing Prompt Console */}
           <div 
-            className="writing-console" 
             style={{ 
-              background: "rgba(0, 0, 0, 0.4)", 
-              border: "1px solid rgba(184, 255, 249, 0.15)", 
-              borderRadius: 15, 
+              background: "rgba(0, 10, 0, 0.4)", 
+              border: "1.5px solid #153a1a", 
+              borderRadius: 12, 
               padding: 20,
               marginBottom: 20
             }}
           >
-            <div style={{ color: "#b8fff9", fontWeight: "bold", fontSize: "0.95rem", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.5 }}>
-              🛰️ MENSAJE DE TRANSMISIÓN REQUERIDO:
+            <div className="retro-text" style={{ fontWeight: "bold", fontSize: "0.9rem", marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              &gt;&gt; SOLICITUD DE TRANSMISIÓN:
             </div>
-            <p style={{ margin: "0 0 15px 0", fontSize: "1.1rem", color: "#e6f7ff", lineHeight: 1.5 }}>
+            <p className="retro-text" style={{ margin: "0 0 20px 0", fontSize: "1.1rem", lineHeight: 1.5 }}>
               {currentQuestion.text}
             </p>
 
@@ -103,58 +108,59 @@ export function WritingGame({ activity, userId, onComplete, onClose }) {
                 }}
                 disabled={loading || isSuccess}
                 rows={6}
-                placeholder="Escribe tu presentación aquí en inglés... (Ej: Hello! My name is Leo...)"
+                placeholder="Escribe tu texto aquí en inglés... (Ej: Hello! My name is Tom...)"
+                className="retro-input"
                 style={{
                   width: "100%",
                   padding: 15,
-                  borderRadius: 10,
-                  border: "1px solid rgba(184, 255, 249, 0.3)",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  color: "#e6f7ff",
+                  borderRadius: 8,
                   fontSize: "1.05rem",
-                  fontFamily: "inherit",
                   resize: "none",
                   boxSizing: "border-box",
-                  outline: "none",
-                  transition: "all 0.3s ease"
+                  lineHeight: "1.5",
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#2ec4b6"}
-                onBlur={(e) => e.target.style.borderColor = "rgba(184, 255, 249, 0.3)"}
               />
 
-              <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.85rem", marginTop: 8 }}>
-                <span>Mínimo 30 caracteres</span>
-                <span>Caracteres: {text.length}</span>
+              <div className="retro-text" style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginTop: 8 }}>
+                <span>[MINIMO: 30 CARACTERES]</span>
+                <span>[LOG: {text.length} CHR]</span>
               </div>
 
               {/* Action button */}
-              <div style={{ marginTop: 20, display: "flex", justifyContent: "center" }}>
+              <div style={{ marginTop: 25, display: "flex", justifyContent: "center" }}>
                 <button 
                   type="submit"
-                  className="btn-create" 
+                  disabled={loading || isSuccess || text.trim().length === 0}
                   style={{ 
                     width: "100%", 
-                    maxWidth: 300, 
-                    padding: 15,
-                    background: "linear-gradient(135deg, #a8eaf5, #90e0ef)",
-                    color: "#002427"
-                  }} 
-                  disabled={loading || isSuccess || text.trim().length === 0}
+                    maxWidth: 320, 
+                    padding: "16px 24px",
+                    background: "linear-gradient(135deg, #153a1a, #0d2511)",
+                    color: "#39ff14",
+                    border: "2px solid #39ff14",
+                    boxShadow: "0 0 15px rgba(57, 255, 20, 0.25)",
+                    fontSize: "1.05rem",
+                    fontWeight: "bold",
+                    margin: 0,
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                    cursor: "pointer"
+                  }}
                 >
-                  {loading ? "Iniciando Transmisión..." : "📡 Transmitir a la Tierra"}
+                  {loading ? ">> ESTABLECIENDO CANAL..." : "📡 Iniciar Transmisión de Datos"}
                 </button>
               </div>
             </form>
           </div>
 
           {isSuccess && (
-            <div style={{ marginTop: 15, color: "#2ec4b6", fontWeight: "bold", textAlign: "center" }} className="animate-pulse">
-              ✨ ¡Transmisión en curso! Señal enviada a la base espacial con éxito. (+15 XP)
+            <div className="retro-text" style={{ marginTop: 20, fontWeight: "bold", textAlign: "center", fontSize: "1.05rem" }}>
+              📡 TRANSMISIÓN COMPLETADA EXITOSAMENTE. (+15 XP REGISTRADOS)
             </div>
           )}
         </div>
       ) : (
-        <p>Cargando preguntas de Writing Lab...</p>
+        <p className="retro-text">Cargando comunicaciones de terminal...</p>
       )}
     </div>
   );
