@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import ReclutaPrincipal from "../../assets/amongus/recluta principal personaje solo.png";
+import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 
 export function RegisterForm({
   authUsername,

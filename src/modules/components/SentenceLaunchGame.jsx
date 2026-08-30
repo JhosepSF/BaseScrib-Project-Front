@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import "../../styles/Panel.css";
+import { soundFx } from "../utils/soundEffects";
 
 // Helper to shuffle an array
 function shuffle(array) {
@@ -166,6 +167,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
   const handleVerify = () => {
     // Check if all left nodes are connected
     if (Object.keys(connections).length !== leftNodes.length) {
+      soundFx.playError();
       setIsError(true);
       setTimeout(() => setIsError(false), 2000);
       return;
@@ -186,15 +188,20 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
     });
 
     if (allCorrect) {
+      soundFx.playLaser();
+      soundFx.playSuccess();
       setIsSuccess(true);
       setTimeout(() => {
         if (currentQIndex < questions.length - 1) {
           setCurrentQIndex(currentQIndex + 1);
         } else {
+          soundFx.playCoin();
+          soundFx.playStreakBonus();
           onComplete(10, 10); // 10 XP, 10 Coins
         }
       }, 1500);
     } else {
+      soundFx.playError();
       setIsError(true);
       setTimeout(() => {
         setIsError(false);

@@ -7,6 +7,22 @@ import { SentenceLaunchGame } from "./SentenceLaunchGame";
 import { WordRecoveryGame } from "./WordRecoveryGame";
 import { ShipRepairGame } from "./ShipRepairGame";
 import { WritingGame } from "./WritingGame";
+import UnlockMissionModal from "./UnlockMissionModal";
+import LeaderboardModal from "./LeaderboardModal";
+import PrePostTestModal from "./PrePostTestModal";
+import StoreModal from "./StoreModal";
+import InventoryModal from "./InventoryModal";
+import AbyssModal from "./AbyssModal";
+import AvatarShowcase from "./AvatarShowcase";
+import ValleDePortalesView from "./ValleDePortalesView";
+import { soundFx } from "../utils/soundEffects";
+import RecluteHUD from "./RecluteHUD";
+import MissionConsole from "./MissionConsole";
+import HoloMonitor from "./HoloMonitor";
+import PortalGateway from "./PortalGateway";
+import { RoomActivityPanel3D } from "./RoomActivityPanel3D";
+import naveDentro2D from "../../assets/amongus/Nave_dentro_16_9_2D.jpg";
+import "../../styles/SpaceStation.css";
 
 const missionBriefings = {
   1: {
@@ -37,9 +53,11 @@ const missionBriefings = {
       { en: "book", es: "libro" },
       { en: "computer", es: "computadora" },
       { en: "photo", es: "foto" },
-      { en: "star", es: "estrella" }
+      { en: "star", es: "estrella" },
+      { en: "spacesuit", es: "traje espacial" },
+      { en: "helmet", es: "casco" }
     ],
-    objective: "Explorar la base Basescrib: recorre los módulos de estudio y el jardín espacial para identificar objetos y tripulantes."
+    objective: "Explorar la base Basescrib: recorre los módulos de estudio y la cabina espacial para identificar objetos y suministros."
   },
   3: {
     grammar: "Present Simple (Routines, He/She/It + verb + s/es)",
@@ -51,9 +69,11 @@ const missionBriefings = {
       { en: "eat", es: "comer" },
       { en: "write", es: "escribir" },
       { en: "sleep", es: "dormir" },
-      { en: "schedule", es: "horario" }
+      { en: "schedule", es: "horario" },
+      { en: "inspect", es: "inspeccionar" },
+      { en: "monitor", es: "monitorear" }
     ],
-    objective: "Inspeccionar rutinas de la tripulación: descubre qué hacen los tripulantes cada día y organiza tu horario espacial."
+    objective: "Inspeccionar rutinas de la tripulación en Base ONE: descubre qué hacen los tripulantes cada día y organiza tu horario espacial."
   },
   4: {
     grammar: "Present Continuous (Subject + am/is/are + verb + ing)",
@@ -65,23 +85,171 @@ const missionBriefings = {
       { en: "eating", es: "comiendo" },
       { en: "talking", es: "conversando" },
       { en: "working", es: "trabajando" },
-      { en: "drawing", es: "dibujando" }
+      { en: "drawing", es: "dibujando" },
+      { en: "repairing", es: "reparando" },
+      { en: "scanning", es: "escaneando" }
     ],
-    objective: "Supervisar las tareas activas de la nave: debido a que el General está enfermo, debes reportar qué hace cada recluta justo ahora."
+    objective: "Supervisar las tareas activas de la nave: ante la emergencia, reporta las acciones en desarrollo de cada recluta justo ahora."
   },
   5: {
     grammar: "Adverbs of Frequency (always, sometimes, never), How often, What time",
     vocabulary: [
+      { en: "always", es: "siempre" },
+      { en: "sometimes", es: "a veces" },
+      { en: "never", es: "nunca" },
       { en: "wake up", es: "despertarse" },
       { en: "train", es: "entrenar" },
       { en: "help", es: "ayudar" },
       { en: "meet", es: "reunirse" },
       { en: "study", es: "estudiar" },
       { en: "explore", es: "explorar" },
-      { en: "draw", es: "dibujar" },
       { en: "sleep", es: "dormir" }
     ],
-    objective: "Completar la encuesta de hábitos: comparte con el nuevo recluta con qué frecuencia realizas tus actividades diarias."
+    objective: "Auditar los horarios de órbita: comparte con el nuevo recluta con qué frecuencia realizas las tareas clave de la base."
+  },
+  6: {
+    grammar: "Verb To Have (have / has / don't have / doesn't have)",
+    vocabulary: [
+      { en: "have", es: "tener (yo/tú/nosotros/ellos)" },
+      { en: "has", es: "tener (él/ella)" },
+      { en: "don't have", es: "no tener" },
+      { en: "doesn't have", es: "no tener (3ra pers.)" },
+      { en: "toolkit", es: "caja de herramientas" },
+      { en: "oxygen tank", es: "tanque de oxígeno" },
+      { en: "key code", es: "código de acceso" },
+      { en: "scanner", es: "escáner" },
+      { en: "energy cell", es: "célula de energía" },
+      { en: "supplies", es: "suministros" }
+    ],
+    objective: "Realizar la auditoría de inventario en Base ONE: verifica qué herramientas y suministros tiene o no la tripulación."
+  },
+  7: {
+    grammar: "Wh-Questions (What, Where, When, Who, Why, How)",
+    vocabulary: [
+      { en: "what", es: "qué / cuál" },
+      { en: "where", es: "dónde" },
+      { en: "when", es: "cuándo" },
+      { en: "who", es: "quién" },
+      { en: "why", es: "por qué" },
+      { en: "how", es: "cómo" },
+      { en: "signal", es: "señal" },
+      { en: "frequency", es: "frecuencia" },
+      { en: "origin", es: "origen" },
+      { en: "meaning", es: "significado" }
+    ],
+    objective: "Investigar la transmisión alienígena desconocida: formula y responde preguntas clave sobre el origen del mensaje."
+  },
+  8: {
+    grammar: "Possessive Adjectives (my, your, his, her) & Possessive Pronouns (mine, yours, his, hers)",
+    vocabulary: [
+      { en: "my", es: "mi" },
+      { en: "your", es: "tu" },
+      { en: "his", es: "su (de él)" },
+      { en: "her", es: "su (de ella)" },
+      { en: "mine", es: "mío/mía" },
+      { en: "yours", es: "tuyo/tuya" },
+      { en: "hers", es: "suyo/suya (de ella)" },
+      { en: "visor", es: "visor" },
+      { en: "helmet", es: "casco" },
+      { en: "badge", es: "insignia" }
+    ],
+    objective: "Identificar pertenencias perdidas en el laboratorio: determina a quién pertenece cada equipo encontrado."
+  },
+  9: {
+    grammar: "Personal & Object Pronouns (me, him, her, us, them)",
+    vocabulary: [
+      { en: "me", es: "mí / me" },
+      { en: "him", es: "él / lo / le" },
+      { en: "her", es: "ella / la / le" },
+      { en: "us", es: "nosotros / nos" },
+      { en: "them", es: "ellos / los / les" },
+      { en: "transmission", es: "transmisión" },
+      { en: "channel", es: "canal" },
+      { en: "call", es: "llamar" },
+      { en: "answer", es: "responder" },
+      { en: "coordinates", es: "coordenadas" }
+    ],
+    objective: "Establecer comunicaciones directas con Base ONE: envía señales y mensajes a los miembros de la tripulación."
+  },
+  10: {
+    grammar: "Demonstrative Pronouns (This, That, These, Those)",
+    vocabulary: [
+      { en: "this", es: "este / esta (cerca)" },
+      { en: "that", es: "ese / esa / aquel (lejos)" },
+      { en: "these", es: "estos / estas (cerca)" },
+      { en: "those", es: "esos / esas / aquellos (lejos)" },
+      { en: "simulator", es: "simulador" },
+      { en: "shield", es: "escudo" },
+      { en: "console", es: "consola" },
+      { en: "deck", es: "cubierta" },
+      { en: "controls", es: "controles" },
+      { en: "quantum", es: "cuántico" }
+    ],
+    objective: "Explorar la cubierta de simulación: identifica los equipos de entrenamiento según su distancia y número."
+  },
+  11: {
+    grammar: "Quantifiers (How many / How much, some, any, a lot of)",
+    vocabulary: [
+      { en: "how many", es: "cuántos/cuántas (contable)" },
+      { en: "how much", es: "cuánto/cuánta (incontable)" },
+      { en: "some", es: "algunos / algo de" },
+      { en: "any", es: "alguno / ningún / cualquier" },
+      { en: "a lot of", es: "mucho / gran cantidad de" },
+      { en: "fuel", es: "combustible" },
+      { en: "plasma", es: "plasma" },
+      { en: "energy", es: "energía" },
+      { en: "reserves", es: "reservas" },
+      { en: "water", es: "agua" }
+    ],
+    objective: "Calcular las reservas de plasma y energía cuántica: realiza el inventario cuantitativo para el viaje interestelar."
+  },
+  12: {
+    grammar: "Descriptive Adjectives (tall, fast, luminous, intelligent, bio-mechanic)",
+    vocabulary: [
+      { en: "tall", es: "alto" },
+      { en: "fast", es: "rápido" },
+      { en: "luminous", es: "luminoso" },
+      { en: "intelligent", es: "inteligente" },
+      { en: "bio-mechanic", es: "biomecánico" },
+      { en: "friendly", es: "amigable" },
+      { en: "blue", es: "azul" },
+      { en: "companion", es: "compañero" },
+      { en: "creature", es: "criatura" },
+      { en: "species", es: "especie" }
+    ],
+    objective: "Catalogar a los acompañantes de Scribtonia: redacta informes descriptivos de las especies recién descubiertas."
+  },
+  13: {
+    grammar: "Comparatives (-er / more) & Superlatives (-est / most)",
+    vocabulary: [
+      { en: "bigger", es: "más grande que" },
+      { en: "smaller", es: "más pequeño que" },
+      { en: "faster", es: "más rápido que" },
+      { en: "biggest", es: "el más grande" },
+      { en: "fastest", es: "el más rápido" },
+      { en: "most powerful", es: "el más poderoso" },
+      { en: "planet", es: "planeta" },
+      { en: "starship", es: "nave estelar" },
+      { en: "galaxy", es: "galaxia" },
+      { en: "solar system", es: "sistema solar" }
+    ],
+    objective: "Comparar datos astronómicos y naves espacial: evalúa el tamaño, velocidad y alcance de cuerpos celestes."
+  },
+  14: {
+    grammar: "Prepositions of Place (next to, behind, in front of, between, inside)",
+    vocabulary: [
+      { en: "next to", es: "al lado de" },
+      { en: "behind", es: "detrás de" },
+      { en: "in front of", es: "delante de" },
+      { en: "between", es: "entre (dos objetos)" },
+      { en: "inside", es: "dentro de" },
+      { en: "vault", es: "bóveda" },
+      { en: "medal", es: "medalla" },
+      { en: "graduation", es: "graduación" },
+      { en: "commander", es: "comandante" },
+      { en: "coordinates", es: "coordenadas" }
+    ],
+    objective: "Localizar las coordenadas finales y graduación: encuentra la medalla en la bóveda central y completa la formación."
   }
 };
 
@@ -95,8 +263,40 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   const [activeGame, setActiveGame] = useState(null); // { type, activity }
   const [gameStartTime, setGameStartTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(1);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showStore, setShowStore] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+  const [showAbyss, setShowAbyss] = useState(false);
+  const [showVallePortales, setShowVallePortales] = useState(false);
+  const [showTest, setShowTest] = useState(false);
+  const [testType, setTestType] = useState("pre");
+  const [unlockingMission, setUnlockingMission] = useState(null);
+  const [unlockedMissionIds, setUnlockedMissionIds] = useState([]);
+  const [sparkyPhrase, setSparkyPhrase] = useState("¡Buen trabajo, recluta! Continúa con la misión.");
+  const [viewMode, setViewMode] = useState("classic"); // "classic" or "3d"
   const navigate = useNavigate();
   const token = localStorage.getItem("basescrib_token") || "";
+
+  // Sparky phrases rotation
+  useEffect(() => {
+    const phrases = [
+      "¡Buen trabajo, recluta! Continúa con la misión.",
+      "Focus, recruit! You can do it!",
+      "Great job, keep going!",
+      "La constancia es la clave del éxito espacial.",
+      "¡No te rindas! La dimensión te necesita.",
+      "Aprender un nuevo idioma es como descubrir un nuevo planeta.",
+      "¡Estás mejorando muy rápido!",
+      "Mantén tu racha activa, recluta."
+    ];
+
+    const intervalId = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * phrases.length);
+      setSparkyPhrase(phrases[randomIndex]);
+    }, 8000); // Change phrase every 8 seconds
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Fetch current user and activities
   useEffect(() => {
@@ -105,7 +305,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     const fetchData = async () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        
+
         // Fetch User profile to get latest coins/xp
         const userRes = await fetch(`${API_BASE}/users/me/`, { headers });
         if (!userRes.ok) throw new Error("Error cargando perfil");
@@ -116,7 +316,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         const actRes = await fetch(`${API_BASE}/activities/`, { headers });
         if (!actRes.ok) throw new Error("Error cargando actividades");
         const actData = await actRes.json();
-        
+
         // Sort activities by ID or order
         const sortedActs = actData.sort((a, b) => a.id - b.id);
         setActivities(sortedActs);
@@ -171,7 +371,8 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         setUser(prev => ({
           ...prev,
           xp: data.xp,
-          coins: data.coins
+          coins: data.coins,
+          streak_count: data.streak_count ?? prev?.streak_count ?? 0
         }));
       }
 
@@ -279,7 +480,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
 
     return (
       <div style={{
-        backgroundImage: "url('/src/assets/amongus/Nave dentro.png')",
+        backgroundImage: `url(${naveDentro2D})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "100vh",
@@ -295,12 +496,12 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         alignItems: "center",
         justifyContent: "center" // Center the mission box vertically
       }}>
-        <div style={{ 
-          maxHeight: "94vh", 
-          overflowY: "auto", 
-          width: "100%", 
-          maxWidth: gameType === 1 ? "800px" : "750px", 
-          borderRadius: "15px", 
+        <div style={{
+          maxHeight: "94vh",
+          overflowY: "auto",
+          width: "100%",
+          maxWidth: gameType === 1 ? "800px" : "750px",
+          borderRadius: "15px",
           boxShadow: "0 10px 40px rgba(0, 0, 0, 0.8)",
           scrollbarWidth: "thin" // Style for Firefox
         }}>
@@ -333,260 +534,314 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   const dayCompletedCount = dayActivities.filter(act => !!completedList[act.id]).length;
   const dayProgressPercent = dayActivities.length > 0 ? (dayCompletedCount / dayActivities.length) * 100 : 0;
 
-  return (
-    <div style={{
-      backgroundImage: "url('/src/assets/amongus/Nave dentro.png')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      height: "100vh",
-      width: "100vw",
-      position: "fixed",
-      top: 0, left: 0,
-      zIndex: 100,
-      overflow: "hidden",
-      padding: "20px 15px",
-      boxSizing: "border-box",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center"
-    }}>
-      <div
-        className="glass-console room-console-card panel-large animate-fadeIn neon-scrollbar"
-        style={{
-          maxWidth: 850,
-          width: "100%",
-          padding: 30,
-          borderRadius: 16,
-          maxHeight: "calc(100vh - 40px)",
-          overflowY: "auto",
-          overflowX: "hidden",
-          boxSizing: "border-box"
-        }}
-      >
-        {error && <div className="error-message">{error}</div>}
+  if (viewMode === "3d") {
+    return (
+      <>
+        <RoomActivityPanel3D
+          user={user}
+          activities={activities}
+          completedList={completedList}
+          selectedDay={selectedDay}
+          setSelectedDay={setSelectedDay}
+          onStartGame={(act) => {
+            setActiveGame({ type: act.id, activity: act });
+            setGameStartTime(Date.now());
+          }}
+          onToggleViewMode={() => setViewMode("classic")}
+          onOpenStore={() => setShowStore(true)}
+          onOpenInventory={() => setShowInventory(true)}
+          onOpenRank={() => setShowLeaderboard(true)}
+          onOpenEval={() => {
+            setTestType("pre");
+            setShowTest(true);
+          }}
+          onOpenVallePortales={() => setShowVallePortales(true)}
+          onLogout={onBack}
+        />
 
-      <div className="panel-title-row" style={{ borderBottom: "1px solid rgba(184, 255, 249, 0.15)", paddingBottom: 15 }}>
-        <div>
-          <span className="dashboard-kicker">Misión Activa: Dimensión {selectedDay}</span>
-          <h2>Centro de Control de Actividades</h2>
-          <p>Completa cada actividad del simulador para preparar el lanzamiento.</p>
-        </div>
-
-        {user && (
-          <div style={{ display: "flex", alignItems: "center", gap: 15, flexWrap: "wrap" }}>
-            <button 
-              onClick={() => navigate("/avatar")} 
-              className="btn-avatar"
-              style={{
-                margin: 0,
-                padding: "8px 14px",
-                fontSize: "0.85rem",
-                background: "linear-gradient(135deg, #2ec4b6, #26a399)",
-                color: "#002427",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontWeight: "600",
-                transition: "all 0.3s ease"
-              }}
-            >
-              🎨 Personalizar Avatar
-            </button>
-            <div className="user-stats-pill" style={{ margin: 0 }}>
-              <span className="stat-item">⭐ {user.xp} XP</span>
-              <span className="stat-item">🪙 {user.coins} Monedas</span>
-            </div>
-          </div>
+        {showLeaderboard && (
+          <LeaderboardModal
+            roomId={joinedRoom?.id}
+            token={token}
+            onClose={() => setShowLeaderboard(false)}
+          />
         )}
-      </div>
 
-      {/* Day Selector Tabs */}
-      <div 
-        className="day-selector-tabs" 
-        style={{ 
-          display: "flex", 
-          gap: 10, 
-          marginTop: 20, 
-          marginBottom: 10, 
-          overflowX: "auto", 
-          paddingBottom: 8,
-          borderBottom: "1px solid rgba(184, 255, 249, 0.1)"
-        }}
-      >
-        {[1, 2, 3, 4, 5].map((dayNum) => (
-          <button
-            key={dayNum}
-            onClick={() => setSelectedDay(dayNum)}
-            className="btn-tab"
-            style={{
-              padding: "8px 16px",
-              borderRadius: "20px",
-              border: selectedDay === dayNum ? "2px solid #b8fff9" : "1px solid rgba(184, 255, 249, 0.25)",
-              background: selectedDay === dayNum ? "rgba(46, 196, 182, 0.25)" : "rgba(255,255,255,0.04)",
-              color: selectedDay === dayNum ? "#b8fff9" : "#9be6df",
-              fontWeight: "bold",
-              fontSize: "0.85rem",
-              cursor: "pointer",
-              margin: 0,
-              boxShadow: selectedDay === dayNum ? "0 0 12px rgba(184, 255, 249, 0.2)" : "none",
-              whiteSpace: "nowrap",
-              transition: "all 0.2s ease"
-            }}
-          >
-            🚀 Día {dayNum}
-          </button>
+        {showStore && (
+          <StoreModal
+            user={user}
+            token={token}
+            onClose={() => setShowStore(false)}
+            onUserUpdated={(updatedUser) => setUser(updatedUser)}
+          />
+        )}
+
+        {showInventory && (
+          <InventoryModal
+            user={user}
+            token={token}
+            onClose={() => setShowInventory(false)}
+            onUserUpdated={(updatedUser) => setUser(updatedUser)}
+          />
+        )}
+
+        {showVallePortales && (
+          <ValleDePortalesView
+            user={user}
+            token={token}
+            onClose={() => setShowVallePortales(false)}
+            onUserUpdated={(updatedUser) => setUser(updatedUser)}
+          />
+        )}
+
+        {showAbyss && (
+          <AbyssModal
+            user={user}
+            token={token}
+            selectedDay={selectedDay}
+            onClose={() => setShowAbyss(false)}
+            onUserUpdated={(updatedUser) => setUser(updatedUser)}
+          />
+        )}
+
+        {showTest && (
+          <PrePostTestModal
+            testType={testType}
+            user={user}
+            token={token}
+            onClose={() => setShowTest(false)}
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div className="space-station-room">
+      {/* BACKGROUND & AMBIENT EFFECTS */}
+      <img
+        src={naveDentro2D}
+        className="space-station-room__bg"
+        alt="Space Station Interior"
+      />
+      <div className="space-station-room__overlay" />
+      <div className="ambient-particles">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="ambient-particle" />
         ))}
       </div>
 
-      {/* Mission Briefing Card */}
-      {missionBriefings[selectedDay] && (
-        <div 
-          className="briefing-card animate-fadeIn" 
-          style={{ 
-            background: "rgba(15, 58, 71, 0.4)", 
-            border: "1px solid rgba(184, 255, 249, 0.2)", 
-            borderRadius: 12, 
-            padding: 20, 
-            textAlign: "left", 
-            marginTop: 15,
-            marginBottom: 20,
-            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05)"
-          }}
-        >
-          <h4 style={{ color: "#ffd166", margin: "0 0 10px 0", fontSize: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-            📋 Bitácora de Misión - Objetivo del Día:
-          </h4>
-          <p style={{ margin: "0 0 15px 0", color: "#e6f7ff", fontSize: "0.9rem", lineHeight: "1.4" }}>
-            {missionBriefings[selectedDay].objective}
-          </p>
+      {/* VIEW MODE TOGGLE FLOATING BUTTON */}
+      <button
+        onClick={() => setViewMode("3d")}
+        style={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          zIndex: 999,
+          padding: "10px 18px",
+          background: "linear-gradient(135deg, #f72585, #7209b7)",
+          color: "white",
+          border: "none",
+          borderRadius: "20px",
+          fontWeight: "bold",
+          fontSize: "0.85rem",
+          cursor: "pointer",
+          boxShadow: "0 0 15px rgba(247, 37, 133, 0.6)"
+        }}
+      >
+        🌀 Probar Vista 3D Mapeada (Beta)
+      </button>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-            {/* Grammar Target */}
-            <div style={{ flex: "1 1 250px" }}>
-              <span style={{ fontSize: "0.8rem", color: "#9be6df", fontWeight: "bold", textTransform: "uppercase" }}>🎯 Enfoque Gramatical</span>
-              <p style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "0.85rem", fontWeight: "600" }}>
-                {missionBriefings[selectedDay].grammar}
+      {/* TOP HUD */}
+      <RecluteHUD
+        user={user}
+        onOpenStore={() => setShowStore(true)}
+        onOpenRank={() => setShowLeaderboard(true)}
+        onOpenEval={() => {
+          setTestType("pre");
+          setShowTest(true);
+        }}
+        onOpenInventory={() => setShowInventory(true)}
+        onLogout={onBack}
+      />
+
+      {/* MAIN DIEGETIC LAYOUT */}
+      <div className="station-layout">
+
+        {/* CENTER CONSOLES (BITACORA, TABS, VOCAB) */}
+        <div className="station-layout__middle">
+
+          {/* LEFT MONITOR: BITACORA */}
+          {missionBriefings[selectedDay] ? (
+            <HoloMonitor icon="📋" title={`BITÁCORA - DÍA ${selectedDay}`}>
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ color: "#ffd166", fontWeight: "bold" }}>Misión:</span>
+                <p style={{ margin: "4px 0", color: "rgba(230, 247, 255, 0.9)" }}>
+                  {missionBriefings[selectedDay].objective}
+                </p>
+              </div>
+              <div>
+                <span style={{ color: "#ffd166", fontWeight: "bold" }}>Gramática:</span>
+                <p style={{ margin: "4px 0", color: "#b8fff9", fontWeight: "600" }}>
+                  {missionBriefings[selectedDay].grammar}
+                </p>
+              </div>
+            </HoloMonitor>
+          ) : (
+            <HoloMonitor icon="🛰️" title={`MISIÓN ACTIVA - DÍA ${selectedDay}`}>
+              <p style={{ margin: "4px 0", color: "rgba(230, 247, 255, 0.9)" }}>
+                Completa el circuito de los 5 simuladores del Día {selectedDay} para desbloquear la estrella de la lección.
               </p>
+            </HoloMonitor>
+          )}
+
+          {/* CENTRAL CONSOLE: MISSION TABS AND SLOTS */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 15 }}>
+            <div className="mission-console__day-tabs">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((dayNum) => (
+                <button
+                  key={dayNum}
+                  onClick={() => { soundFx.playClick(); setSelectedDay(dayNum); }}
+                  className={`mission-console__day-tab ${selectedDay === dayNum ? "mission-console__day-tab--active" : ""}`}
+                >
+                  🚀 Día {dayNum}
+                </button>
+              ))}
             </div>
 
-            {/* Vocabulary list */}
-            <div style={{ flex: "2 2 400px" }}>
-              <span style={{ fontSize: "0.8rem", color: "#9be6df", fontWeight: "bold", textTransform: "uppercase" }}>🔤 Vocabulario Clave</span>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 10px", marginTop: 6 }}>
-                {missionBriefings[selectedDay].vocabulary.map((vocab, index) => (
-                  <span 
-                    key={index} 
-                    style={{ 
-                      fontSize: "0.75rem", 
-                      background: "rgba(255, 255, 255, 0.06)", 
-                      color: "#e6f7ff", 
-                      padding: "4px 8px", 
-                      borderRadius: 4,
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      display: "inline-block"
-                    }}
-                    title={vocab.es}
-                  >
-                    <strong>{vocab.en}</strong> <span style={{ color: "#ffd166", opacity: 0.8 }}>({vocab.es})</span>
-                  </span>
-                ))}
+            <MissionConsole
+              dayActivities={dayActivities}
+              completedList={completedList}
+              onStartGame={(act) => {
+                setActiveGame({ type: act.id, activity: act });
+                setGameStartTime(Date.now());
+              }}
+            />
+
+            <div className="station-progress">
+              <div className="station-progress__labels">
+                <span>Progreso de Misión (Día {selectedDay})</span>
+                <span>{dayCompletedCount} / {dayActivities.length || 5}</span>
+              </div>
+              <div className="station-progress__bar-bg">
+                <div
+                  className="station-progress__bar-fill"
+                  style={{ width: `${dayProgressPercent}%` }}
+                />
               </div>
             </div>
           </div>
+
+          {/* RIGHT MONITOR: VOCABULARY */}
+          {missionBriefings[selectedDay] && (
+            <HoloMonitor icon="🔤" title="VOCABULARIO CLAVE">
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                {missionBriefings[selectedDay].vocabulary.map((vocab, index) => (
+                  <span key={index} className="vocab-chip" title={vocab.es}>
+                    <span className="vocab-chip__en">{vocab.en}</span>
+                    <span className="vocab-chip__es">({vocab.es})</span>
+                  </span>
+                ))}
+              </div>
+            </HoloMonitor>
+          )}
+
         </div>
+
+        {/* BOTTOM SECTION: AVATAR, SPARKY AND PORTAL */}
+        <div className="station-layout__bottom">
+          <div className="station-layout__bottom-left">
+            <div
+              onClick={() => { soundFx.playClick(); setShowInventory(true); }}
+              title="¡Haz Clic para abrir tu Armario e Inventario!"
+              style={{ pointerEvents: "auto", position: "relative", cursor: "pointer" }}
+            >
+              <AvatarShowcase
+                outfitId={user?.selected_outfit || "m_base"}
+                petId={localStorage.getItem("basescrib_equipped_pet") || "pet_alien_blue"}
+                size="small"
+              />
+            </div>
+
+            <div className="sparky-container">
+              <div className="sparky-bubble">
+                {sparkyPhrase}
+              </div>
+              <span className="sparky-emoji">🤖</span>
+            </div>
+          </div>
+
+          <div className="station-layout__bottom-right">
+            <PortalGateway onOpen={() => setShowVallePortales(true)} />
+          </div>
+        </div>
+
+      </div>
+
+      {/* MODAL OVERLAYS */}
+      {showVallePortales && (
+        <ValleDePortalesView
+          user={user}
+          token={token}
+          onClose={() => setShowVallePortales(false)}
+          onUserUpdated={(updatedUser) => setUser(updatedUser)}
+        />
       )}
 
-      {/* Progress Section */}
-      <div className="mission-progress-container" style={{ margin: "20px 0" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: "0.9rem", color: "#9be6df" }}>
-          <span>Progreso de la Misión (Día {selectedDay})</span>
-          <span>{dayCompletedCount} / {dayActivities.length} Completado</span>
-        </div>
-        <div className="progress-bar-bg" style={{ background: "rgba(255, 255, 255, 0.1)", borderRadius: 10, height: 12, overflow: "hidden" }}>
-          <div 
-            className="progress-bar-fill" 
-            style={{ 
-              background: "linear-gradient(90deg, #2ec4b6, #b8fff9)", 
-              height: "100%", 
-              width: `${dayProgressPercent}%`, 
-              transition: "width 0.5s ease" 
-            }}
-          />
-        </div>
-      </div>
+      {showAbyss && (
+        <AbyssModal
+          user={user}
+          token={token}
+          selectedDay={selectedDay}
+          onClose={() => setShowAbyss(false)}
+          onUserUpdated={(updatedUser) => setUser(updatedUser)}
+        />
+      )}
 
-      {/* Activities Grid */}
-      <div className="activities-list-container">
-        {dayActivities.length === 0 ? (
-          <div style={{ textAlign: "center", padding: 40, background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px dashed rgba(184, 255, 249, 0.2)" }}>
-            <p style={{ color: "#9be6df", margin: 0 }}>No hay actividades registradas en la base de datos para el Día {selectedDay} aún.</p>
-          </div>
-        ) : (
-          <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 15 }}>
-            {dayActivities.map((act) => {
-              const meta = getActivityMetadata(act.id);
-              const isCompleted = !!completedList[act.id];
-              
-              return (
-                <li 
-                  key={act.id} 
-                  className={`activity-quest-card ${isCompleted ? "quest-complete" : ""}`}
-                  style={{
-                    background: isCompleted ? "rgba(46, 196, 182, 0.1)" : "rgba(255, 255, 255, 0.03)",
-                    border: isCompleted ? "1px solid rgba(46, 196, 182, 0.3)" : "1px solid rgba(255, 255, 255, 0.08)",
-                    borderRadius: 12,
-                    padding: "15px 20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    transition: "all 0.3s ease",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => {
-                    setActiveGame({ type: act.id, activity: act });
-                    setGameStartTime(Date.now());
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-                    <span style={{ fontSize: "2rem" }}>{meta.icon}</span>
-                    <div style={{ textAlign: "left" }}>
-                      <span style={{ fontSize: "0.8rem", color: isCompleted ? "#2ec4b6" : "#ffd166", fontWeight: "600", textTransform: "uppercase" }}>
-                        {meta.typeName}
-                      </span>
-                      <h3 style={{ margin: "4px 0", color: "#e6f7ff", fontSize: "1.1rem" }}>{act.title}</h3>
-                      <p style={{ margin: 0, fontSize: "0.85rem", color: "rgba(230, 247, 255, 0.7)" }}>{act.description}</p>
-                    </div>
-                  </div>
+      {showLeaderboard && (
+        <LeaderboardModal
+          roomId={joinedRoom?.id}
+          token={token}
+          onClose={() => setShowLeaderboard(false)}
+        />
+      )}
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-                    <span style={{ fontSize: "0.8rem", color: "#9be6df", background: "rgba(255,255,255,0.05)", padding: "4px 8px", borderRadius: 4 }}>
-                      {meta.reward}
-                    </span>
-                    
-                    {isCompleted ? (
-                      <span className="badge-complete" style={{ color: "#2ec4b6", fontWeight: "bold", fontSize: "0.9rem" }}>
-                        ✓ Completado
-                      </span>
-                    ) : (
-                      <button className="btn-start" style={{ margin: 0, padding: "8px 16px", fontSize: "0.85rem" }}>
-                        Jugar
-                      </button>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+      {showStore && (
+        <StoreModal
+          user={user}
+          token={token}
+          onClose={() => setShowStore(false)}
+          onUserUpdated={(updatedUser) => setUser(updatedUser)}
+        />
+      )}
 
-      <div style={{ marginTop: 25, display: "flex", justifyContent: "flex-end" }}>
-        <button onClick={onBack} className="btn-cancel">
-          Salir al Portal
-        </button>
-      </div>
-      </div>
+      {showInventory && (
+        <InventoryModal
+          user={user}
+          token={token}
+          onClose={() => setShowInventory(false)}
+          onUserUpdated={(updatedUser) => setUser(updatedUser)}
+        />
+      )}
+
+      {showTest && (
+        <PrePostTestModal
+          testType={testType}
+          user={user}
+          token={token}
+          onClose={() => setShowTest(false)}
+        />
+      )}
+
+      {unlockingMission && (
+        <UnlockMissionModal
+          mission={unlockingMission}
+          token={token}
+          onClose={() => setUnlockingMission(null)}
+          onUnlocked={(mId) => setUnlockedMissionIds([...unlockedMissionIds, mId])}
+        />
+      )}
     </div>
   );
 }

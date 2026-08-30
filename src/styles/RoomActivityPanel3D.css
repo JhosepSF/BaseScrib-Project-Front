@@ -1,0 +1,251 @@
+/* ============================================================
+   RoomActivityPanel3D.css
+   Full Screen Immersive 3D/Isometric Screen Mapping (100vw x 100vh)
+   ============================================================ */
+
+.room-3d-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #020108;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 100;
+}
+
+/* Container de relación fija 16:9 (2560x1440) que escala la imagen y el HTML en bloque */
+.room-3d-container {
+  position: relative;
+  width: 100vw;
+  height: calc(100vw * (9 / 16));
+  max-width: calc(100vh * (16 / 9));
+  max-height: 100vh;
+  aspect-ratio: 16 / 9;
+  background-image: url('/src/assets/amongus/Nave_dentro_16_9.jpg');
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+/* MAPPED SCREENS */
+
+.mapped-screen {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+/* 1. Pared Izquierda (Bitácora - Pantalla "MISSION") */
+.mapped-wall-left {
+  background: rgba(10, 25, 45, 0.9);
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid rgba(46, 196, 182, 0.5);
+  box-shadow: inset 0 0 10px rgba(184, 255, 249, 0.4);
+}
+
+/* 2. Consola Izquierda (Tabs Días 1-10 - Pantalla "BASE ONE") */
+.mapped-console-left {
+  background: rgba(10, 25, 45, 0.88);
+  border-radius: 4px;
+  padding: 3px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-content: center;
+  justify-content: center;
+  border: 1px solid rgba(46, 196, 182, 0.4);
+  box-shadow: inset 0 0 8px rgba(46, 196, 182, 0.4);
+}
+
+/* 3. Consola Derecha - Monitor Izquierdo (🔥 Racha) */
+.mapped-console-right-left {
+  background: rgba(10, 25, 45, 0.88);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  box-shadow: inset 0 0 8px rgba(255, 107, 107, 0.4);
+}
+
+/* 4. Consola Derecha - Monitor Central (🚀 Misiones) */
+.mapped-console-right-center {
+  background: rgba(10, 25, 45, 0.90);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 1px solid rgba(184, 255, 249, 0.4);
+  box-shadow: inset 0 0 10px rgba(184, 255, 249, 0.4);
+}
+
+/* 5. Consola Derecha - Monitor Derecho (🪙 Monedas) */
+.mapped-console-right-right {
+  background: rgba(10, 25, 45, 0.88);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  box-shadow: inset 0 0 8px rgba(255, 209, 102, 0.4);
+}
+
+/* 6. Vocabulario Clave (Upper Right Holographic Panel) */
+.mapped-vocab-right {
+  background: rgba(10, 25, 45, 0.85);
+  border: 1px solid rgba(46, 196, 182, 0.5);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 0 15px rgba(46, 196, 182, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+}
+
+/* AVATAR Y SPARKY */
+
+.mapped-avatar {
+  position: absolute;
+  top: 55%;
+  left: 32%;
+  width: 25%;
+  height: 35%;
+  z-index: 20;
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.robot-speech-bubble {
+  position: absolute;
+  top: 67%;
+  left: 70%;
+  background: rgba(10, 30, 50, 0.92);
+  border: 1.5px solid #9be6df;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: #e6f7ff;
+  font-size: 0.8vw;
+  max-width: 13vw;
+  text-align: center;
+  pointer-events: none;
+  z-index: 25;
+  box-shadow: 0 0 15px rgba(46, 196, 182, 0.4);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ESTILOS INTERNOS DE LOS PANELES */
+
+.bitacora-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #fff;
+  font-size: 0.65vw;
+  padding: 2px;
+}
+
+.day-btn-3d {
+  flex: 1 1 18%;
+  height: 40%;
+  background: rgba(46, 196, 182, 0.15);
+  border: 1px solid rgba(46, 196, 182, 0.4);
+  color: #9be6df;
+  font-size: 0.6vw;
+  font-weight: bold;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.day-btn-3d:hover {
+  background: rgba(46, 196, 182, 0.4);
+}
+
+.day-btn-3d.active {
+  background: rgba(46, 196, 182, 0.7);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(46, 196, 182, 0.6);
+}
+
+.mission-slot-3d {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 2px;
+}
+
+.mini-quest-card {
+  flex: 1;
+  height: 85%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  text-align: center;
+  font-size: 0.55vw;
+  padding: 1px;
+}
+
+.mini-quest-card:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ffd166;
+}
+
+.mini-quest-card.completed {
+  border-color: #2ec4b6;
+  background: rgba(46, 196, 182, 0.25);
+}
+
+.mini-quest-card i {
+  font-size: 1vw;
+  margin-bottom: 2px;
+}
+
+.stat-3d-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffd166;
+  font-weight: bold;
+}
+
+.stat-3d-box span.val {
+  font-size: 38px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.stat-3d-box span.lbl {
+  font-size: 15px;
+  color: #ffffff;
+  margin-top: 4px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

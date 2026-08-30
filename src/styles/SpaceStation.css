@@ -1,0 +1,932 @@
+/* ============================================================
+   SpaceStation.css — BaseScrib Immersive Control Room Styles
+   Animations, HUD, Holographic Monitors, Portal Effects
+   ============================================================ */
+
+/* ─────── KEYFRAME ANIMATIONS ─────── */
+
+@keyframes hologram-flicker {
+  0%, 100% { opacity: 1; }
+  3% { opacity: 0.85; }
+  6% { opacity: 1; }
+  42% { opacity: 0.95; }
+  44% { opacity: 0.88; }
+  46% { opacity: 1; }
+  89% { opacity: 0.92; }
+  91% { opacity: 1; }
+}
+
+@keyframes scan-line {
+  0% { top: -4px; }
+  100% { top: 100%; }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: 0 0 8px rgba(46, 196, 182, 0.3), inset 0 0 4px rgba(46, 196, 182, 0.1); }
+  50% { box-shadow: 0 0 18px rgba(46, 196, 182, 0.6), inset 0 0 8px rgba(46, 196, 182, 0.2); }
+}
+
+@keyframes glow-breathe-magenta {
+  0%, 100% { box-shadow: 0 0 8px rgba(247, 37, 133, 0.3), inset 0 0 4px rgba(114, 9, 183, 0.1); }
+  50% { box-shadow: 0 0 22px rgba(247, 37, 133, 0.6), inset 0 0 10px rgba(114, 9, 183, 0.25); }
+}
+
+@keyframes portal-vortex-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes portal-vortex-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes portal-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(247, 37, 133, 0.5)); }
+  50% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(247, 37, 133, 0.8)); }
+}
+
+@keyframes float-up-down {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(0.5deg); }
+  75% { transform: translateY(3px) rotate(-0.5deg); }
+}
+
+@keyframes particle-float {
+  0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+  10% { opacity: 0.6; scale: 1; }
+  90% { opacity: 0.4; }
+  100% { transform: translateY(-20px) translateX(40px) scale(0.3); opacity: 0; }
+}
+
+@keyframes meteor-cross {
+  0% { transform: translateX(-100px) translateY(-50px) rotate(-35deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateX(110vw) translateY(60vh) rotate(-35deg); opacity: 0; }
+}
+
+@keyframes warp-in {
+  0% { transform: scale(1.12); opacity: 0; filter: blur(16px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+
+@keyframes vallePortalWarp {
+  0% { transform: scale(1.12); opacity: 0; filter: blur(16px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+
+@keyframes warp-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slot-pulse-pending {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 209, 102, 0.2); }
+  50% { box-shadow: 0 0 18px rgba(255, 209, 102, 0.5), 0 0 4px rgba(255, 209, 102, 0.3) inset; }
+}
+
+@keyframes neon-text-glow {
+  0%, 100% { text-shadow: 0 0 6px currentColor, 0 0 12px currentColor; }
+  50% { text-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 36px currentColor; }
+}
+
+@keyframes typing-dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ─────── SPACE STATION FULL SCREEN ─────── */
+
+.space-station-room {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  user-select: none;
+}
+
+.space-station-room__bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.space-station-room__overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(10, 30, 50, 0.15) 0%, rgba(5, 10, 25, 0.55) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ─────── HUD BAR (TOP) ─────── */
+
+.recrute-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(8, 20, 35, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(46, 196, 182, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(184, 255, 249, 0.08);
+  animation: slideInUp 0.5s ease-out;
+}
+
+.recrute-hud__identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recrute-hud__avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #2ec4b6;
+  background: rgba(46, 196, 182, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 0 10px rgba(46, 196, 182, 0.3);
+}
+
+.recrute-hud__name {
+  color: #b8fff9;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.recrute-hud__stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recrute-hud__stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e6f7ff;
+  white-space: nowrap;
+}
+
+.recrute-hud__stat--xp { color: #ffd166; border-color: rgba(255, 209, 102, 0.2); }
+.recrute-hud__stat--coins { color: #90e0ef; border-color: rgba(144, 224, 239, 0.2); }
+.recrute-hud__stat--streak { color: #ff6b6b; border-color: rgba(255, 107, 107, 0.2); }
+
+.recrute-hud__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.recrute-hud__btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.recrute-hud__btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+.recrute-hud__btn:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.recrute-hud__btn--store {
+  background: linear-gradient(135deg, #90e0ef, #48cae4);
+  color: #002427;
+}
+
+.recrute-hud__btn--rank {
+  background: linear-gradient(135deg, #ffd166, #f4a261);
+  color: #1a1200;
+}
+
+.recrute-hud__btn--eval {
+  background: rgba(255, 255, 255, 0.08);
+  color: #9be6df;
+  border: 1px solid rgba(184, 255, 249, 0.2);
+}
+
+.recrute-hud__btn--avatar {
+  background: linear-gradient(135deg, #2ec4b6, #26a399);
+  color: #002427;
+}
+
+.recrute-hud__btn--logout {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff8e8e;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  font-size: 0.75rem;
+  padding: 5px 10px;
+}
+
+/* ─────── HOLOGRAPHIC MONITOR ─────── */
+
+.holo-monitor {
+  position: relative;
+  background: rgba(8, 22, 40, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(46, 196, 182, 0.35);
+  border-radius: 12px;
+  padding: 14px;
+  overflow: hidden;
+  animation: hologram-flicker 6s infinite, glow-breathe 4s ease-in-out infinite;
+}
+
+.holo-monitor::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(46, 196, 182, 0.4), transparent);
+  animation: scan-line 4s linear infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.holo-monitor__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(46, 196, 182, 0.15);
+}
+
+.holo-monitor__icon {
+  font-size: 1.1rem;
+}
+
+.holo-monitor__title {
+  color: #2ec4b6;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.holo-monitor__body {
+  color: #e6f7ff;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 196, 182, 0.3) transparent;
+}
+
+.holo-monitor__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.holo-monitor__body::-webkit-scrollbar-thumb {
+  background: rgba(46, 196, 182, 0.4);
+  border-radius: 4px;
+}
+
+/* ─────── MISSION CONSOLE ─────── */
+
+.mission-console {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.mission-console__day-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 196, 182, 0.2) transparent;
+}
+
+.mission-console__day-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.mission-console__day-tabs::-webkit-scrollbar-thumb {
+  background: rgba(46, 196, 182, 0.3);
+  border-radius: 3px;
+}
+
+.mission-console__day-tab {
+  padding: 6px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(184, 255, 249, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: #9be6df;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.mission-console__day-tab:hover {
+  background: rgba(46, 196, 182, 0.15);
+  border-color: rgba(184, 255, 249, 0.4);
+}
+
+.mission-console__day-tab--active {
+  background: rgba(46, 196, 182, 0.25);
+  border: 2px solid #b8fff9;
+  color: #b8fff9;
+  box-shadow: 0 0 14px rgba(184, 255, 249, 0.25);
+}
+
+.mission-console__slots {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .mission-console__slots {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .mission-console__slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.mission-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 25, 45, 0.7);
+  backdrop-filter: blur(6px);
+  min-height: 110px;
+}
+
+.mission-slot:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: rgba(46, 196, 182, 0.5);
+  background: rgba(15, 35, 60, 0.85);
+  box-shadow: 0 8px 28px rgba(46, 196, 182, 0.2), 0 0 15px rgba(46, 196, 182, 0.15) inset;
+}
+
+.mission-slot:active {
+  transform: scale(0.96);
+}
+
+.mission-slot--pending {
+  border-color: rgba(255, 209, 102, 0.25);
+  animation: slot-pulse-pending 3s ease-in-out infinite;
+}
+
+.mission-slot--completed {
+  border-color: rgba(46, 196, 182, 0.45);
+  background: rgba(46, 196, 182, 0.08);
+}
+
+.mission-slot--completed::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: #2ec4b6;
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-shadow: 0 0 8px rgba(46, 196, 182, 0.8);
+}
+
+.mission-slot__icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+  transition: transform 0.3s ease;
+}
+
+.mission-slot:hover .mission-slot__icon {
+  transform: scale(1.15);
+}
+
+.mission-slot__name {
+  color: #e6f7ff;
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.mission-slot__reward {
+  color: #ffd166;
+  font-size: 0.68rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.mission-slot__badge-complete {
+  color: #2ec4b6;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ─────── PROGRESS BAR ─────── */
+
+.station-progress {
+  background: rgba(8, 20, 35, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(46, 196, 182, 0.15);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+
+.station-progress__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  color: #9be6df;
+  font-weight: 500;
+}
+
+.station-progress__bar-bg {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.station-progress__bar-fill {
+  background: linear-gradient(90deg, #2ec4b6, #b8fff9);
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 10px rgba(46, 196, 182, 0.4);
+}
+
+/* ─────── PORTAL GATEWAY (MINI PORTAL) ─────── */
+
+@keyframes portal-pulse-gentle {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 6px rgba(247, 37, 133, 0.25));
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 12px rgba(247, 37, 133, 0.45));
+    opacity: 0.92;
+  }
+}
+
+.portal-gateway {
+  position: relative;
+  width: 130px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: float-gentle 5s ease-in-out infinite;
+}
+
+.portal-gateway:hover {
+  transform: scale(1.1);
+}
+
+.portal-gateway--3d {
+  animation: portal-pulse-gentle 3.8s ease-in-out infinite;
+}
+
+.portal-gateway__outer-ring {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2.5px dashed #f72585;
+  animation: portal-vortex-spin 7s linear infinite;
+  box-shadow: 0 0 25px rgba(247, 37, 133, 0.8), inset 0 0 15px rgba(114, 9, 183, 0.6);
+  filter: drop-shadow(0 0 12px #f72585);
+  transition: all 0.3s ease;
+}
+
+/* Reduced gap between dashed ring and inner vortex for 3D view */
+.portal-gateway--3d .portal-gateway__outer-ring {
+  width: 84px;
+  height: 84px;
+  box-shadow: 0 0 10px rgba(247, 37, 133, 0.25), inset 0 0 8px rgba(114, 9, 183, 0.2);
+  filter: none;
+}
+
+.portal-gateway:hover .portal-gateway__outer-ring,
+.portal-gateway.hovered .portal-gateway__outer-ring {
+  animation-duration: 2s;
+  box-shadow: 0 0 45px rgba(247, 37, 133, 0.95), inset 0 0 25px rgba(114, 9, 183, 0.8);
+  filter: drop-shadow(0 0 20px #f72585);
+}
+
+.portal-gateway--3d.hovered .portal-gateway__outer-ring,
+.portal-gateway--3d:hover .portal-gateway__outer-ring {
+  animation-duration: 2s;
+  box-shadow: 0 0 30px rgba(247, 37, 133, 0.85), inset 0 0 18px rgba(114, 9, 183, 0.7);
+  filter: drop-shadow(0 0 16px #f72585);
+}
+
+.portal-gateway__vortex {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #f72585, #7209b7, #3a0ca3, #f72585);
+  animation: portal-vortex-reverse 5s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.portal-gateway:hover .portal-gateway__vortex,
+.portal-gateway.hovered .portal-gateway__vortex {
+  animation-duration: 1.5s;
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5), 0 0 25px #f72585;
+}
+
+.portal-gateway__vortex-emoji {
+  font-size: 2.2rem;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.portal-gateway:hover .portal-gateway__vortex-emoji,
+.portal-gateway.hovered .portal-gateway__vortex-emoji {
+  transform: scale(1.25);
+}
+
+.portal-gateway__vortex-emoji {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px #f72585);
+  transition: transform 0.3s ease;
+}
+
+.portal-gateway:hover .portal-gateway__vortex-emoji {
+  transform: scale(1.25);
+}
+
+.portal-gateway__label {
+  position: absolute;
+  bottom: 6px;
+  background: linear-gradient(135deg, #f72585, #7209b7);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 12px rgba(247, 37, 133, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.portal-gateway__sublabel {
+  display: block;
+  font-size: 0.52rem;
+  font-weight: 500;
+  color: #ffd166;
+  margin-top: 1px;
+  text-transform: none;
+}
+
+/* ─────── SPARKY ROBOT ─────── */
+
+.sparky-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: float-up-down 3s ease-in-out infinite;
+}
+
+.sparky-bubble {
+  position: relative;
+  background: rgba(8, 22, 40, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(46, 196, 182, 0.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: #e6f7ff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  max-width: 180px;
+  text-align: center;
+  line-height: 1.3;
+  animation: glow-breathe 4s ease-in-out infinite;
+}
+
+.sparky-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(46, 196, 182, 0.35);
+}
+
+.sparky-emoji {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 8px rgba(46, 196, 182, 0.4));
+}
+
+/* ─────── MAIN LAYOUT GRID ─────── */
+
+.station-layout {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding: 85px 20px 14px 20px; /* Increased top padding to avoid HUD overlap */
+  gap: 15px;
+  pointer-events: none;
+}
+
+.station-layout > * {
+  pointer-events: auto;
+}
+
+.station-layout__middle {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 250px 1fr 230px;
+  gap: 20px;
+  align-items: start;
+  min-height: 0;
+}
+
+@media (max-width: 1100px) {
+  .station-layout__middle {
+    grid-template-columns: 220px 1fr 180px;
+  }
+}
+
+@media (max-width: 850px) {
+  .station-layout__middle {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+}
+
+.station-layout__bottom {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.station-layout__bottom-left {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.station-layout__bottom-right {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* ─────── VOCABULARY CHIPS ─────── */
+
+.vocab-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e6f7ff;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vocab-chip__en {
+  font-weight: 700;
+}
+
+.vocab-chip__es {
+  color: #ffd166;
+  opacity: 0.8;
+  font-size: 0.68rem;
+}
+
+/* ─────── AMBIENT PARTICLES ─────── */
+
+.ambient-particles {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(184, 255, 249, 0.5);
+  border-radius: 50%;
+  animation: particle-float linear infinite;
+}
+
+.ambient-particle:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 0s; }
+.ambient-particle:nth-child(2) { left: 25%; animation-duration: 15s; animation-delay: 2s; width: 2px; height: 2px; }
+.ambient-particle:nth-child(3) { left: 42%; animation-duration: 18s; animation-delay: 5s; }
+.ambient-particle:nth-child(4) { left: 60%; animation-duration: 11s; animation-delay: 1s; width: 4px; height: 4px; }
+.ambient-particle:nth-child(5) { left: 78%; animation-duration: 14s; animation-delay: 3s; }
+.ambient-particle:nth-child(6) { left: 90%; animation-duration: 16s; animation-delay: 7s; width: 2px; height: 2px; }
+.ambient-particle:nth-child(7) { left: 50%; animation-duration: 20s; animation-delay: 4s; background: rgba(247, 37, 133, 0.4); }
+.ambient-particle:nth-child(8) { left: 35%; animation-duration: 13s; animation-delay: 6s; background: rgba(255, 209, 102, 0.3); width: 2px; height: 2px; }
+
+/* ─────── WARP TRANSITION (IMPROVED) ─────── */
+
+.warp-transition-fullscreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #0a0a2e 0%, #000 100%);
+  animation: warp-flash 1.2s ease-out forwards;
+}
+
+.warp-transition-fullscreen__text {
+  color: #b8fff9;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(46, 196, 182, 0.8), 0 0 40px rgba(46, 196, 182, 0.4);
+  animation: neon-text-glow 1s ease-in-out infinite;
+}
+
+/* ─────── VALLE DE PORTALES ENHANCEMENTS ─────── */
+
+.valle-ambient-nebula {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(114, 9, 183, 0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 60%, rgba(247, 37, 133, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  animation: hologram-flicker 8s infinite;
+}
+
+.valle-meteor {
+  position: absolute;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(184, 255, 249, 0.8), transparent);
+  border-radius: 1px;
+  animation: meteor-cross 8s linear infinite;
+  pointer-events: none;
+}
+
+.valle-meteor:nth-child(2) {
+  animation-delay: 4s;
+  animation-duration: 6s;
+  top: 20%;
+}
+
+.valle-meteor:nth-child(3) {
+  animation-delay: 7s;
+  animation-duration: 10s;
+  top: 60%;
+}
+
+/* ─────── EXIT / BACK BUTTON ─────── */
+
+.station-exit-btn {
+  padding: 8px 16px;
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff8e8e;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.station-exit-btn:hover {
+  background: rgba(255, 107, 107, 0.25);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ─────── GAME OVERLAY ─────── */
+
+.game-overlay-fullscreen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 200;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  box-sizing: border-box;
+  background-size: cover;
+  background-position: center;
+}
+
+.game-overlay-fullscreen__container {
+  max-height: 94vh;
+  overflow-y: auto;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  scrollbar-width: thin;
+}

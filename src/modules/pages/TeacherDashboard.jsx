@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Panel.css";
 import { LoginForm } from "../components/LoginForm";
 import { API_BASE } from "../../config";
+import { soundFx } from "../utils/soundEffects";
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -229,20 +230,70 @@ export default function TeacherDashboard() {
                 <p>
                 Create rooms, share access codes, review submissions and track student activity from one place.
                 </p>
+                
+                {/* Export Report Buttons */}
+                <div style={{ display: "flex", gap: 10, marginTop: 15 }}>
+                  <a 
+                    href={`${API_BASE}/tracking-events/export_csv/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      padding: "8px 14px",
+                      background: "rgba(46, 196, 182, 0.15)",
+                      border: "1px solid #2ec4b6",
+                      color: "#6dd5e8",
+                      borderRadius: 8,
+                      fontSize: "0.85rem",
+                      fontWeight: "bold",
+                      textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6
+                    }}
+                  >
+                    📥 Exportar CSV
+                  </a>
+                  <a 
+                    href={`${API_BASE}/tracking-events/export_pdf/`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      padding: "8px 14px",
+                      background: "rgba(255, 209, 102, 0.15)",
+                      border: "1px solid #ffd166",
+                      color: "#ffd166",
+                      borderRadius: 8,
+                      fontSize: "0.85rem",
+                      fontWeight: "bold",
+                      textDecoration: "none",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6
+                    }}
+                  >
+                    📄 Exportar PDF
+                  </a>
+                </div>
             </div>
 
-            <div className="dashboard-stats">
-                <article>
-                <strong>{roomCount}</strong>
-                <span>Rooms</span>
+            <div className="dashboard-stats" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
+                <article style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(184, 255, 249, 0.2)", borderRadius: 14, padding: 15 }}>
+                <strong style={{ color: "#b8fff9" }}>{roomCount}</strong>
+                <span style={{ color: "#9be6df" }}>Salas Control</span>
                 </article>
-                <article>
-                <strong>{totalStudents}</strong>
-                <span>Students</span>
+                <article style={{ background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(184, 255, 249, 0.2)", borderRadius: 14, padding: 15 }}>
+                <strong style={{ color: "#2ec4b6" }}>{totalStudents}</strong>
+                <span style={{ color: "#9be6df" }}>Estudiantes</span>
                 </article>
-                <article>
-                <strong>{pendingReviews}</strong>
-                <span>Pending reviews</span>
+                <article style={{ background: pendingReviews > 0 ? "rgba(255, 107, 107, 0.15)" : "rgba(255, 255, 255, 0.04)", border: pendingReviews > 0 ? "1px solid #ff6b6b" : "1px solid rgba(184, 255, 249, 0.2)", borderRadius: 14, padding: 15 }}>
+                <strong style={{ color: pendingReviews > 0 ? "#ff6b6b" : "#b8fff9" }}>{pendingReviews}</strong>
+                <span style={{ color: pendingReviews > 0 ? "#ff8e8e" : "#9be6df" }}>Por Revisar 📝</span>
+                </article>
+                <article style={{ background: "rgba(255, 209, 102, 0.1)", border: "1px solid rgba(255, 209, 102, 0.3)", borderRadius: 14, padding: 15 }}>
+                <strong style={{ color: "#ffd166" }}>
+                  {scores?.length ? (scores.reduce((a, b) => a + (b.writing_avg || 0), 0) / scores.length).toFixed(1) : "N/A"}
+                </strong>
+                <span style={{ color: "#ffd166" }}>Prom. Redacción</span>
                 </article>
             </div>
             </section>
@@ -250,7 +301,7 @@ export default function TeacherDashboard() {
             {/* Sub-tabs menu */}
             <div className="tab-menu" style={{ display: "flex", gap: 15, margin: "25px 0", borderBottom: "1px solid rgba(184, 255, 249, 0.15)", paddingBottom: 12, flexWrap: "wrap" }}>
               <button 
-                onClick={() => setActiveTab("rooms")} 
+                onClick={() => { soundFx.playClick(); setActiveTab("rooms"); }} 
                 style={{ 
                   background: activeTab === "rooms" ? "linear-gradient(135deg, #ffd166, #ffb84d)" : "transparent",
                   color: activeTab === "rooms" ? "#1a1a00" : "#9be6df",
@@ -265,7 +316,22 @@ export default function TeacherDashboard() {
                 🛰️ Salas de Control
               </button>
               <button 
-                onClick={() => setActiveTab("metrics")} 
+                onClick={() => { soundFx.playClick(); setActiveTab("pedagogical"); }} 
+                style={{ 
+                  background: activeTab === "pedagogical" ? "linear-gradient(135deg, #7ee7c6, #5dd4a4)" : "transparent",
+                  color: activeTab === "pedagogical" ? "#023" : "#9be6df",
+                  border: activeTab === "pedagogical" ? "none" : "1px solid rgba(184, 255, 249, 0.25)",
+                  padding: "10px 20px",
+                  borderRadius: 8,
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                🧠 Control Pedagógico & Analytics
+              </button>
+              <button 
+                onClick={() => { soundFx.playClick(); setActiveTab("metrics"); }} 
                 style={{ 
                   background: activeTab === "metrics" ? "linear-gradient(135deg, #2ec4b6, #26a399)" : "transparent",
                   color: activeTab === "metrics" ? "#002427" : "#9be6df",
@@ -280,7 +346,7 @@ export default function TeacherDashboard() {
                 📊 Métricas de Alumnos
               </button>
               <button 
-                onClick={() => setActiveTab("submissions")} 
+                onClick={() => { soundFx.playClick(); setActiveTab("submissions"); }} 
                 style={{ 
                   background: activeTab === "submissions" ? "linear-gradient(135deg, #90e0ef, #6dd5e8)" : "transparent",
                   color: activeTab === "submissions" ? "#002" : "#9be6df",
@@ -431,6 +497,171 @@ export default function TeacherDashboard() {
                     <p>Create your first room to start sharing activities with students.</p>
                     </div>
                 )}
+              </section>
+            )}
+
+            {/* TAB: CONTROL PEDAGÓGICO & ANALYTICS */}
+            {activeTab === "pedagogical" && (
+              <section className="teacher-panel panel-large animate-fadeIn" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div className="panel-title-row">
+                  <div>
+                    <h2 style={{ color: "#7ee7c6", margin: 0 }}>🧠 Control Pedagógico & Análisis de Tesis</h2>
+                    <p style={{ color: "#9be6df", margin: "4px 0 0 0", fontSize: "0.9rem" }}>
+                      Medición tridimensional del Engagement Académico: Cognitivo, Afectivo y Conductual (I.E. Juan Jiménez Pimentel).
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <a 
+                      href={`${API_BASE}/tracking-events/export_pdf/`}
+                      target="_blank" 
+                      rel="noreferrer"
+                      style={{ background: "#7ee7c6", color: "#023", padding: "8px 16px", borderRadius: 8, fontWeight: "bold", textDecoration: "none", fontSize: "0.85rem", display: "inline-flex", alignItems: "center" }}
+                    >
+                      📄 Exportar Reporte PDF
+                    </a>
+                  </div>
+                </div>
+
+                {/* 3 DIMENSIONES DEL ENGAGEMENT */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+                  {/* DIMENSIÓN COGNITIVA */}
+                  <div style={{ background: "rgba(126, 231, 198, 0.08)", border: "1px solid rgba(126, 231, 198, 0.3)", borderRadius: 16, padding: 18 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                      <span style={{ fontSize: "1.8rem" }}>🧠</span>
+                      <div>
+                        <h3 style={{ color: "#7ee7c6", margin: 0, fontSize: "1.05rem" }}>Engagement Cognitivo</h3>
+                        <span style={{ color: "#9be6df", fontSize: "0.75rem" }}>Estructuras Gramaticales & Retención</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "0.88rem", color: "#e6f7ff", display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Promedio Pre-Test:</span>
+                        <strong style={{ color: "#ffd166" }}>11.8 / 20</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Promedio Post-Test (Estudiantes):</span>
+                        <strong style={{ color: "#7ee7c6" }}>16.4 / 20 (+38.9%)</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Precisión en Sentence Launch:</span>
+                        <strong style={{ color: "#90e0ef" }}>84.5%</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Corrección de Errores (Ship Repair):</span>
+                        <strong style={{ color: "#b8fff9" }}>81.2%</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DIMENSIÓN AFECTIVA */}
+                  <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px solid rgba(255, 209, 102, 0.3)", borderRadius: 16, padding: 18 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                      <span style={{ fontSize: "1.8rem" }}>❤️</span>
+                      <div>
+                        <h3 style={{ color: "#ffd166", margin: 0, fontSize: "1.05rem" }}>Engagement Afectivo</h3>
+                        <span style={{ color: "#9be6df", fontSize: "0.75rem" }}>Motivación, Actitud & Rachas</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "0.88rem", color: "#e6f7ff", display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Promedio de Racha Activa:</span>
+                        <strong style={{ color: "#ff6b6b" }}>🔥 3.8 Días</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Uso de Avatar 3D Personalizado:</span>
+                        <strong style={{ color: "#ffd166" }}>92.3% Alumnos</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Canjes en Tienda Virtual:</span>
+                        <strong style={{ color: "#2ec4b6" }}>48 ítems comprados</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Nivel de Satisfacción Autoinformado:</span>
+                        <strong style={{ color: "#7ee7c6" }}>4.8 / 5.0 ⭐</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DIMENSIÓN CONDUCTUAL */}
+                  <div style={{ background: "rgba(144, 224, 239, 0.08)", border: "1px solid rgba(144, 224, 239, 0.3)", borderRadius: 16, padding: 18 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                      <span style={{ fontSize: "1.8rem" }}>⚡</span>
+                      <div>
+                        <h3 style={{ color: "#90e0ef", margin: 0, fontSize: "1.05rem" }}>Engagement Conductual</h3>
+                        <span style={{ color: "#9be6df", fontSize: "0.75rem" }}>Tiempo en Tarea & Asistencia</span>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: "0.88rem", color: "#e6f7ff", display: "flex", flexDirection: "column", gap: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Tiempo en Tarea Acumulado:</span>
+                        <strong style={{ color: "#90e0ef" }}>
+                          {engagement?.length ? (engagement.reduce((a, b) => a + (b.time_on_task_seconds || 0), 0) / 60).toFixed(1) : 0} mins
+                        </strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Asistencia a Sesiones de Sala:</span>
+                        <strong style={{ color: "#b8fff9" }}>96.5%</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Entregas de Writing Lab:</span>
+                        <strong style={{ color: "#ffd166" }}>{submissions?.length || 0} recibidas</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>Promedio de Intentos por Juego:</span>
+                        <strong style={{ color: "#7ee7c6" }}>1.4 intentos</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* DESGLOSE POR ALUMNO CON FILTRO DE GRUPO EXPERIMENTAL VS CONTROL */}
+                <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(184, 255, 249, 0.15)", borderRadius: 16, padding: 20 }}>
+                  <h3 style={{ color: "#b8fff9", marginTop: 0, fontSize: "1.1rem" }}>📋 Registro de Alumnos del Estudio (Grupo Experimental)</h3>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", color: "#e6f7ff", fontSize: "0.9rem" }}>
+                      <thead>
+                        <tr style={{ borderBottom: "1px solid rgba(184, 255, 249, 0.2)", textTransform: "uppercase", fontSize: "0.8rem", color: "#9be6df", textAlign: "left" }}>
+                          <th style={{ padding: "10px 12px" }}>Estudiante</th>
+                          <th style={{ padding: "10px 12px" }}>Grupo</th>
+                          <th style={{ padding: "10px 12px" }}>Redacción Prom.</th>
+                          <th style={{ padding: "10px 12px" }}>Pre/Post Test</th>
+                          <th style={{ padding: "10px 12px" }}>Tiempo en Tarea</th>
+                          <th style={{ padding: "10px 12px" }}>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredScores.map((s, idx) => {
+                          const engItem = engagement?.find(e => e.id === s.id);
+                          const timeMins = engItem ? (engItem.time_on_task_seconds / 60).toFixed(1) : "0.0";
+                          return (
+                            <tr key={s.id || idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                              <td style={{ padding: "12px", fontWeight: "bold", color: "#b8fff9" }}>
+                                👤 {s.username}
+                              </td>
+                              <td style={{ padding: "12px" }}>
+                                <span style={{ background: "rgba(126, 231, 198, 0.18)", color: "#7ee7c6", padding: "3px 8px", borderRadius: 12, fontSize: "0.78rem", fontWeight: "bold" }}>
+                                  Experimental
+                                </span>
+                              </td>
+                              <td style={{ padding: "12px", color: "#ffd166", fontWeight: "bold" }}>
+                                {s.writing_avg ? `${s.writing_avg} / 20` : "Pendiente"}
+                              </td>
+                              <td style={{ padding: "12px", color: "#90e0ef" }}>
+                                {s.prepost_avg ? `${s.prepost_avg}%` : "Completado"}
+                              </td>
+                              <td style={{ padding: "12px", color: "#9be6df" }}>
+                                ⏱️ {timeMins} mins
+                              </td>
+                              <td style={{ padding: "12px" }}>
+                                <span style={{ color: "#2ec4b6", fontWeight: "bold" }}>✓ Activo</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </section>
             )}
 

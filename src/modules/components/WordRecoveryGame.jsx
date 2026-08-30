@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import ReclutaPrincipal from "../../assets/amongus/recluta principal personaje solo.png";
+import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
 
 export function WordRecoveryGame({ activity, onComplete, onClose }) {

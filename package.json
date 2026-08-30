@@ -19,6 +19,7 @@
     "@mui/material": "^5.15.18",
     "bootstrap": "^5.3.3",
     "feather-icons": "^4.29.2",
+    "fix-perspective": "^1.0.0",
     "frontend": "file:",
     "pnpm": "^11.5.0",
     "react": "^18.2.0",

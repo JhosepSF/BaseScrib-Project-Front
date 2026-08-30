@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import ReclutaPrincipal from "../../assets/amongus/recluta principal personaje solo.png";
+import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 
 const MESSAGES = [
   "¡Hola recluta! Bienvenido a BaseScrib",
