@@ -22,14 +22,15 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
       {/* Stats */}
       <div className="recrute-hud__stats">
         <span className="recrute-hud__stat recrute-hud__stat--xp">⭐ {user.xp || 0} XP</span>
-        <span className="recrute-hud__stat recrute-hud__stat--coins">🪙 {user.coins || 0}</span>
-        <span className="recrute-hud__stat recrute-hud__stat--streak">🔥 {user.streak_count || 0}d</span>
+        <span className="recrute-hud__stat recrute-hud__stat--coins" data-tour="coins-card">🪙 {user.coins || 0}</span>
+        <span className="recrute-hud__stat recrute-hud__stat--streak" data-tour="streak-card">🔥 {user.streak_count || 0}d</span>
       </div>
 
       {/* Action Buttons */}
       <div className="recrute-hud__actions">
         <button
           className="recrute-hud__btn recrute-hud__btn--store"
+          data-tour="store-button"
           onClick={() => { soundFx.playClick(); onOpenStore(); }}
         >
           🛒 Tienda

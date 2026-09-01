@@ -5,6 +5,7 @@ import { soundFx } from "../utils/soundEffects";
 import RecluteHUD from "./RecluteHUD";
 import { RoomCalibratorTool } from "./RoomCalibratorTool";
 import PortalGateway from "./PortalGateway";
+import OnboardingModal from "../onboarding/components/OnboardingModal";
 import naveDentroImage from "../../assets/amongus/Nave_dentro_16_9.jpg";
 import sparkyOpenOpen from "../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA ABIERTA.png";
 import sparkyOpenClosed from "../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA CERRADA.png";
@@ -298,6 +299,7 @@ export function RoomActivityPanel3D({
 }) {
   const [sparkyPhrase, setSparkyPhrase] = useState("¡Buen trabajo, recluta! Continúa con la misión.");
   const [showCalibrator, setShowCalibrator] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // 'bitacora' | 'misiones' | 'vocabulario' | 'racha' | 'monedas'
   const [dayPage, setDayPage] = useState(0); // 0 = D1-D4, 1 = D5-D8, 2 = D9-D10
   const [isPortalHovered, setIsPortalHovered] = useState(false);
@@ -444,6 +446,45 @@ export function RoomActivityPanel3D({
       {/* TOP BAR CONTROLS */}
       <div style={{ position: "absolute", top: 75, left: 20, zIndex: 999, display: "flex", gap: 10 }}>
         <button
+          onClick={() => { soundFx.playWarp(); setShowOnboarding(true); }}
+          style={{
+            padding: "6px 14px",
+            background: "linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))",
+            border: "1.5px solid #60a5fa",
+            borderRadius: "20px",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.75rem",
+            cursor: "pointer",
+            boxShadow: "0 0 15px rgba(59, 130, 246, 0.6)"
+          }}
+        >
+          📜 Cinemáticas & Tutorial
+        </button>
+
+        <button
+          onClick={() => {
+            soundFx.playWarp();
+            localStorage.removeItem("basescrib_onboarding_completed");
+            setShowOnboarding(true);
+          }}
+          style={{
+            padding: "6px 14px",
+            background: "linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9))",
+            border: "1.5px solid #fca5a5",
+            borderRadius: "20px",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.75rem",
+            cursor: "pointer",
+            boxShadow: "0 0 15px rgba(239, 68, 68, 0.6)"
+          }}
+          title="Reinicia el registro para probar las cinemáticas como un usuario nuevo"
+        >
+          🔄 Reiniciar Onboarding (Pruebas)
+        </button>
+
+        <button
           onClick={onToggleViewMode}
           style={{
             padding: "6px 14px",
@@ -477,6 +518,16 @@ export function RoomActivityPanel3D({
           👁️ {showCalibrator ? "Ocultar Zonas / Modo Calibración" : "👁️ Ver Zonas de Calibración"}
         </button>
       </div>
+
+      {/* ONBOARDING & TUTORIAL SYSTEM MODAL */}
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={() => {
+          localStorage.setItem("basescrib_onboarding_completed", "true");
+          setShowOnboarding(false);
+        }}
+      />
 
 
 
@@ -831,6 +882,7 @@ export function RoomActivityPanel3D({
           >
             <div
               className="mapped-portal-gateway-hitbox"
+              data-tour="portals-button"
               onClick={(e) => {
                 e.stopPropagation();
                 if (!showCalibrator) {
@@ -870,8 +922,6 @@ export function RoomActivityPanel3D({
             </div>
           </div>
         </foreignObject>
-
-
 
         {/* 6. CONSOLAS DE PANTALLAS INTERACTIVAS (RENDERIZADAS EN LA CAPA SUPERIOR SUPERIOR DEL SVG PARA NUNCA SER TAPADAS) */}
         {/* BITACORA (Pared Izquierda) */}
@@ -924,6 +974,7 @@ export function RoomActivityPanel3D({
         <foreignObject x="408" y="660" width="256.5" height="145" style={{ overflow: "visible", pointerEvents: "none" }}>
           <div
             className="mapped-screen mapped-console-left"
+            data-tour="day-selector"
             style={{
               width: "100%",
               height: "100%",

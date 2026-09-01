@@ -4,6 +4,7 @@ import "../../styles/Panel.css";
 import { LoginForm } from "../components/LoginForm";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
+import DatabaseManagementModal from "../components/DatabaseManagementModal";
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState("rooms");
   const [selectedRoomFilter, setSelectedRoomFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDbModal, setShowDbModal] = useState(false);
 
   // Filtered lists logic
   const filteredScores = (scores || []).filter(s => {
@@ -273,6 +275,25 @@ export default function TeacherDashboard() {
                   >
                     📄 Exportar PDF
                   </a>
+                  <button
+                    onClick={() => setShowDbModal(true)}
+                    style={{
+                      padding: "8px 14px",
+                      background: "rgba(139, 92, 246, 0.2)",
+                      border: "1px solid #8b5cf6",
+                      color: "#c4b5fd",
+                      borderRadius: 8,
+                      fontSize: "0.85rem",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      transition: "transform 0.2s ease"
+                    }}
+                  >
+                    💾 Base de Datos (Exportar / Insertar)
+                  </button>
                 </div>
             </div>
 
@@ -982,6 +1003,7 @@ export default function TeacherDashboard() {
         </main>
       )}
 
+      <DatabaseManagementModal isOpen={showDbModal} onClose={() => setShowDbModal(false)} />
     </div>
   );
 }
