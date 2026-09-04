@@ -35,12 +35,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(3, 7, 18, 0.4) 0%,
-    rgba(3, 7, 18, 0.2) 50%,
-    rgba(3, 7, 18, 0.95) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(3, 7, 18, 0.4) 0%,
+      rgba(3, 7, 18, 0.2) 50%,
+      rgba(3, 7, 18, 0.95) 100%);
   pointer-events: none;
 }
 
@@ -114,14 +112,21 @@
 }
 
 @keyframes vnCharacterBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.02); }
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
 }
 
 .vn-portrait-frame {
   position: relative;
   height: 100%;
-  border-bottom: 4px solid;
+  border-bottom: none;
   filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
 }
 
@@ -155,7 +160,7 @@
   backdrop-filter: blur(20px);
   padding: 24px 32px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
-              inset 0 0 20px rgba(56, 189, 248, 0.15);
+    inset 0 0 20px rgba(56, 189, 248, 0.15);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -190,7 +195,8 @@
   min-height: 90px;
 }
 
-.vn-text-en, .vn-text-es {
+.vn-text-en,
+.vn-text-es {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -269,10 +275,398 @@
     margin: 0 2vw 15px 2vw;
     padding: 16px 20px;
   }
+
   .vn-portrait-wrapper {
     height: 40vh;
   }
+
   .vn-en-content {
     font-size: 1rem;
   }
+}
+
+/* GENSHIN IMPACT STYLE CHARACTER SELECTION (SHOT 6) */
+.genshin-avatar-stage-container {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 1150px;
+  height: 68vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 10px;
+  z-index: 20;
+}
+
+.genshin-avatar-selection-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  position: relative;
+  z-index: 30;
+  margin-right: -10px;
+  /* Leave room for sidebar on right */
+}
+
+.genshin-arrow-btn {
+  background: rgba(4, 15, 25, 0.94);
+  border: 3px solid #00f0ff;
+  color: #00f0ff;
+  font-size: 2.5rem;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.7);
+  transition: all 0.25s ease;
+  user-select: none;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.genshin-arrow-btn:hover {
+  transform: scale(1.25);
+  background: #00f0ff;
+  color: #02111b;
+  box-shadow: 0 0 50px rgba(0, 240, 255, 1);
+}
+
+.genshin-center-platform-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.genshin-center-platform-box:hover {
+  transform: scale(1.03);
+}
+
+.genshin-switch-hint {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #93c5fd;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(59, 130, 246, 0.6);
+  padding: 5px 16px;
+  border-radius: 14px;
+  margin-top: -15px;
+  text-shadow: 0 0 8px rgba(147, 197, 253, 0.6);
+  animation: vnCharacterBounce 2.5s infinite ease-in-out;
+  z-index: 10;
+}
+
+.genshin-character-title-badge {
+  background: rgba(3, 16, 26, 0.94);
+  border: 2px solid #ffd166;
+  color: #ffd166;
+  padding: 7px 22px;
+  border-radius: 22px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.6);
+  margin-bottom: -10px;
+  text-align: center;
+  z-index: 10;
+}
+
+/* SIDEBAR CONTROL PANEL FOR INITIAL CUSTOMIZATION */
+.genshin-custom-sidebar {
+  position: absolute;
+  right: 15px;
+  top: 40px;
+  background: rgba(4, 15, 25, 0.92);
+  border: 2px solid rgba(0, 240, 255, 0.5);
+  border-radius: 20px;
+  padding: 18px 22px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 230px;
+  z-index: 40;
+}
+
+.genshin-section-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #9be6df;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.genshin-swatch-row {
+  display: flex;
+  gap: 10px;
+}
+
+.genshin-color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.genshin-color-swatch.active {
+  border-color: #ffd166;
+  transform: scale(1.2);
+  box-shadow: 0 0 14px #ffd166;
+}
+
+.genshin-option-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.genshin-option-chip.active {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: #00f0ff;
+  color: #b8fff9;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+/* MODAL DE CONFIRMACIÓN DE PERSONAJE */
+.vn-confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(2, 8, 16, 0.88);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+}
+
+.vn-confirm-card {
+  background: linear-gradient(135deg, rgba(8, 26, 38, 0.98), rgba(4, 15, 22, 0.98));
+  border: 2.5px solid #00f0ff;
+  border-radius: 24px;
+  padding: 30px 36px;
+  max-width: 460px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 45px rgba(0, 240, 255, 0.5);
+  animation: vnCharacterBounce 0.4s ease-out;
+}
+
+.vn-confirm-title {
+  color: #38bdf8;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.vn-confirm-subtitle {
+  color: #ffd166;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.vn-confirm-desc {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.vn-confirm-btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #00f0ff, #7000ff);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  margin-bottom: 10px;
+  transition: transform 0.2s ease;
+}
+
+.vn-confirm-btn-primary:hover {
+  transform: scale(1.03);
+}
+
+.vn-confirm-btn-secondary {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Holographic Game Preview Overlays for Cinematic Cutscene */
+.vn-game-preview-overlay {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 840px;
+  z-index: 5;
+  animation: vnCardPop 0.4s ease-out;
+  pointer-events: none;
+}
+
+@keyframes vnCardPop {
+  0% { opacity: 0; transform: translate(-50%, 20px) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.vn-game-preview-card {
+  background: rgba(5, 24, 38, 0.92);
+  border: 1.5px solid rgba(0, 240, 255, 0.5);
+  border-radius: 20px;
+  padding: 16px 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.15);
+}
+
+.vn-game-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  padding-bottom: 8px;
+}
+
+.vn-game-preview-title {
+  color: #00f0ff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vn-game-preview-badge {
+  background: rgba(255, 209, 102, 0.15);
+  border: 1px solid #ffd166;
+  color: #ffd166;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 10px;
+}
+
+.vn-game-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .vn-game-preview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.vn-mini-game-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.vn-mini-game-item:hover {
+  border-color: #00f0ff;
+  transform: translateY(-3px);
+}
+
+.vn-mini-game-icon {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+.vn-mini-game-name {
+  color: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.vn-mini-game-desc {
+  color: #94a3b8;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+/* Mailbox Space Email Preview Card (Shot 7) */
+.vn-mailbox-card {
+  background: linear-gradient(135deg, rgba(8, 26, 38, 0.94), rgba(4, 15, 22, 0.94));
+  border: 2px solid #ffd166;
+  border-radius: 20px;
+  padding: 18px 22px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 40px rgba(255, 209, 102, 0.35);
+}
+
+.vn-mailbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 209, 102, 0.3);
+  padding-bottom: 8px;
+}
+
+.vn-mailbox-title {
+  color: #ffd166;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vn-mailbox-status {
+  background: rgba(46, 196, 182, 0.2);
+  border: 1px solid #2ec4b6;
+  color: #b8fff9;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.vn-mailbox-body {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(255, 209, 102, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }

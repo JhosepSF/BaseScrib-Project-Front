@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 
-export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuthPassword, handleLogin, loading, setStep }) {
+export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuthPassword, handleLogin, loading, error, setStep }) {
   return (
     <div 
       className="auth-home-container animate-fadeIn" 
@@ -53,7 +53,7 @@ export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuth
             animation: "fadeIn 0.3s ease-out"
           }}
         >
-          {loading ? "Escaneando credenciales..." : "Ingresa tu usuario y código"}
+          {loading ? "Escaneando credenciales..." : (error ? "⚠️ Credenciales incorrectas" : "Ingresa tu usuario y código")}
           {/* Arrow pointing down at the crewmate */}
           <div style={{
             position: "absolute",
@@ -115,6 +115,24 @@ export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuth
             {loading ? "ESCANEANDO CREDENCIALES..." : "INGRESA TU FIRMA DE TRIPULANTE"}
           </span>
         </div>
+
+        {error && (
+          <div style={{
+            background: "rgba(239, 68, 68, 0.25)",
+            border: "1.5px solid #ef4444",
+            color: "#fca5a5",
+            padding: "10px 14px",
+            borderRadius: "10px",
+            fontSize: "0.88rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: "15px",
+            boxShadow: "0 0 15px rgba(239, 68, 68, 0.4)",
+            animation: "fadeIn 0.3s ease-out"
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left" }}>

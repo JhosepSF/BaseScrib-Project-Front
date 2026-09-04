@@ -197,7 +197,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
         } else {
           soundFx.playCoin();
           soundFx.playStreakBonus();
-          onComplete(10, 10); // 10 XP, 10 Coins
+          onComplete(15, 15); // 15 XP, 15 Coins
         }
       }, 1500);
     } else {

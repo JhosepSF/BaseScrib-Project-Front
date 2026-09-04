@@ -16,6 +16,7 @@ export function RegisterForm({
   setStudentSection,
   handleRegister,
   loading,
+  error,
   setStep,
 }) {
   return (
@@ -69,7 +70,7 @@ export function RegisterForm({
             animation: "fadeIn 0.3s ease-out"
           }}
         >
-          {loading ? "Registrando cadete..." : "Registra tus datos de tripulante"}
+          {loading ? "Registrando cadete..." : (error ? "⚠️ Revisa los datos de registro" : "Registra tus datos de tripulante")}
           {/* Arrow pointing down at the crewmate */}
           <div style={{
             position: "absolute",
@@ -131,6 +132,24 @@ export function RegisterForm({
             {loading ? "CREANDO TRIPULANTE..." : "CREA TU IDENTIDAD ESPACIAL"}
           </span>
         </div>
+
+        {error && (
+          <div style={{
+            background: "rgba(239, 68, 68, 0.25)",
+            border: "1.5px solid #ef4444",
+            color: "#fca5a5",
+            padding: "10px 14px",
+            borderRadius: "10px",
+            fontSize: "0.88rem",
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: "15px",
+            boxShadow: "0 0 15px rgba(239, 68, 68, 0.4)",
+            animation: "fadeIn 0.3s ease-out"
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
 
         <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: 15 }}>
           {/* Hidden role indicator */}

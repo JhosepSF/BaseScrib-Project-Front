@@ -451,7 +451,7 @@ export function ComicGame({ activity, onComplete, onClose }) {
           setSelectedOptionId(null);
           setShowStatusText("SISTEMA OK");
         } else {
-          onComplete(5, 5); // 5 XP, 5 Coins
+          onComplete(10, 10); // 10 XP, 10 Coins
         }
       }, 1200);
     } else {

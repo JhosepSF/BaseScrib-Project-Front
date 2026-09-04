@@ -1,0 +1,186 @@
+/* AvatarFrame.css — Estilos y Animaciones de Marcos de Usuario Animados */
+
+.avatar-frame-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* MARCO BASE DEFAULT */
+.avatar-frame-default {
+  border: 2px solid #2ec4b6;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(46, 196, 182, 0.4);
+  padding: 3px;
+  background: rgba(4, 15, 22, 0.6);
+}
+
+/* MARCO FUEGO INFERNAL 🔥 */
+.avatar-frame-fire {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #ff4500, #ff8c00, #e63946, #ffd166);
+  background-size: 200% 200%;
+  animation: fireGlow 2.5s ease-in-out infinite alternate;
+  box-shadow: 0 0 18px rgba(255, 69, 0, 0.8), 0 0 30px rgba(255, 140, 0, 0.5);
+}
+
+.avatar-frame-fire::before {
+  content: '🔥';
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 8px #ff4500);
+  animation: firePulse 1.8s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* MARCO ELECTRICIDAD / VOLTAJE CUÁNTICO ⚡ */
+.avatar-frame-electric {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #00f0ff, #7000ff, #00ff87, #00f0ff);
+  background-size: 300% 300%;
+  animation: electricShift 1.8s linear infinite;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.95), inset 0 0 12px rgba(112, 0, 255, 0.6);
+}
+
+.avatar-frame-electric::before {
+  content: '⚡';
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 10px #00f0ff);
+  animation: sparkFlicker 1.2s infinite;
+  z-index: 5;
+}
+
+/* MARCO SPIDER-MAN / ARAÑA SUPERHEROÍNA 🕷️ */
+.avatar-frame-spidey {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(from 0deg, #d62828, #003049, #d62828, #fdf0d5, #003049, #d62828);
+  box-shadow: 0 0 16px rgba(214, 40, 40, 0.9), 0 0 25px rgba(0, 48, 73, 0.7);
+  animation: spideyPulse 3s ease-in-out infinite;
+}
+
+.avatar-frame-spidey::after {
+  content: '🕷️';
+  position: absolute;
+  top: -8px;
+  left: -6px;
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 10px #d62828);
+  animation: spiderSwing 2.4s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* MARCO NEÓN CYBERPUNK 🌌 */
+.avatar-frame-neon {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #f72585, #7209b7, #3f37c9, #4cc9f0);
+  background-size: 200% 200%;
+  animation: neonRotate 3s linear infinite;
+  box-shadow: 0 0 22px rgba(247, 37, 133, 0.8), 0 0 35px rgba(76, 201, 240, 0.5);
+}
+
+.avatar-frame-neon::before {
+  content: '🌌';
+  position: absolute;
+  bottom: -6px;
+  left: -6px;
+  font-size: 1.05rem;
+  filter: drop-shadow(0 0 8px #f72585);
+  z-index: 5;
+}
+
+/* MARCO CORONA DORADA / REY ESPACIAL 👑 */
+.avatar-frame-gold-crown {
+  position: relative;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, #ffd166, #ffb84d, #ffffff, #cca010);
+  background-size: 200% 200%;
+  animation: goldShimmer 2.2s ease-in-out infinite alternate;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.95), 0 0 35px rgba(255, 184, 77, 0.6);
+}
+
+.avatar-frame-gold-crown::before {
+  content: '👑';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  filter: drop-shadow(0 0 10px #ffd166);
+  animation: crownBob 2s ease-in-out infinite alternate;
+  z-index: 5;
+}
+
+/* INNER AVATAR CONTENT HOLDER */
+.avatar-frame-inner {
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #071521;
+  width: 100%;
+  height: 100%;
+}
+
+/* ANIMACIONES CSS */
+@keyframes fireGlow {
+  0% { background-position: 0% 50%; box-shadow: 0 0 14px rgba(255, 69, 0, 0.7); }
+  100% { background-position: 100% 50%; box-shadow: 0 0 26px rgba(255, 140, 0, 1); }
+}
+
+@keyframes firePulse {
+  0% { transform: scale(1) rotate(-5deg); }
+  100% { transform: scale(1.2) rotate(10deg); }
+}
+
+@keyframes electricShift {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 200%; }
+}
+
+@keyframes sparkFlicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+@keyframes spideyPulse {
+  0%, 100% { box-shadow: 0 0 14px rgba(214, 40, 40, 0.8); }
+  50% { box-shadow: 0 0 26px rgba(0, 48, 73, 1), 0 0 35px rgba(214, 40, 40, 0.9); }
+}
+
+@keyframes spiderSwing {
+  0% { transform: translateY(0px) rotate(-10deg); }
+  100% { transform: translateY(4px) rotate(10deg); }
+}
+
+@keyframes neonRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes goldShimmer {
+  0% { background-position: 0% 50%; box-shadow: 0 0 15px rgba(255, 209, 102, 0.7); }
+  100% { background-position: 100% 50%; box-shadow: 0 0 28px rgba(255, 209, 102, 1); }
+}
+
+@keyframes crownBob {
+  0% { transform: translateX(-50%) translateY(0px); }
+  100% { transform: translateX(-50%) translateY(-4px); }
+}

@@ -1,0 +1,197 @@
+/* HolographicRoomSimulator.css — Estilos para el Simulador Holográfico de Entrenamiento en Onboarding */
+
+.holo-sim-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(3, 10, 18, 0.94);
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* CONTAINER HOLOGRÁFICO PRINCIPAL */
+.holo-sim-screen-card {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 560px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 24px;
+  border: 2px solid #00f0ff;
+  box-shadow: 0 0 45px rgba(0, 240, 255, 0.4), inset 0 0 35px rgba(112, 0, 255, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* EFECTO DE LÍNEAS DE ESCANEO DE HOLOGRAMA */
+.holo-sim-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 240, 255, 0.08) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* TOP HEADER DE LA PANTALLA HOLOGRÁFICA */
+.holo-sim-header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: linear-gradient(180deg, rgba(3, 15, 23, 0.88) 0%, rgba(3, 15, 23, 0) 100%);
+}
+
+.holo-sim-title-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1.5px solid #00f0ff;
+  color: #b8fff9;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 10px #00f0ff;
+}
+
+.holo-sim-btn-skip {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.holo-sim-btn-skip:hover {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+/* REGIONES DE HIGHLIGHT / SPOTLIGHTS DE ZONAS */
+.holo-sim-spotlight-box {
+  position: absolute;
+  border: 2px dashed #ffd166;
+  border-radius: 18px;
+  background: rgba(255, 209, 102, 0.12);
+  box-shadow: 0 0 25px rgba(255, 209, 102, 0.6), inset 0 0 15px rgba(255, 209, 102, 0.3);
+  animation: holoSpotlightPulse 2s infinite alternate;
+  pointer-events: none;
+  z-index: 4;
+}
+
+@keyframes holoSpotlightPulse {
+  0% { transform: scale(0.99); box-shadow: 0 0 15px rgba(255, 209, 102, 0.5); }
+  100% { transform: scale(1.02); box-shadow: 0 0 32px rgba(255, 209, 102, 0.9); }
+}
+
+/* TARJETA DE DIÁLOGO FLOTANTE DE SPARKY */
+.holo-sim-tooltip-card {
+  position: relative;
+  z-index: 10;
+  margin: 16px 24px;
+  background: linear-gradient(135deg, rgba(8, 26, 38, 0.95), rgba(4, 15, 22, 0.98));
+  border: 2px solid #00f0ff;
+  border-radius: 20px;
+  padding: 16px 22px;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #e6f7ff;
+}
+
+.holo-sim-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.holo-sim-sparky-avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px #00f0ff);
+}
+
+.holo-sim-step-title-es {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffd166;
+  text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+  margin: 0;
+}
+
+.holo-sim-step-title-en {
+  font-size: 0.8rem;
+  color: #9be6df;
+  font-weight: 600;
+  margin: 2px 0 0 0;
+}
+
+.holo-sim-tooltip-text {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.holo-sim-tooltip-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.holo-sim-step-counter {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 12px;
+  border-radius: 10px;
+}
+
+.holo-sim-nav-btn {
+  background: linear-gradient(135deg, #00f0ff, #7000ff);
+  color: white;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.holo-sim-nav-btn:hover {
+  transform: scale(1.05);
+}

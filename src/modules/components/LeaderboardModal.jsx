@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../config";
+import AvatarFrame from "./AvatarFrame";
 
 export default function LeaderboardModal({ roomId, token, onClose }) {
   const [ranking, setRanking] = useState([]);
@@ -36,7 +37,6 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
   }, [roomId, token]);
 
   const top3 = ranking.slice(0, 3);
-  const rest = ranking.slice(3);
 
   const getRankBadge = (rank) => {
     if (rank === 1) return "🥇";
@@ -100,22 +100,29 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
         </button>
 
         <div style={{ textAlign: "center", marginBottom: 20 }}>
-          <span style={{ fontSize: "3rem" }}>🏆</span>
-          <h2 style={{ color: "#ffd166", margin: "5px 0 2px 0", fontSize: "1.8rem" }}>Ranking del Salón</h2>
-          <p style={{ color: "#9be6df", fontSize: "0.9rem" }}>
-            Los mejores reclutas de <strong style={{ color: "#b8fff9" }}>{roomName}</strong>
+          <h2 style={{ color: "#ffd166", margin: 0, fontSize: "1.8rem", textShadow: "0 0 15px rgba(255, 209, 102, 0.5)" }}>
+            🏆 Tabla de Clasificación
+          </h2>
+          <p style={{ color: "#9be6df", fontSize: "0.9rem", margin: "4px 0 0 0" }}>
+            Sala: <strong style={{ color: "#ffffff" }}>{roomName}</strong>
           </p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
-
         {loading ? (
-          <div style={{ textAlign: "center", padding: 40, color: "#9be6df" }}>
-            <p>Cargando posiciones de la tripulación...</p>
+          <div style={{ textAlign: "center", padding: 30, color: "#9be6df" }}>
+            Cargando puestos de la tripulación...
+          </div>
+        ) : error ? (
+          <div style={{ color: "#ff6b6b", textAlign: "center", padding: 20 }}>
+            {error}
+          </div>
+        ) : ranking.length === 0 ? (
+          <div style={{ textAlign: "center", padding: 30, color: "#9be6df" }}>
+            Aún no hay reclutas registrados en esta sala.
           </div>
         ) : (
-          <div style={{ overflowY: "auto", paddingRight: 5 }} className="custom-scroll">
-            {/* PODIUM TOP 3 */}
+          <div style={{ overflowY: "auto", paddingRight: 6 }}>
+            {/* TOP 3 PODIUM */}
             {top3.length > 0 && (
               <div style={{
                 display: "grid",
@@ -132,10 +139,16 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     borderRadius: 16,
                     padding: 15,
                     textAlign: "center",
-                    boxShadow: "0 0 15px rgba(192, 192, 192, 0.2)"
+                    boxShadow: "0 0 15px rgba(192, 192, 192, 0.2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
                   }}>
-                    <span style={{ fontSize: "2rem" }}>🥈</span>
-                    <h4 style={{ color: "#e6e6e6", margin: "5px 0", fontSize: "0.95rem" }}>{top3[1].username}</h4>
+                    <span style={{ fontSize: "1.8rem" }}>🥈</span>
+                    <AvatarFrame frameId={top3[1].equipped_frame || "frame_default"} size="medium">
+                      <span style={{ fontSize: "1.2rem" }}>{top3[1].gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                    </AvatarFrame>
+                    <h4 style={{ color: "#e6e6e6", margin: "6px 0 2px 0", fontSize: "0.95rem" }}>{top3[1].username}</h4>
                     <p style={{ color: "#ffd166", fontSize: "0.85rem", margin: 0, fontWeight: "bold" }}>{top3[1].xp} XP</p>
                     <div style={{ fontSize: "0.75rem", color: "#9be6df", marginTop: 4 }}>
                       🪙 {top3[1].coins} · 🔥 {top3[1].streak_count}d
@@ -152,10 +165,16 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     padding: 18,
                     textAlign: "center",
                     boxShadow: "0 0 25px rgba(255, 209, 102, 0.4)",
-                    transform: "scale(1.05)"
+                    transform: "scale(1.05)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
                   }}>
-                    <span style={{ fontSize: "2.8rem" }}>👑</span>
-                    <h3 style={{ color: "#ffd166", margin: "5px 0", fontSize: "1.1rem" }}>{top3[0].username}</h3>
+                    <span style={{ fontSize: "2.2rem" }}>👑</span>
+                    <AvatarFrame frameId={top3[0].equipped_frame || "frame_gold_crown"} size="large">
+                      <span style={{ fontSize: "1.6rem" }}>{top3[0].gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                    </AvatarFrame>
+                    <h3 style={{ color: "#ffd166", margin: "8px 0 2px 0", fontSize: "1.1rem" }}>{top3[0].username}</h3>
                     <p style={{ color: "#b8fff9", fontSize: "1rem", margin: 0, fontWeight: "bold" }}>{top3[0].xp} XP</p>
                     <div style={{ fontSize: "0.8rem", color: "#ffd166", marginTop: 4 }}>
                       🪙 {top3[0].coins} · 🔥 {top3[0].streak_count} días
@@ -171,10 +190,16 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     borderRadius: 16,
                     padding: 15,
                     textAlign: "center",
-                    boxShadow: "0 0 15px rgba(205, 127, 50, 0.2)"
+                    boxShadow: "0 0 15px rgba(205, 127, 50, 0.2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center"
                   }}>
-                    <span style={{ fontSize: "2rem" }}>🥉</span>
-                    <h4 style={{ color: "#e6c280", margin: "5px 0", fontSize: "0.95rem" }}>{top3[2].username}</h4>
+                    <span style={{ fontSize: "1.8rem" }}>🥉</span>
+                    <AvatarFrame frameId={top3[2].equipped_frame || "frame_default"} size="medium">
+                      <span style={{ fontSize: "1.2rem" }}>{top3[2].gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                    </AvatarFrame>
+                    <h4 style={{ color: "#e6c280", margin: "6px 0 2px 0", fontSize: "0.95rem" }}>{top3[2].username}</h4>
                     <p style={{ color: "#ffd166", fontSize: "0.85rem", margin: 0, fontWeight: "bold" }}>{top3[2].xp} XP</p>
                     <div style={{ fontSize: "0.75rem", color: "#9be6df", marginTop: 4 }}>
                       🪙 {top3[2].coins} · 🔥 {top3[2].streak_count}d
@@ -203,6 +228,9 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     <span style={{ fontWeight: "bold", fontSize: "1.1rem", minWidth: 35, color: "#ffd166" }}>
                       {getRankBadge(st.rank)}
                     </span>
+                    <AvatarFrame frameId={st.equipped_frame || "frame_default"} size="small">
+                      <span style={{ fontSize: "1.0rem" }}>{st.gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                    </AvatarFrame>
                     <div>
                       <strong style={{ color: "#e6f7ff", fontSize: "1rem" }}>{st.username}</strong>
                       <div style={{ fontSize: "0.78rem", color: "#9be6df" }}>

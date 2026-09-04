@@ -36,7 +36,7 @@ export function ShipRepairGame({ activity, onComplete, onClose }) {
         if (currentQIndex < questions.length - 1) {
           setCurrentQIndex(currentQIndex + 1);
         } else {
-          onComplete(10, 10); // 10 XP, 10 Coins
+          onComplete(15, 15); // 15 XP, 15 Coins
         }
       }, 1500);
     } else {

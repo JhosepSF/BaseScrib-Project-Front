@@ -749,7 +749,12 @@ export function RoomActivityPanel3D({
             <div style={{ pointerEvents: "none", position: "relative" }}>
               <AvatarShowcase
                 outfitId={user?.selected_outfit || "m_base"}
-                petId={localStorage.getItem("basescrib_equipped_pet") || "pet_alien_blue"}
+                petId={user?.equipped_pet || localStorage.getItem("basescrib_equipped_pet") || "pet_alien_blue"}
+                suitColor={user?.suit_color || "#2ec4b6"}
+                visorColor={user?.visor_color || "#a3e2f7"}
+                accessory={user?.accessory || "none"}
+                decal={user?.decal || "none"}
+                gender={user?.gender || (user?.selected_outfit?.startsWith("m_") ? "male" : "female")}
                 size="large"
                 transparent={true}
               />

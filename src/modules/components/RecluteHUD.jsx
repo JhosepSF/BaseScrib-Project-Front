@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { soundFx } from "../utils/soundEffects";
+import AvatarFrame from "./AvatarFrame";
 
 /**
- * RecruteHUD — Floating HUD bar with avatar identity, stats, and navigation.
+ * RecluteHUD — Floating HUD bar with avatar identity, stats, and navigation.
  * Positioned at the top of the Space Station view.
  */
 export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, onOpenInventory, onLogout }) {
@@ -11,12 +12,27 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
 
   if (!user) return null;
 
+  const handleAvatarClick = () => {
+    soundFx.playClick();
+    if (onOpenInventory) onOpenInventory();
+    else navigate("/avatar");
+  };
+
   return (
     <div className="recrute-hud">
-      {/* Identity */}
-      <div className="recrute-hud__identity">
-        <div className="recrute-hud__avatar-mini">🧑‍🚀</div>
-        <span className="recrute-hud__name">{user.username}</span>
+      {/* Identity with Animated Avatar Frame */}
+      <div className="recrute-hud__identity" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <AvatarFrame
+          frameId={user.equipped_frame || "frame_default"}
+          size="small"
+          onClick={handleAvatarClick}
+          title="¡Haz clic para personalizar tu Avatar y Marcos!"
+        >
+          <span style={{ fontSize: "1.2rem" }}>{user.gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+        </AvatarFrame>
+        <span className="recrute-hud__name" style={{ fontWeight: "bold", fontSize: "1rem", color: "#e6f7ff" }}>
+          {user.username}
+        </span>
       </div>
 
       {/* Stats */}
@@ -49,7 +65,7 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
         </button>
         <button
           className="recrute-hud__btn recrute-hud__btn--avatar"
-          onClick={() => { soundFx.playClick(); if (onOpenInventory) onOpenInventory(); else navigate("/avatar"); }}
+          onClick={handleAvatarClick}
         >
           🎨 Avatar
         </button>
@@ -70,6 +86,8 @@ RecluteHUD.propTypes = {
     xp: PropTypes.number,
     coins: PropTypes.number,
     streak_count: PropTypes.number,
+    gender: PropTypes.string,
+    equipped_frame: PropTypes.string,
   }),
   onOpenStore: PropTypes.func.isRequired,
   onOpenRank: PropTypes.func.isRequired,

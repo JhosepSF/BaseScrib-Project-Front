@@ -359,6 +359,7 @@ export function PanelPrincipal() {
           setAuthPassword={setAuthPassword}
           handleLogin={handleLogin}
           loading={loading}
+          error={error}
           setStep={setStep}
         />
       )}
@@ -378,6 +379,7 @@ export function PanelPrincipal() {
           setStudentSection={setStudentSection}
           handleRegister={handleRegister}
           loading={loading}
+          error={error}
           setStep={setStep}
         />
       )}

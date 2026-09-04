@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import VisualNovelDialogue from "./VisualNovelDialogue";
-import GuidedTourSpotlight from "./GuidedTourSpotlight";
+import HolographicRoomSimulator from "./HolographicRoomSimulator";
 import {
   INTRO_CUTSCENE_SLIDES,
-  HUD_SPOTLIGHT_STEPS,
   MISSION_1_TUTORIAL_SLIDES,
 } from "../data/onboardingStory";
 import { soundFx } from "../../utils/soundEffects";
@@ -12,14 +11,13 @@ import { soundFx } from "../../utils/soundEffects";
  * OnboardingModal Component
  * Orchestrates the full Onboarding flow:
  * 1. Intro Cutscene (Visual Novel Style)
- * 2. Interactive Spotlight Tour of HUD
+ * 2. Holographic Interactive Room Simulator
  * 3. Mission 1 Walkthrough Briefing
  * 4. Completion Reward Claim
  */
 export default function OnboardingModal({ isOpen, onClose, onComplete }) {
   const [mode, setMode] = useState("CUTSCENE"); // 'CUTSCENE' | 'SPOTLIGHT_TOUR' | 'MISSION_1' | 'REWARD'
   const [cutsceneIndex, setCutsceneIndex] = useState(0);
-  const [spotlightIndex, setSpotlightIndex] = useState(0);
   const [missionIndex, setMissionIndex] = useState(0);
 
   if (!isOpen) return null;
@@ -63,10 +61,7 @@ export default function OnboardingModal({ isOpen, onClose, onComplete }) {
       )}
 
       {mode === "SPOTLIGHT_TOUR" && (
-        <GuidedTourSpotlight
-          steps={HUD_SPOTLIGHT_STEPS}
-          currentStepIndex={spotlightIndex}
-          onNextStep={(idx) => setSpotlightIndex(idx)}
+        <HolographicRoomSimulator
           onSkipTour={() => setMode("MISSION_1")}
           onFinishTour={handleSpotlightFinish}
         />

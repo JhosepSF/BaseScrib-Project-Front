@@ -47,7 +47,7 @@ export function WritingGame({ activity, userId, onComplete, onClose }) {
       
       // Award 15 XP immediately on submission
       setTimeout(() => {
-        onComplete(15, 0); // 15 XP, 0 Coins (pending review)
+        onComplete(20, 20); // 20 XP, 20 Coins
       }, 2000);
 
     } catch (err) {
