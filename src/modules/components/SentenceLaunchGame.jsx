@@ -151,6 +151,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const [mistakes, setMistakes] = useState(0);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
 
   const containerRef = useRef(null);
 
@@ -191,17 +192,14 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setPortCoords(newCoords);
   };
 
-  // Build English <-> Spanish vocabulary wire pairs for current round
+  // Build English <-> Spanish vocabulary wire pairs for current round (100% randomized per student/attempt)
   useEffect(() => {
     const dayNum = activity?.dayNumber || activity?.day || 1;
     const dayVocab = VOCAB_BY_DAY[dayNum] || VOCAB_BY_DAY[1];
 
-    // Pick 4 pairs per round
-    const startIdx = (currentQIndex * 4) % dayVocab.length;
-    let roundPairs = dayVocab.slice(startIdx, startIdx + 4);
-    if (roundPairs.length < 4) {
-      roundPairs = [...roundPairs, ...dayVocab.slice(0, 4 - roundPairs.length)];
-    }
+    // Pick 4 random pairs from day's pool for this round
+    const shuffledDayVocab = shuffle(dayVocab);
+    const roundPairs = shuffledDayVocab.slice(0, 4);
 
     const { leftNodes: lNodes, rightNodes: rNodes } = createGameNodes(roundPairs);
 
@@ -211,6 +209,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setSelectedLeft(null);
     setIsError(false);
     setIsSuccess(false);
+    setShowSolution(false);
   }, [currentQIndex, activity]);
 
   // Update port coordinates on render / window resize
@@ -226,7 +225,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   }, [leftNodes, rightNodes]);
 
   const handleLeftClick = (idx) => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     if (selectedLeft === idx) {
       setSelectedLeft(null);
     } else {
@@ -235,7 +234,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   const handleRightClick = (rightIdx) => {
-    if (isSuccess || selectedLeft === null) return;
+    if (isSuccess || showSolution || selectedLeft === null) return;
 
     setConnections(prev => {
       const next = { ...prev };
@@ -252,6 +251,8 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   const handleVerify = () => {
+    if (showSolution || isSuccess) return;
+
     if (Object.keys(connections).length !== leftNodes.length) {
       soundFx.playError();
       setIsError(true);
@@ -285,13 +286,33 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
         }
       }, 1500);
     } else {
-      setMistakes((prev) => prev + 1);
+      // 1-Attempt Incorrect: Record mistake, show solution feedback, and auto-advance
+      const newMistakes = mistakes + 1;
+      setMistakes(newMistakes);
       soundFx.playError();
       setIsError(true);
+      setShowSolution(true);
+
+      // Build correct connections map to show solution feedback
+      const solutionMap = {};
+      leftNodes.forEach((lNode, lIdx) => {
+        const rIdx = rightNodes.findIndex(rNode => rNode.matchIndex === lNode.matchIndex);
+        if (rIdx !== -1) {
+          solutionMap[lIdx] = rIdx;
+        }
+      });
+
+      // Override current connections with the correct solution feedback
+      setConnections(solutionMap);
+
       setTimeout(() => {
-        setIsError(false);
-        setConnections({});
-      }, 1500);
+        if (currentQIndex < questions.length - 1) {
+          setCurrentQIndex(currentQIndex + 1);
+        } else {
+          soundFx.playCoin();
+          onComplete(15, 15, newMistakes);
+        }
+      }, 2500);
     }
   };
 
@@ -342,7 +363,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
               if (!start || !end) return null;
 
-              const color = colors[leftNodes[leftIdx].matchIndex % colors.length];
+              const wireColor = showSolution ? "#2ec4b6" : colors[leftNodes[leftIdx].matchIndex % colors.length];
 
               return (
                 <g key={`wire-${leftIdx}`}>
@@ -359,7 +380,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                   <path
                     d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
                     fill="none"
-                    stroke={color}
+                    stroke={wireColor}
                     strokeWidth="10"
                     strokeLinecap="round"
                     opacity="0.45"
@@ -369,7 +390,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                   <path
                     d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
                     fill="none"
-                    stroke={color}
+                    stroke={wireColor}
                     strokeWidth="6"
                     strokeLinecap="round"
                   />
@@ -394,7 +415,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                     style={{ filter: "drop-shadow(0 0 3px #fff)" }}
                   />
                   {/* Glowing sparks left */}
-                  <circle cx={start.x} cy={start.y} r="8" fill="#ffd166">
+                  <circle cx={start.x} cy={start.y} r="8" fill={showSolution ? "#2ec4b6" : "#ffd166"}>
                     <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
                     <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
                   </circle>
@@ -429,7 +450,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             {leftNodes.map((node, idx) => {
               const isSelected = selectedLeft === idx;
               const isConnected = connections[idx] !== undefined;
-              const wireColor = colors[node.matchIndex % colors.length];
+              const wireColor = showSolution ? "#2ec4b6" : colors[node.matchIndex % colors.length];
 
               return (
                 <div className="wire-node" key={`left-node-${idx}`}>
@@ -456,7 +477,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             {rightNodes.map((node, idx) => {
               const connectedLeftKey = Object.keys(connections).find(key => connections[key] === idx);
               const isConnected = connectedLeftKey !== undefined;
-              const wireColor = isConnected ? colors[leftNodes[Number(connectedLeftKey)].matchIndex % colors.length] : "#141f32";
+              const wireColor = showSolution ? "#2ec4b6" : (isConnected ? colors[leftNodes[Number(connectedLeftKey)].matchIndex % colors.length] : "#141f32");
 
               return (
                 <div className="wire-node" key={`right-node-${idx}`} style={{ flexDirection: "row-reverse" }}>
@@ -485,7 +506,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             className="btn-cancel" 
             style={{ flex: 1, margin: 0 }} 
             onClick={() => setConnections({})}
-            disabled={Object.keys(connections).length === 0 || isSuccess}
+            disabled={Object.keys(connections).length === 0 || isSuccess || showSolution}
           >
             🔄 Limpiar Cables
           </button>
@@ -493,21 +514,21 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             className="btn-create" 
             style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0 }} 
             onClick={handleVerify}
-            disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
+            disabled={Object.keys(connections).length !== leftNodes.length || isSuccess || showSolution}
           >
             ⚡ Conectar Energía
           </button>
         </div>
 
-        {isError && (
+        {isError && showSolution && (
           <div style={{ marginTop: 15, color: "#ff6b6b", fontWeight: "bold", textAlign: "center" }} className="animate-shake">
-            💥 ¡CORTOCIRCUITO! Una o más palabras no corresponden a su traducción. Inténtalo de nuevo.
+            💥 ¡CONEXIÓN INCORRECTA! (-0.75 pts). Observa las respuestas correctas resaltadas en verde. Avanzando...
           </div>
         )}
 
         {isSuccess && (
           <div style={{ marginTop: 15, color: "#2ec4b6", fontWeight: "bold", textAlign: "center" }}>
-            ✨ ¡SISTEMA RESTABLECIDO! Energía eléctrica normalizada.
+            ✨ ¡SISTEMA RESTABLECIDO! Todas las palabras están correctamente conectadas.
           </div>
         )}
       </div>
