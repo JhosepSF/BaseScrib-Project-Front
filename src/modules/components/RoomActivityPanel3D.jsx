@@ -1190,7 +1190,7 @@ export function RoomActivityPanel3D({
               🛰️ MISIÓN DÍA {selectedDay}
             </div>
 
-            <div style={{ display: "flex", gap: "8px", width: "100%", height: "65px" }}>
+            <div style={{ display: "flex", gap: "8px", width: "100%", height: "78px", marginTop: "4px" }}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -1221,7 +1221,7 @@ export function RoomActivityPanel3D({
                 }}
                 title="Iniciar los 5 minijuegos del Día"
               >
-                <span style={{ fontSize: "18px" }}>🚀</span>
+                <span style={{ fontSize: "20px" }}>🚀</span>
                 <span>INICIAR JUEGOS</span>
               </button>
 
@@ -1251,10 +1251,6 @@ export function RoomActivityPanel3D({
                 <span style={{ fontSize: "18px" }}>ℹ️</span>
                 <span>INFO</span>
               </button>
-            </div>
-
-            <div style={{ fontSize: "11px", color: "rgba(184, 255, 249, 0.8)", fontWeight: "600" }}>
-              ⚡ 5 ETAPAS CONTINUAS
             </div>
           </div>
         </foreignObject>
