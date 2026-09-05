@@ -344,7 +344,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
           id="wire-canvas-container" 
           ref={containerRef} 
           className="wire-minigame-deck"
-          style={{ minHeight: "260px", marginTop: "15px" }}
+          style={{ maxWidth: "480px", margin: "15px auto", padding: "20px 18px", minHeight: "260px" }}
         >
           {/* SVG Canvas to render cables */}
           <svg className="wire-svg-canvas">
