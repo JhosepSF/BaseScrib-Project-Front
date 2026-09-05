@@ -86,10 +86,13 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
       {/* Top Banner Progress Bar */}
       <div className="daily-runner-hud">
         <div className="runner-hud-left">
-          <span className="runner-day-badge">🚀 MISIÓN DÍA {dayNumber}</span>
-          <span className="runner-stage-indicator">
-            Etapa {stageIndex + 1} de 5: <strong>{currentStage.title}</strong>
-          </span>
+          <div className="runner-hud-meta">
+            <span className="runner-day-badge">🚀 DÍA {dayNumber}</span>
+            <span className="runner-step-counter">ETAPA {stageIndex + 1} / 5</span>
+          </div>
+          <h3 className="runner-stage-name">
+            {currentStage.icon} {currentStage.title.split(":")[1]?.trim() || currentStage.title}
+          </h3>
         </div>
 
         {/* 5-Step Visual Stepper */}
@@ -102,7 +105,7 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
             return (
               <div key={stg.id} className={`stepper-pill ${statusClass}`}>
                 <span className="pill-icon">{stg.icon}</span>
-                <span className="pill-name">{stg.title.split(":")[0]}</span>
+                <span className="pill-name">Etapa {stg.id}</span>
               </div>
             );
           })}
