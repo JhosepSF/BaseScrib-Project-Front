@@ -8,6 +8,7 @@ export function ShipRepairGame({ activity, onComplete, onClose }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [mistakes, setMistakes] = useState(0);
 
   const questions = activity.questions || [];
 
@@ -36,10 +37,11 @@ export function ShipRepairGame({ activity, onComplete, onClose }) {
         if (currentQIndex < questions.length - 1) {
           setCurrentQIndex(currentQIndex + 1);
         } else {
-          onComplete(15, 15); // 15 XP, 15 Coins
+          onComplete(15, 15, mistakes); // 15 XP, 15 Coins, mistakes
         }
       }, 1500);
     } else {
+      setMistakes((prev) => prev + 1);
       setIsError(true);
       setTimeout(() => {
         setIsError(false);

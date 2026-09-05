@@ -8,6 +8,7 @@ export function ComicGame({ activity, onComplete, onClose }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [isError, setIsError] = useState(false);
+  const [mistakes, setMistakes] = useState(0);
   const [showStatusText, setShowStatusText] = useState("SISTEMA OK");
 
   const questions = activity.questions || [];
@@ -451,10 +452,11 @@ export function ComicGame({ activity, onComplete, onClose }) {
           setSelectedOptionId(null);
           setShowStatusText("SISTEMA OK");
         } else {
-          onComplete(10, 10); // 10 XP, 10 Coins
+          onComplete(10, 10, mistakes); // 10 XP, 10 Coins, mistakes
         }
       }, 1200);
     } else {
+      setMistakes((prev) => prev + 1);
       setIsError(true);
       setShowStatusText("FALLO DE AUTENTICACIÓN");
       setTimeout(() => {

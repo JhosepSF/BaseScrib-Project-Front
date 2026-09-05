@@ -21,6 +21,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
   const [selectedLeft, setSelectedLeft] = useState(null); // left index
   
   const [portCoords, setPortCoords] = useState({}); // { portId: {x, y} }
+  const [mistakes, setMistakes] = useState(0);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -197,10 +198,11 @@ export function SentenceLaunchGame({ activity, onComplete, onClose }) {
         } else {
           soundFx.playCoin();
           soundFx.playStreakBonus();
-          onComplete(15, 15); // 15 XP, 15 Coins
+          onComplete(15, 15, mistakes); // 15 XP, 15 Coins, mistakes
         }
       }, 1500);
     } else {
+      setMistakes((prev) => prev + 1);
       soundFx.playError();
       setIsError(true);
       setTimeout(() => {

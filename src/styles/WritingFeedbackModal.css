@@ -1,0 +1,165 @@
+/* WritingFeedbackModal.css — Estilos para el Modal de Feedback del Alumno */
+
+.feedback-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(2, 6, 20, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.feedback-modal-card {
+  background: linear-gradient(135deg, rgba(10, 25, 50, 0.98) 0%, rgba(5, 12, 28, 0.99) 100%);
+  border: 2px solid #ffd166;
+  border-radius: 28px;
+  padding: 32px 40px;
+  max-width: 520px;
+  width: 100%;
+  color: #e6f7ff;
+  box-shadow: 0 0 50px rgba(255, 209, 102, 0.4), inset 0 0 20px rgba(255, 209, 102, 0.15);
+  position: relative;
+  animation: feedbackPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes feedbackPopIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.feedback-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1.5px solid #ef4444;
+  color: #ef4444;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feedback-close-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.feedback-modal-header {
+  text-align: center;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.feedback-badge-tag {
+  background: rgba(255, 209, 102, 0.2);
+  color: #ffd166;
+  border: 1px solid #ffd166;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.feedback-modal-header h2 {
+  margin: 10px 0 4px 0;
+  color: #ffffff;
+  font-size: 1.4rem;
+}
+
+.feedback-modal-header small {
+  color: #9be6df;
+  font-size: 0.78rem;
+}
+
+/* HERO SCORE BADGE */
+.feedback-score-hero {
+  background: rgba(255, 209, 102, 0.08);
+  border: 1.5px dashed #ffd166;
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.feedback-score-hero span {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffd166;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.hero-score-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.score-star {
+  font-size: 2.2rem;
+}
+
+.score-num {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #ffd166;
+}
+
+.score-max {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #e6f7ff;
+}
+
+/* COMMENTS SECTION */
+.feedback-comments-section h4 {
+  margin: 0 0 8px 0;
+  color: #2ec4b6;
+  font-size: 0.95rem;
+}
+
+.feedback-text-content {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #e6f7ff;
+  margin-bottom: 24px;
+  white-space: pre-wrap;
+}
+
+.btn-understand-feedback {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
+  border: none;
+  border-radius: 16px;
+  color: #0d1b2a;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btn-understand-feedback:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 209, 102, 0.8);
+}

@@ -21,6 +21,7 @@ import MissionConsole from "./MissionConsole";
 import HoloMonitor from "./HoloMonitor";
 import PortalGateway from "./PortalGateway";
 import { RoomActivityPanel3D } from "./RoomActivityPanel3D";
+import { DailyGameRunner } from "./DailyGameRunner";
 import naveDentro2D from "../../assets/amongus/Nave_dentro_16_9_2D.jpg";
 import "../../styles/SpaceStation.css";
 
@@ -274,6 +275,36 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   const [unlockedMissionIds, setUnlockedMissionIds] = useState([]);
   const [sparkyPhrase, setSparkyPhrase] = useState("¡Buen trabajo, recluta! Continúa con la misión.");
   const [viewMode, setViewMode] = useState("classic"); // "classic" or "3d"
+  const [activeRunnerDay, setActiveRunnerDay] = useState(null);
+
+  const getDayLockStatus = (dayNum) => {
+    if (dayNum === 1) return { isUnlocked: true };
+
+    const prevDayCompletedAt = localStorage.getItem(`basescrib_day_${dayNum - 1}_completed_at`);
+    if (!prevDayCompletedAt) {
+      return { isUnlocked: false, reason: `Debes completar la misión del Día ${dayNum - 1} primero.` };
+    }
+
+    const completedTime = new Date(prevDayCompletedAt).getTime();
+    const now = Date.now();
+    const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
+    const timeDiff = now - completedTime;
+
+    if (timeDiff < cooldownMs) {
+      const remainingMs = cooldownMs - timeDiff;
+      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+      return {
+        isUnlocked: false,
+        reason: `🔒 Cooldown Diario: Disponible en ${hours}h ${mins}m`,
+        remainingHours: hours,
+        remainingMins: mins
+      };
+    }
+
+    return { isUnlocked: true };
+  };
+
   const navigate = useNavigate();
   const token = localStorage.getItem("basescrib_token") || "";
 
@@ -710,10 +741,57 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
               ))}
             </div>
 
+            {(() => {
+              const lockStatus = getDayLockStatus(selectedDay);
+              return lockStatus.isUnlocked ? (
+                <button
+                  onClick={() => {
+                    soundFx.playWarp();
+                    setActiveRunnerDay(selectedDay);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "16px",
+                    background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                    border: "none",
+                    borderRadius: "16px",
+                    color: "#0d1b2a",
+                    fontWeight: "900",
+                    fontSize: "1.1rem",
+                    cursor: "pointer",
+                    boxShadow: "0 0 20px rgba(255, 209, 102, 0.6)",
+                    marginBottom: "8px",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  🚀 ¡INICIAR MISIÓN DEL DÍA {selectedDay}! ➔
+                </button>
+              ) : (
+                <div style={{
+                  padding: "14px 18px",
+                  background: "rgba(239, 68, 68, 0.15)",
+                  border: "1.5px solid #ef4444",
+                  borderRadius: "16px",
+                  color: "#fca5a5",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  textAlign: "center",
+                  marginBottom: "8px"
+                }}>
+                  🔒 DÍA BLOQUEADO: {lockStatus.reason}
+                </div>
+              );
+            })()}
+
             <MissionConsole
               dayActivities={dayActivities}
               completedList={completedList}
               onStartGame={(act) => {
+                const lockStatus = getDayLockStatus(selectedDay);
+                if (!lockStatus.isUnlocked) {
+                  alert(`🔒 Este día está bloqueado. ${lockStatus.reason}`);
+                  return;
+                }
                 setActiveGame({ type: act.id, activity: act });
                 setGameStartTime(Date.now());
               }}
@@ -845,6 +923,21 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
           token={token}
           onClose={() => setUnlockingMission(null)}
           onUnlocked={(mId) => setUnlockedMissionIds([...unlockedMissionIds, mId])}
+        />
+      )}
+
+      {/* SEQUENCED DAILY GAME RUNNER OVERLAY */}
+      {activeRunnerDay && (
+        <DailyGameRunner
+          dayNumber={activeRunnerDay}
+          activities={dayActivities}
+          userId={user?.id}
+          onFinishAll={(runnerData) => {
+            localStorage.setItem(`basescrib_day_${runnerData.dayNumber}_completed_at`, new Date().toISOString());
+            setActiveRunnerDay(null);
+            handleGameComplete(1, runnerData.totalXP, runnerData.totalCoins);
+          }}
+          onClose={() => setActiveRunnerDay(null)}
         />
       )}
     </div>

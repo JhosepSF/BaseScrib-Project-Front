@@ -6,6 +6,7 @@ import RecluteHUD from "./RecluteHUD";
 import { RoomCalibratorTool } from "./RoomCalibratorTool";
 import PortalGateway from "./PortalGateway";
 import OnboardingModal from "../onboarding/components/OnboardingModal";
+import { DailyGameRunner } from "./DailyGameRunner";
 import naveDentroImage from "../../assets/amongus/Nave_dentro_16_9.jpg";
 import sparkyOpenOpen from "../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA ABIERTA.png";
 import sparkyOpenClosed from "../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA CERRADA.png";
@@ -303,6 +304,35 @@ export function RoomActivityPanel3D({
   const [activeModal, setActiveModal] = useState(null); // 'bitacora' | 'misiones' | 'vocabulario' | 'racha' | 'monedas'
   const [dayPage, setDayPage] = useState(0); // 0 = D1-D4, 1 = D5-D8, 2 = D9-D10
   const [isPortalHovered, setIsPortalHovered] = useState(false);
+  const [activeRunnerDay, setActiveRunnerDay] = useState(null);
+
+  const getDayLockStatus = (dayNum) => {
+    if (dayNum === 1) return { isUnlocked: true };
+
+    const prevDayCompletedAt = localStorage.getItem(`basescrib_day_${dayNum - 1}_completed_at`);
+    if (!prevDayCompletedAt) {
+      return { isUnlocked: false, reason: `Debes completar la misión del Día ${dayNum - 1} primero.` };
+    }
+
+    const completedTime = new Date(prevDayCompletedAt).getTime();
+    const now = Date.now();
+    const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
+    const timeDiff = now - completedTime;
+
+    if (timeDiff < cooldownMs) {
+      const remainingMs = cooldownMs - timeDiff;
+      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+      return {
+        isUnlocked: false,
+        reason: `🔒 Cooldown Diario: Disponible en ${hours}h ${mins}m`,
+        remainingHours: hours,
+        remainingMins: mins
+      };
+    }
+
+    return { isUnlocked: true };
+  };
 
   // COFRE ANIMATION STATES
   const cofreFrames = [
@@ -607,60 +637,57 @@ export function RoomActivityPanel3D({
             )}
 
             {/* MISIONES MODAL CONTENT */}
-            {activeModal === "misiones" && (
-              <div>
-                <h2 style={{ margin: "0 0 16px 0", color: "#2ec4b6", fontSize: "24px", display: "flex", alignItems: "center", gap: 10, borderBottom: "2px solid rgba(46, 196, 182, 0.4)", paddingBottom: "10px" }}>
-                  🚀 ACTIVIDADES Y DESAFÍOS DÍA {selectedDay}
-                </h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px", margin: "20px 0" }}>
-                  {dayActivities.map((act) => {
-                    const isCompleted = !!completedList[act.id];
-                    const meta = getActivityMetadata(act.id);
-                    return (
-                      <div
-                        key={act.id}
-                        onClick={() => { setActiveModal(null); onStartGame(act); }}
+            {activeModal === "misiones" && (() => {
+              const lockStatus = getDayLockStatus(selectedDay);
+              return (
+                <div style={{ textAlign: "center", padding: "10px 0" }}>
+                  <h2 style={{ margin: "0 0 16px 0", color: "#2ec4b6", fontSize: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderBottom: "2px solid rgba(46, 196, 182, 0.4)", paddingBottom: "10px" }}>
+                    🚀 MISIÓN DEL DÍA {selectedDay}
+                  </h2>
+                  <p style={{ fontSize: "16px", color: "#e6f7ff", lineHeight: "1.6", margin: "14px 0" }}>
+                    Completarás las 5 etapas continuas del día: <strong>Gramática ➔ Vocabulario ➔ Lectura ➔ Escucha ➔ Writing</strong>.
+                  </p>
+
+                  {lockStatus.isUnlocked ? (
+                    <div style={{ background: "rgba(46, 196, 182, 0.12)", border: "1.5px dashed #2ec4b6", borderRadius: "18px", padding: "24px", margin: "20px 0" }}>
+                      <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🎯</span>
+                      <h3 style={{ color: "#ffd166", margin: "0 0 8px 0" }}>¡MISIÓN DEL DÍA DISPONIBLE!</h3>
+                      <p style={{ fontSize: "14px", color: "#b8fff9", margin: "0 0 20px 0" }}>
+                        Nota de Juegos Automáticos: Se califica de 0 a 20 con resta de puntos por equivocación. El Writing irá a la bandeja del profesor.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setActiveModal(null);
+                          setActiveRunnerDay(selectedDay);
+                        }}
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          background: isCompleted ? "rgba(46, 196, 182, 0.2)" : "rgba(255, 255, 255, 0.08)",
-                          border: isCompleted ? "1.5px solid #2ec4b6" : "1.5px solid rgba(255, 255, 255, 0.2)",
-                          borderRadius: "14px",
-                          padding: "12px 18px",
+                          width: "100%",
+                          padding: "16px 28px",
+                          background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                          border: "none",
+                          borderRadius: "16px",
+                          color: "#0d1b2a",
+                          fontWeight: "900",
+                          fontSize: "1.15rem",
                           cursor: "pointer",
-                          transition: "all 0.2s ease"
+                          boxShadow: "0 0 25px rgba(255, 209, 102, 0.6)"
                         }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                          <span style={{ fontSize: "28px" }}>{meta.icon}</span>
-                          <div>
-                            <h4 style={{ margin: 0, color: "#e6f7ff", fontSize: "17px" }}>{act.title}</h4>
-                            <span style={{ fontSize: "13px", color: isCompleted ? "#2ec4b6" : "#ffd166" }}>
-                              {isCompleted ? "✓ Completado (+XP +Monedas)" : "Pendiente por Iniciar"}
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          style={{
-                            background: isCompleted ? "#2ec4b6" : "linear-gradient(135deg, #ffd166, #ff9f1c)",
-                            border: "none",
-                            color: "black",
-                            fontWeight: "bold",
-                            borderRadius: "10px",
-                            padding: "8px 16px",
-                            fontSize: "14px",
-                            cursor: "pointer"
-                          }}
-                        >
-                          {isCompleted ? "Repasar" : "¡Iniciar!"}
-                        </button>
-                      </div>
-                    );
-                  })}
+                        🚀 ¡INICIAR MISIÓN DEL DÍA {selectedDay}! ➔
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ background: "rgba(239, 68, 68, 0.12)", border: "1.5px solid #ef4444", borderRadius: "18px", padding: "24px", margin: "20px 0" }}>
+                      <span style={{ fontSize: "2.8rem", display: "block", marginBottom: "10px" }}>🔒</span>
+                      <h3 style={{ color: "#ef4444", margin: "0 0 8px 0" }}>DÍA BLOQUEADO POR COOLDOWN</h3>
+                      <p style={{ fontSize: "15px", color: "#fca5a5", fontWeight: "bold", margin: 0 }}>
+                        {lockStatus.reason}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* VOCABULARIO MODAL CONTENT */}
             {activeModal === "vocabulario" && (
@@ -1203,6 +1230,23 @@ export function RoomActivityPanel3D({
         <RoomCalibratorTool active={showCalibrator} zones={ROOM_ZONES} />
 
       </svg>
+
+      {/* SEQUENCED DAILY GAME RUNNER OVERLAY */}
+      {activeRunnerDay && (
+        <DailyGameRunner
+          dayNumber={activeRunnerDay}
+          activities={dayActivities}
+          userId={user?.id}
+          onFinishAll={(runnerData) => {
+            localStorage.setItem(`basescrib_day_${runnerData.dayNumber}_completed_at`, new Date().toISOString());
+            setActiveRunnerDay(null);
+            if (onActivityComplete) {
+              onActivityComplete(runnerData.totalXP, runnerData.totalCoins);
+            }
+          }}
+          onClose={() => setActiveRunnerDay(null)}
+        />
+      )}
     </div>
   );
 }
