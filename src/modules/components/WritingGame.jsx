@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
 import "../../styles/Panel.css";
 
-export function WritingGame({ activity, userId, onComplete, onClose }) {
+export function WritingGame({ activity, userId, onComplete, onClose, hideHeader = false }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,23 +58,23 @@ export function WritingGame({ activity, userId, onComplete, onClose }) {
   };
 
   return (
-    <div className="glass-console auth-card panel-large retro-terminal animate-fadeIn" style={{ maxWidth: 750, padding: 30, position: "relative" }}>
+    <div className="glass-console auth-card panel-large retro-terminal animate-fadeIn" style={{ maxWidth: 750, width: "100%", padding: 30, position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
-      <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid #153a1a", paddingBottom: 15 }}>
-        <div style={{ textAlign: "left" }}>
-          <span className="dashboard-kicker retro-text" style={{ textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
-            Misión 5: Terminal de Comunicaciones Comms
-          </span>
-          <h2 className="retro-text" style={{ margin: "5px 0 0 0", fontSize: "1.6rem" }}>{activity.title}</h2>
-        </div>
-        {onClose && (
+      {!hideHeader && (
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid #153a1a", paddingBottom: 15 }}>
+          <div style={{ textAlign: "left" }}>
+            <span className="dashboard-kicker retro-text" style={{ textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+              Misión 5: Terminal de Comunicaciones Comms
+            </span>
+            <h2 className="retro-text" style={{ margin: "5px 0 0 0", fontSize: "1.6rem" }}>{activity.title}</h2>
+          </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "#153a1a", border: "1px solid #39ff14", color: "#39ff14" }}>
             Cerrar X
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {error && <div className="error-message" style={{ background: "rgba(255, 107, 107, 0.1)", border: "1px solid #ff6b6b", color: "#ff6b6b" }}>{error}</div>}
 

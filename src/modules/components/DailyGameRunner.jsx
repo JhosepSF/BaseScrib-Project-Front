@@ -119,7 +119,9 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
           <StageComponent
             activity={currentActivity}
             userId={userId}
+            hideHeader={true}
             onComplete={handleStageComplete}
+            onClose={onClose}
           />
         ) : (
           /* Transition Overlay between Stages */

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
 
-export function WordRecoveryGame({ activity, onComplete, onClose }) {
+export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [filledWords, setFilledWords] = useState([]); // e.g. ["is", "is"]
@@ -111,23 +111,23 @@ export function WordRecoveryGame({ activity, onComplete, onClose }) {
   };
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 750, padding: 30, position: "relative" }}>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 750, width: "100%", padding: 30, position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
-      <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
-        <div style={{ textAlign: "left" }}>
-          <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
-            Misión 3: Cargar Reactor Principal (Vocabulario)
-          </span>
-          <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
-        </div>
-        {onClose && (
+      {!hideHeader && (
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
+          <div style={{ textAlign: "left" }}>
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+              Misión 3: Cargar Reactor Principal (Vocabulario)
+            </span>
+            <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
+          </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
             Cerrar X
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {currentQuestion ? (
         <div>
