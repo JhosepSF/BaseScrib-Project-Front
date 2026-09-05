@@ -151,7 +151,10 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const [mistakes, setMistakes] = useState(0);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Solution feedback evaluation state
   const [showSolution, setShowSolution] = useState(false);
+  const [evalResults, setEvalResults] = useState({}); // { leftIdx: { userRightIdx, isCorrect, correctRightIdx } }
 
   const containerRef = useRef(null);
 
@@ -210,6 +213,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setIsError(false);
     setIsSuccess(false);
     setShowSolution(false);
+    setEvalResults({});
   }, [currentQIndex, activity]);
 
   // Update port coordinates on render / window resize
@@ -260,16 +264,22 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
       return;
     }
 
+    // Detailed evaluation of each connection
+    const results = {};
     let allCorrect = true;
-    Object.keys(connections).forEach(leftIdxStr => {
-      const leftIdx = Number(leftIdxStr);
-      const rightIdx = connections[leftIdx];
-      const leftNode = leftNodes[leftIdx];
-      const rightNode = rightNodes[rightIdx];
 
-      if (leftNode.matchIndex !== rightNode.matchIndex) {
-        allCorrect = false;
-      }
+    leftNodes.forEach((lNode, lIdx) => {
+      const userRightIdx = connections[lIdx];
+      const correctRightIdx = rightNodes.findIndex(rNode => rNode.matchIndex === lNode.matchIndex);
+      const isCorrect = (userRightIdx !== undefined) && (rightNodes[userRightIdx]?.matchIndex === lNode.matchIndex);
+
+      if (!isCorrect) allCorrect = false;
+
+      results[lIdx] = {
+        userRightIdx,
+        correctRightIdx,
+        isCorrect
+      };
     });
 
     if (allCorrect) {
@@ -277,42 +287,26 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
       soundFx.playSuccess();
       setIsSuccess(true);
       setTimeout(() => {
-        if (currentQIndex < questions.length - 1) {
-          setCurrentQIndex(currentQIndex + 1);
-        } else {
-          soundFx.playCoin();
-          soundFx.playStreakBonus();
-          onComplete(15, 15, mistakes);
-        }
+        handleNextRound();
       }, 1500);
     } else {
-      // 1-Attempt Incorrect: Record mistake, show solution feedback, and auto-advance
+      // 1-Attempt Incorrect: Record mistake, show red (wrong) vs green (correct) wire feedback
       const newMistakes = mistakes + 1;
       setMistakes(newMistakes);
       soundFx.playError();
       setIsError(true);
       setShowSolution(true);
+      setEvalResults(results);
+    }
+  };
 
-      // Build correct connections map to show solution feedback
-      const solutionMap = {};
-      leftNodes.forEach((lNode, lIdx) => {
-        const rIdx = rightNodes.findIndex(rNode => rNode.matchIndex === lNode.matchIndex);
-        if (rIdx !== -1) {
-          solutionMap[lIdx] = rIdx;
-        }
-      });
-
-      // Override current connections with the correct solution feedback
-      setConnections(solutionMap);
-
-      setTimeout(() => {
-        if (currentQIndex < questions.length - 1) {
-          setCurrentQIndex(currentQIndex + 1);
-        } else {
-          soundFx.playCoin();
-          onComplete(15, 15, newMistakes);
-        }
-      }, 2500);
+  const handleNextRound = () => {
+    if (currentQIndex < questions.length - 1) {
+      setCurrentQIndex(prev => prev + 1);
+    } else {
+      soundFx.playCoin();
+      soundFx.playStreakBonus();
+      onComplete(15, 15, mistakes);
     }
   };
 
@@ -354,79 +348,126 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
         >
           {/* SVG Canvas to render cables */}
           <svg className="wire-svg-canvas">
-            {/* Render Established Connections */}
-            {Object.keys(connections).map((leftIdxStr) => {
-              const leftIdx = Number(leftIdxStr);
-              const rightIdx = connections[leftIdx];
-              const start = portCoords[`left-${leftIdx}`];
-              const end = portCoords[`right-${rightIdx}`];
+            {!showSolution ? (
+              /* Normal Gameplay Connections */
+              Object.keys(connections).map((leftIdxStr) => {
+                const leftIdx = Number(leftIdxStr);
+                const rightIdx = connections[leftIdx];
+                const start = portCoords[`left-${leftIdx}`];
+                const end = portCoords[`right-${rightIdx}`];
 
-              if (!start || !end) return null;
+                if (!start || !end) return null;
 
-              const wireColor = showSolution ? "#2ec4b6" : colors[leftNodes[leftIdx].matchIndex % colors.length];
+                const wireColor = colors[leftNodes[leftIdx].matchIndex % colors.length];
 
-              return (
-                <g key={`wire-${leftIdx}`}>
-                  {/* Cable Drop Shadow */}
-                  <path
-                    d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
-                    fill="none"
-                    stroke="#000"
-                    strokeWidth="12"
-                    strokeLinecap="round"
-                    opacity="0.5"
-                  />
-                  {/* Cable Glow Filter */}
-                  <path
-                    d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
-                    fill="none"
-                    stroke={wireColor}
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    opacity="0.45"
-                    style={{ filter: `blur(4px)` }}
-                  />
-                  {/* Primary insulated cable */}
-                  <path
-                    d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
-                    fill="none"
-                    stroke={wireColor}
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                  />
-                  {/* Cable Specular highlight */}
-                  <path
-                    d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
-                    fill="none"
-                    stroke="rgba(255, 255, 255, 0.35)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeDasharray="8,12"
-                  />
-                  {/* Glowing Electric Flow */}
-                  <path
-                    d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
-                    fill="none"
-                    stroke="#ffffff"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeDasharray="6,15"
-                    className="electric-flow-line"
-                    style={{ filter: "drop-shadow(0 0 3px #fff)" }}
-                  />
-                  {/* Glowing sparks left */}
-                  <circle cx={start.x} cy={start.y} r="8" fill={showSolution ? "#2ec4b6" : "#ffd166"}>
-                    <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
-                  </circle>
-                  {/* Glowing sparks right */}
-                  <circle cx={end.x} cy={end.y} r="8" fill="#2ec4b6">
-                    <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
-                  </circle>
-                </g>
-              );
-            })}
+                return (
+                  <g key={`wire-${leftIdx}`}>
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="#000"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      opacity="0.5"
+                    />
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke={wireColor}
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                      opacity="0.45"
+                      style={{ filter: `blur(4px)` }}
+                    />
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke={wireColor}
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.35)"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeDasharray="8,12"
+                    />
+                    <path
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      fill="none"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeDasharray="6,15"
+                      className="electric-flow-line"
+                      style={{ filter: "drop-shadow(0 0 3px #fff)" }}
+                    />
+                    <circle cx={start.x} cy={start.y} r="8" fill="#ffd166">
+                      <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx={end.x} cy={end.y} r="8" fill="#2ec4b6">
+                      <animate attributeName="r" values="4;9;4" dur="0.9s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.9;0.2;0.9" dur="0.9s" repeatCount="indefinite" />
+                    </circle>
+                  </g>
+                );
+              })
+            ) : (
+              /* Solution Evaluation Mode: Render User Wires (Red for Wrong, Green for Right) + Solution Wires */
+              leftNodes.map((lNode, lIdx) => {
+                const res = evalResults[lIdx];
+                if (!res) return null;
+
+                const start = portCoords[`left-${lIdx}`];
+                const userEnd = portCoords[`right-${res.userRightIdx}`];
+                const correctEnd = portCoords[`right-${res.correctRightIdx}`];
+
+                if (!start) return null;
+
+                return (
+                  <g key={`eval-group-${lIdx}`}>
+                    {/* Render User Attempt Wire */}
+                    {userEnd && (
+                      <>
+                        <path
+                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x)/2} ${start.y}, ${(start.x + userEnd.x)/2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
+                          fill="none"
+                          stroke={res.isCorrect ? "#2ec4b6" : "#ef4444"}
+                          strokeWidth="8"
+                          strokeLinecap="round"
+                          opacity="0.85"
+                          style={{ filter: `drop-shadow(0 0 8px ${res.isCorrect ? "#2ec4b6" : "#ef4444"})` }}
+                        />
+                        <path
+                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x)/2} ${start.y}, ${(start.x + userEnd.x)/2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
+                          fill="none"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeDasharray="4,8"
+                        />
+                      </>
+                    )}
+
+                    {/* If Incorrect, Render Green Dashed Solution Wire */}
+                    {!res.isCorrect && correctEnd && (
+                      <path
+                        d={`M ${start.x} ${start.y} C ${(start.x + correctEnd.x)/2} ${start.y}, ${(start.x + correctEnd.x)/2} ${correctEnd.y}, ${correctEnd.x} ${correctEnd.y}`}
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                        strokeDasharray="6,8"
+                        style={{ filter: "drop-shadow(0 0 10px #10b981)" }}
+                      />
+                    )}
+                  </g>
+                );
+              })
+            )}
 
             {/* Active drawing wire line */}
             {selectedLeft !== null && portCoords[`left-${selectedLeft}`] && (
@@ -450,7 +491,12 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             {leftNodes.map((node, idx) => {
               const isSelected = selectedLeft === idx;
               const isConnected = connections[idx] !== undefined;
-              const wireColor = showSolution ? "#2ec4b6" : colors[node.matchIndex % colors.length];
+              const evalItem = evalResults[idx];
+              
+              let wireColor = colors[node.matchIndex % colors.length];
+              if (showSolution && evalItem) {
+                wireColor = evalItem.isCorrect ? "#2ec4b6" : "#ef4444";
+              }
 
               return (
                 <div className="wire-node" key={`left-node-${idx}`}>
@@ -464,8 +510,13 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                       border: isSelected ? "3px solid #000" : "4px solid #000"
                     }}
                   />
-                  <div className="wire-label" style={{ fontWeight: "bold", color: "#ffd166", fontSize: "1rem" }}>
+                  <div className="wire-label" style={{ fontWeight: "bold", color: showSolution && evalItem && !evalItem.isCorrect ? "#fca5a5" : "#ffd166", fontSize: "1rem" }}>
                     🇬🇧 {node.text}
+                    {showSolution && evalItem && (
+                      <span style={{ marginLeft: "6px", fontSize: "0.85rem" }}>
+                        {evalItem.isCorrect ? "✔️" : "❌"}
+                      </span>
+                    )}
                   </div>
                 </div>
               );
@@ -477,7 +528,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             {rightNodes.map((node, idx) => {
               const connectedLeftKey = Object.keys(connections).find(key => connections[key] === idx);
               const isConnected = connectedLeftKey !== undefined;
-              const wireColor = showSolution ? "#2ec4b6" : (isConnected ? colors[leftNodes[Number(connectedLeftKey)].matchIndex % colors.length] : "#141f32");
+              const wireColor = isConnected ? colors[leftNodes[Number(connectedLeftKey)].matchIndex % colors.length] : "#141f32";
 
               return (
                 <div className="wire-node" key={`right-node-${idx}`} style={{ flexDirection: "row-reverse" }}>
@@ -500,29 +551,54 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div style={{ display: "flex", gap: 15, marginTop: 25 }}>
-          <button 
-            className="btn-cancel" 
-            style={{ flex: 1, margin: 0 }} 
-            onClick={() => setConnections({})}
-            disabled={Object.keys(connections).length === 0 || isSuccess || showSolution}
-          >
-            🔄 Limpiar Cables
-          </button>
-          <button 
-            className="btn-create" 
-            style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0 }} 
-            onClick={handleVerify}
-            disabled={Object.keys(connections).length !== leftNodes.length || isSuccess || showSolution}
-          >
-            ⚡ Conectar Energía
-          </button>
-        </div>
+        {/* Normal Action buttons */}
+        {!showSolution && (
+          <div style={{ display: "flex", gap: 15, marginTop: 25 }}>
+            <button 
+              className="btn-cancel" 
+              style={{ flex: 1, margin: 0 }} 
+              onClick={() => setConnections({})}
+              disabled={Object.keys(connections).length === 0 || isSuccess}
+            >
+              🔄 Limpiar Cables
+            </button>
+            <button 
+              className="btn-create" 
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0 }} 
+              onClick={handleVerify}
+              disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
+            >
+              ⚡ Conectar Energía
+            </button>
+          </div>
+        )}
 
-        {isError && showSolution && (
-          <div style={{ marginTop: 15, color: "#ff6b6b", fontWeight: "bold", textAlign: "center" }} className="animate-shake">
-            💥 ¡CONEXIÓN INCORRECTA! (-0.75 pts). Observa las respuestas correctas resaltadas en verde. Avanzando...
+        {/* Feedback Mode Panel with Manual Student Control Button */}
+        {showSolution && (
+          <div style={{ background: "rgba(239, 68, 68, 0.15)", border: "1.5px solid #ef4444", borderRadius: "16px", padding: "20px", marginTop: "20px", textAlign: "center" }} className="animate-fadeIn">
+            <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.15rem", marginBottom: "6px" }}>
+              💥 ¡CONEXIÓN INCORRECTA REGISTRADA! (-0.75 pts)
+            </div>
+            <p style={{ color: "#e6f7ff", fontSize: "0.95rem", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+              Las conexiones en <strong style={{ color: "#ef4444" }}>rojo (❌)</strong> representan tu intento incorrecto. Las líneas punteadas en <strong style={{ color: "#10b981" }}>verde (✔️)</strong> indican la traducción correcta. Tómate el tiempo necesario para revisarlas.
+            </p>
+            <button
+              onClick={handleNextRound}
+              style={{
+                padding: "16px 36px",
+                background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                border: "none",
+                borderRadius: "14px",
+                color: "#0d1b2a",
+                fontWeight: "900",
+                fontSize: "1.1rem",
+                cursor: "pointer",
+                boxShadow: "0 0 25px rgba(255, 209, 102, 0.6)",
+                transition: "all 0.2s ease"
+              }}
+            >
+              💡 ENTENDIDO - CONTINUAR A LA SIGUIENTE RONDA ➔
+            </button>
           </div>
         )}
 
