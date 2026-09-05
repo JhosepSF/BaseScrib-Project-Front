@@ -331,8 +331,10 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                     {isUnlocked ? (
                       <button
                         onClick={() => {
+                          const newGender = o.id.startsWith("m_") ? "male" : "female";
+                          setGender(newGender);
                           setSelectedOutfit(o.id);
-                          saveCustomization({ selectedOutfit: o.id });
+                          saveCustomization({ selectedOutfit: o.id, gender: newGender });
                         }}
                         disabled={isSelected || saving}
                         style={{
