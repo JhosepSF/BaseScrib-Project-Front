@@ -639,21 +639,53 @@ export function RoomActivityPanel3D({
             {/* MISIONES MODAL CONTENT */}
             {activeModal === "misiones" && (() => {
               const lockStatus = getDayLockStatus(selectedDay);
+              const stages = [
+                { icon: "📖", name: "Comic Reading", type: "Lectura", desc: "Comprensión de viñetas interactivas de la bitácora espacial." },
+                { icon: "🚀", name: "Sentence Launch", type: "Gramática", desc: "Construcción y alineación espacial de estructuras gramaticales." },
+                { icon: "🔋", name: "Word Recovery", type: "Escucha", desc: "Sintonía de frecuencias de audio y recuperación de vocabulario." },
+                { icon: "🔧", name: "Ship Repair", type: "Vocabulario", desc: "Detección de fallos técnicos y emparejamiento de vocabulario." },
+                { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Redacción del informe de misión para revisión docente." }
+              ];
+
               return (
                 <div style={{ textAlign: "center", padding: "10px 0" }}>
                   <h2 style={{ margin: "0 0 16px 0", color: "#2ec4b6", fontSize: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderBottom: "2px solid rgba(46, 196, 182, 0.4)", paddingBottom: "10px" }}>
-                    🚀 MISIÓN DEL DÍA {selectedDay}
+                    🚀 MISIÓN Y TUTORIAL DEL DÍA {selectedDay}
                   </h2>
-                  <p style={{ fontSize: "16px", color: "#e6f7ff", lineHeight: "1.6", margin: "14px 0" }}>
-                    Completarás las 5 etapas continuas del día: <strong>Gramática ➔ Vocabulario ➔ Lectura ➔ Escucha ➔ Writing</strong>.
+                  <p style={{ fontSize: "15px", color: "#e6f7ff", lineHeight: "1.5", margin: "10px 0 18px 0" }}>
+                    En esta misión completarás las 5 etapas continuas en orden:
                   </p>
 
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginBottom: "20px" }}>
+                    {stages.map((st, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          background: "rgba(255, 255, 255, 0.05)",
+                          border: "1px solid rgba(46, 196, 182, 0.3)",
+                          borderRadius: "12px",
+                          padding: "12px",
+                          textAlign: "left"
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                          <span style={{ fontSize: "20px" }}>{st.icon}</span>
+                          <div>
+                            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#ffd166" }}>Etapa {idx + 1}: {st.type}</div>
+                            <div style={{ fontSize: "12px", color: "#9be6df" }}>{st.name}</div>
+                          </div>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "#b8fff9", opacity: 0.85, lineHeight: "1.3" }}>
+                          {st.desc}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
                   {lockStatus.isUnlocked ? (
-                    <div style={{ background: "rgba(46, 196, 182, 0.12)", border: "1.5px dashed #2ec4b6", borderRadius: "18px", padding: "24px", margin: "20px 0" }}>
-                      <span style={{ fontSize: "2.5rem", display: "block", marginBottom: "10px" }}>🎯</span>
-                      <h3 style={{ color: "#ffd166", margin: "0 0 8px 0" }}>¡MISIÓN DEL DÍA DISPONIBLE!</h3>
-                      <p style={{ fontSize: "14px", color: "#b8fff9", margin: "0 0 20px 0" }}>
-                        Nota de Juegos Automáticos: Se califica de 0 a 20 con resta de puntos por equivocación. El Writing irá a la bandeja del profesor.
+                    <div style={{ background: "rgba(46, 196, 182, 0.12)", border: "1.5px dashed #2ec4b6", borderRadius: "18px", padding: "20px", margin: "10px 0" }}>
+                      <p style={{ fontSize: "13px", color: "#b8fff9", margin: "0 0 14px 0" }}>
+                        💡 <strong>Mecánica de Calificación:</strong> De 0 a 20 con resta de puntos por errores en intentos. El informe final de Writing se envía a la bandeja del profesor.
                       </p>
                       <button
                         onClick={() => {
@@ -677,10 +709,10 @@ export function RoomActivityPanel3D({
                       </button>
                     </div>
                   ) : (
-                    <div style={{ background: "rgba(239, 68, 68, 0.12)", border: "1.5px solid #ef4444", borderRadius: "18px", padding: "24px", margin: "20px 0" }}>
-                      <span style={{ fontSize: "2.8rem", display: "block", marginBottom: "10px" }}>🔒</span>
+                    <div style={{ background: "rgba(239, 68, 68, 0.12)", border: "1.5px solid #ef4444", borderRadius: "18px", padding: "20px", margin: "10px 0" }}>
+                      <span style={{ fontSize: "2.4rem", display: "block", marginBottom: "8px" }}>🔒</span>
                       <h3 style={{ color: "#ef4444", margin: "0 0 8px 0" }}>DÍA BLOQUEADO POR COOLDOWN</h3>
-                      <p style={{ fontSize: "15px", color: "#fca5a5", fontWeight: "bold", margin: 0 }}>
+                      <p style={{ fontSize: "14px", color: "#fca5a5", fontWeight: "bold", margin: 0 }}>
                         {lockStatus.reason}
                       </p>
                     </div>
@@ -1141,33 +1173,88 @@ export function RoomActivityPanel3D({
         <foreignObject x="1614" y="624" width="270" height="140" style={{ overflow: "visible", pointerEvents: "none" }}>
           <div
             className="mapped-screen mapped-console-right-center"
-            onClick={(e) => { e.stopPropagation(); if (!showCalibrator) setActiveModal("misiones"); }}
-            title="Haz Clic para Abrir Lista de Misiones"
             style={{
               width: "100%",
               height: "100%",
               transformOrigin: "center right",
               transform: "perspective(1200px) rotateX(14deg) rotateY(-18deg) rotateZ(5deg) skewY(2.8deg)",
-              cursor: "pointer",
-              pointerEvents: "auto"
+              pointerEvents: "auto",
+              padding: "10px 12px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "center"
             }}
           >
-            <div className="mission-slot-3d">
-              {dayActivities.slice(0, 5).map((act) => {
-                const isCompleted = !!completedList[act.id];
-                const meta = getActivityMetadata(act.id);
-                return (
-                  <div
-                    key={act.id}
-                    className={`mini-quest-card ${isCompleted ? "completed" : ""}`}
-                    onClick={(e) => { e.stopPropagation(); onStartGame(act); }}
-                    title={act.title}
-                  >
-                    <i style={{ fontSize: "20px" }}>{meta.icon}</i>
-                    <span style={{ fontSize: "11px", fontWeight: "bold" }}>{meta.name}</span>
-                  </div>
-                );
-              })}
+            <div style={{ fontSize: "14px", fontWeight: "900", color: "#2ec4b6", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              🛰️ MISIÓN DÍA {selectedDay}
+            </div>
+
+            <div style={{ display: "flex", gap: "8px", width: "100%", height: "65px" }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (showCalibrator) return;
+                  const lockStatus = getDayLockStatus(selectedDay);
+                  if (!lockStatus.isUnlocked) {
+                    setActiveModal("misiones");
+                  } else {
+                    setActiveRunnerDay(selectedDay);
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                  border: "none",
+                  borderRadius: "10px",
+                  color: "#0d1b2a",
+                  fontWeight: "900",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "2px",
+                  boxShadow: "0 0 15px rgba(255, 209, 102, 0.4)",
+                  transition: "all 0.15s ease"
+                }}
+                title="Iniciar los 5 minijuegos del Día"
+              >
+                <span style={{ fontSize: "18px" }}>🚀</span>
+                <span>INICIAR JUEGOS</span>
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!showCalibrator) setActiveModal("misiones");
+                }}
+                style={{
+                  width: "60px",
+                  background: "rgba(46, 196, 182, 0.18)",
+                  border: "1.5px solid #2ec4b6",
+                  borderRadius: "10px",
+                  color: "#9be6df",
+                  fontWeight: "bold",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "2px",
+                  transition: "all 0.2s"
+                }}
+                title="Ver detalles de los 5 juegos"
+              >
+                <span style={{ fontSize: "18px" }}>ℹ️</span>
+                <span>INFO</span>
+              </button>
+            </div>
+
+            <div style={{ fontSize: "11px", color: "rgba(184, 255, 249, 0.8)", fontWeight: "600" }}>
+              ⚡ 5 ETAPAS CONTINUAS
             </div>
           </div>
         </foreignObject>
