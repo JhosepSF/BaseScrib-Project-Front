@@ -122,9 +122,11 @@ export function WordRecoveryGame({ activity, onComplete, onClose }) {
           </span>
           <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
         </div>
-        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
-          Cerrar X
-        </button>
+        {onClose && (
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
+            Cerrar X
+          </button>
+        )}
       </div>
 
       {currentQuestion ? (

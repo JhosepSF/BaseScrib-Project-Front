@@ -69,9 +69,11 @@ export function WritingGame({ activity, userId, onComplete, onClose }) {
           </span>
           <h2 className="retro-text" style={{ margin: "5px 0 0 0", fontSize: "1.6rem" }}>{activity.title}</h2>
         </div>
-        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "#153a1a", border: "1px solid #39ff14", color: "#39ff14" }}>
-          Cerrar X
-        </button>
+        {onClose && (
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "#153a1a", border: "1px solid #39ff14", color: "#39ff14" }}>
+            Cerrar X
+          </button>
+        )}
       </div>
 
       {error && <div className="error-message" style={{ background: "rgba(255, 107, 107, 0.1)", border: "1px solid #ff6b6b", color: "#ff6b6b" }}>{error}</div>}

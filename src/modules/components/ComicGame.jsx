@@ -481,9 +481,11 @@ export function ComicGame({ activity, onComplete, onClose }) {
           </span>
           <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
         </div>
-        <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
-          Cerrar X
-        </button>
+        {onClose && (
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
+            Cerrar X
+          </button>
+        )}
       </div>
 
       {viewMode === "reading" ? (

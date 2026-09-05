@@ -120,7 +120,6 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
             activity={currentActivity}
             userId={userId}
             onComplete={handleStageComplete}
-            onClose={onClose}
           />
         ) : (
           /* Transition Overlay between Stages */
