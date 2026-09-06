@@ -662,24 +662,28 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         ))}
       </div>
 
-      {/* VIEW MODE TOGGLE FLOATING BUTTON */}
+      {/* VIEW MODE TOGGLE FLOATING BUTTON (TOP-LEFT POSITION AWAY FROM PORTAL) */}
       <button
         onClick={() => setViewMode("3d")}
         style={{
           position: "fixed",
-          bottom: 20,
-          right: 20,
+          top: 75,
+          left: 20,
           zIndex: 999,
-          padding: "10px 18px",
+          padding: "8px 16px",
           background: "linear-gradient(135deg, #f72585, #7209b7)",
           color: "white",
-          border: "none",
+          border: "1.5px solid rgba(255, 255, 255, 0.4)",
           borderRadius: "20px",
           fontWeight: "bold",
-          fontSize: "0.85rem",
+          fontSize: "0.82rem",
           cursor: "pointer",
-          boxShadow: "0 0 15px rgba(247, 37, 133, 0.6)"
+          boxShadow: "0 0 15px rgba(247, 37, 133, 0.6)",
+          display: "flex",
+          alignItems: "center",
+          gap: 6
         }}
+        title="Cambiar a la vista 3D de la Estación"
       >
         🌀 Probar Vista 3D Mapeada (Beta)
       </button>
@@ -695,6 +699,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         }}
         onOpenInventory={() => setShowInventory(true)}
         onLogout={onBack}
+        onToggle3D={() => setViewMode("3d")}
       />
 
       {/* MAIN DIEGETIC LAYOUT */}

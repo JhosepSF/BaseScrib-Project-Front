@@ -9,7 +9,7 @@ import { API_BASE } from "../../config";
 /**
  * RecluteHUD — Floating HUD bar with avatar identity, stats, notifications, and navigation.
  */
-export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, onOpenInventory, onLogout }) {
+export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, onOpenInventory, onLogout, onToggle3D }) {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -219,6 +219,22 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
         >
           🎨 Avatar
         </button>
+        {onToggle3D && (
+          <button
+            className="recrute-hud__btn recrute-hud__btn--3d"
+            onClick={() => { soundFx.playClick(); onToggle3D(); }}
+            style={{
+              background: "linear-gradient(135deg, #f72585, #7209b7)",
+              color: "#ffffff",
+              fontWeight: "bold",
+              border: "1px solid #f72585",
+              boxShadow: "0 0 12px rgba(247, 37, 133, 0.6)"
+            }}
+            title="Cambiar a la Vista 3D Mapeada Interactiva"
+          >
+            🌀 Vista 3D
+          </button>
+        )}
         <button
           className="recrute-hud__btn recrute-hud__btn--logout"
           onClick={() => { soundFx.playClick(); onLogout(); }}
