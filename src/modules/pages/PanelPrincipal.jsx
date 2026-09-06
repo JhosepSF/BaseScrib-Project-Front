@@ -303,50 +303,52 @@ export function PanelPrincipal() {
           <div className="warp-text">{warpText}</div>
         </div>
       )}
-      <header className="panel-header">
-        <h1 className={!token ? "home-title-comic" : ""}>BaseScrib</h1>
-        <p className="tagline">Gamified writing practice — Student & Teacher portal</p>
-        {user && (
-          <div className="user-info" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span>{user.username} ({user.role})</span>
-            {user.role === "student" && (
-              <>
-                <span style={{
-                  background: "rgba(255, 107, 107, 0.15)",
-                  border: "1px solid #ff6b6b",
-                  color: "#ff8e8e",
-                  fontSize: "0.85rem",
-                  padding: "4px 10px",
-                  borderRadius: "14px",
-                  fontWeight: "bold"
-                }}>
-                  🔥 {user.streak_count || 0}d Racha
-                </span>
-
-                <button 
-                  onClick={() => navigate("/avatar")} 
-                  className="btn-avatar"
-                  style={{
-                    margin: 0,
-                    padding: "8px 14px",
+      {step !== "in-room" && (
+        <header className="panel-header">
+          <h1 className={!token ? "home-title-comic" : ""}>BaseScrib</h1>
+          <p className="tagline">Gamified writing practice — Student & Teacher portal</p>
+          {user && (
+            <div className="user-info" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span>{user.username} ({user.role})</span>
+              {user.role === "student" && (
+                <>
+                  <span style={{
+                    background: "rgba(255, 107, 107, 0.15)",
+                    border: "1px solid #ff6b6b",
+                    color: "#ff8e8e",
                     fontSize: "0.85rem",
-                    background: "linear-gradient(135deg, #2ec4b6, #26a399)",
-                    color: "#002427",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "600",
-                    transition: "all 0.3s ease"
-                  }}
-                >
-                  🎨 Avatar 3D
-                </button>
-              </>
-            )}
-            <button onClick={handleLogout} className="btn-logout">Cerrar sesión</button>
-          </div>
-        )}
-      </header>
+                    padding: "4px 10px",
+                    borderRadius: "14px",
+                    fontWeight: "bold"
+                  }}>
+                    🔥 {user.streak_count || 0}d Racha
+                  </span>
+
+                  <button 
+                    onClick={() => navigate("/avatar")} 
+                    className="btn-avatar"
+                    style={{
+                      margin: 0,
+                      padding: "8px 14px",
+                      fontSize: "0.85rem",
+                      background: "linear-gradient(135deg, #2ec4b6, #26a399)",
+                      color: "#002427",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      transition: "all 0.3s ease"
+                    }}
+                  >
+                    🎨 Avatar 3D
+                  </button>
+                </>
+              )}
+              <button onClick={handleLogout} className="btn-logout">Cerrar sesión</button>
+            </div>
+          )}
+        </header>
+      )}
 
       {error && <div className="error-message">{error}</div>}
 
@@ -416,7 +418,7 @@ export function PanelPrincipal() {
         <RoomView joinedRoom={joinedRoom} setStep={setStep} />
       )}
 
-      <footer className="panel-footer">BaseScrib</footer>
+      {step !== "in-room" && <footer className="panel-footer">BaseScrib</footer>}
     </div>
   );
 }
