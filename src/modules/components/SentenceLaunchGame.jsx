@@ -311,31 +311,31 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 750, width: "100%", padding: 30, position: "relative", margin: "auto" }}>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 740, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
               Etapa 1: Cableado de Vocabulario Espacial
             </span>
-            <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity?.title || "Reconexión de Energía Espacial"}</h2>
+            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity?.title || "Reconexión de Energía Espacial"}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
             Cerrar X
           </button>
         </div>
       )}
 
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.85rem", marginBottom: 15 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
           <span>Fusibles de Red: {currentQIndex + 1} de {questions.length}</span>
           <span>Energía Restablecida: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
         </div>
 
-        <h3 style={{ color: "#ffd166", marginBottom: 12, fontSize: "1.05rem", textAlign: "left", lineHeight: "1.5" }}>
+        <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
           ⚡ Instructions / Instrucciones: Une los cables de cada palabra en Inglés (izquierda) con su significado correcto en Español (derecha) para restablecer la corriente del cohete.
         </h3>
 
@@ -344,7 +344,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
           id="wire-canvas-container" 
           ref={containerRef} 
           className="wire-minigame-deck"
-          style={{ maxWidth: "480px", margin: "15px auto", padding: "20px 18px", minHeight: "260px" }}
+          style={{ maxWidth: "480px", margin: "10px auto", padding: "12px 14px", minHeight: "210px" }}
         >
           {/* SVG Canvas to render cables */}
           <svg className="wire-svg-canvas">
@@ -553,10 +553,10 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
         {/* Normal Action buttons */}
         {!showSolution && (
-          <div style={{ display: "flex", gap: 15, marginTop: 25 }}>
+          <div style={{ display: "flex", gap: 15, marginTop: 14 }}>
             <button 
               className="btn-cancel" 
-              style={{ flex: 1, margin: 0 }} 
+              style={{ flex: 1, margin: 0, padding: "10px 16px" }} 
               onClick={() => setConnections({})}
               disabled={Object.keys(connections).length === 0 || isSuccess}
             >
@@ -564,7 +564,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             </button>
             <button 
               className="btn-create" 
-              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0 }} 
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0, padding: "10px 16px" }} 
               onClick={handleVerify}
               disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
             >

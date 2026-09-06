@@ -3,22 +3,40 @@ import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
 
+// Helper to shuffle array
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [filledWords, setFilledWords] = useState([]); // e.g. ["is", "is"]
+  const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [mistakes, setMistakes] = useState(0);
 
   const questions = activity.questions || [];
+  const currentQuestion = questions[currentQIndex];
 
   useEffect(() => {
     setSelectedOptionId(null);
     setFilledWords([]);
     setIsError(false);
     setIsSuccess(false);
-  }, [currentQIndex]);
+
+    if (currentQuestion?.options && currentQuestion.options.length > 0) {
+      setShuffledOptions(shuffle(currentQuestion.options));
+    } else {
+      setShuffledOptions([]);
+    }
+  }, [currentQIndex, currentQuestion]);
 
   const handleOptionSelect = (option) => {
     if (isSuccess) return;
@@ -32,8 +50,8 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   };
 
   const handleVerify = () => {
-    const question = questions[currentQIndex];
-    const selectedOption = question.options?.find(o => o.id === selectedOptionId);
+    if (!currentQuestion) return;
+    const selectedOption = currentQuestion.options?.find(o => o.id === selectedOptionId);
 
     if (!selectedOption) return;
 
@@ -57,8 +75,6 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     }
   };
 
-  const currentQuestion = questions[currentQIndex];
-
   // Helper to render the sentence with highlighted blanks
   const renderSentenceWithBlanks = (text, filled) => {
     const parts = text.split("___");
@@ -66,12 +82,12 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     return (
       <div 
         style={{ 
-          fontSize: "1.35rem", 
-          lineHeight: "2.2", 
+          fontSize: "1.15rem", 
+          lineHeight: "1.8", 
           color: "#e6f7ff", 
           textAlign: "center",
           fontWeight: "600",
-          margin: "15px 0"
+          margin: "10px 0"
         }}
       >
         {parts.map((part, index) => {
@@ -88,12 +104,12 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                     borderBottom: isEmpty ? "2.5px dashed #ffd166" : "2.5px solid #2ec4b6",
                     background: isEmpty ? "rgba(255, 209, 102, 0.08)" : "rgba(46, 196, 182, 0.18)",
                     color: isEmpty ? "#ffd166" : "#b8fff9",
-                    padding: "4px 14px",
+                    padding: "3px 12px",
                     borderRadius: 6,
-                    margin: "0 8px",
+                    margin: "0 6px",
                     fontWeight: "800",
                     display: "inline-block",
-                    minWidth: 70,
+                    minWidth: 60,
                     textAlign: "center",
                     boxShadow: isEmpty ? "none" : "0 0 10px rgba(46, 196, 182, 0.3)",
                     transition: "all 0.3s ease"
@@ -111,19 +127,19 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   };
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 750, width: "100%", padding: 30, position: "relative", margin: "auto" }}>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 740, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 20, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
-              Misión 3: Cargar Reactor Principal (Vocabulario)
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+              Etapa 4: Escucha y Frecuencia (Celdas de Energía)
             </span>
-            <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
+            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.35rem" }}>{activity.title}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
             Cerrar X
           </button>
         </div>
@@ -131,13 +147,13 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
       {currentQuestion ? (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.85rem", marginBottom: 15 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
             <span>Celda de Energía: {currentQIndex + 1} de {questions.length}</span>
             <span>Estabilidad de Combustión: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
-          <h3 style={{ color: "#ffd166", marginBottom: 15, fontSize: "1.1rem", textAlign: "left" }}>
-            Instrucciones: Selecciona la combinación de celdas de combustible correcta para estabilizar el reactor de la nave.
+          <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
+            Instrucciones: Selecciona la combinación de celdas de combustible correcta para estabilizar el reactor.
           </h3>
 
           {/* Reactor Chamber Visual Zone */}
@@ -147,17 +163,17 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               position: "relative",
               overflow: "hidden",
               transition: "all 0.3s ease",
-              padding: "30px 20px"
+              padding: "14px 18px"
             }}
           >
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 15 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
               <img 
                 src={ReclutaPrincipal} 
                 alt="Operador de Combustible" 
                 className="floating-crewmate"
                 style={{ 
-                  width: "140px", 
-                  height: "140px", 
+                  width: "90px", 
+                  height: "90px", 
                   filter: isSuccess 
                     ? "hue-rotate(85deg) saturate(1.6) drop-shadow(0 0 8px #2ec4b6)" 
                     : isError 
@@ -171,7 +187,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
             {renderSentenceWithBlanks(currentQuestion.text, filledWords)}
             
             {/* Visual Fuel Bar Indicator */}
-            <div style={{ width: "80%", height: 12, background: "rgba(255,255,255,0.08)", borderRadius: 6, marginTop: 25, overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.1)" }}>
+            <div style={{ width: "80%", height: 10, background: "rgba(255,255,255,0.08)", borderRadius: 5, marginTop: 12, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", margin: "12px auto 0 auto" }}>
               <div 
                 style={{ 
                   height: "100%", 
@@ -186,22 +202,22 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                 }} 
               />
             </div>
-            <span style={{ fontSize: "0.75rem", color: "rgba(230, 247, 255, 0.5)", marginTop: 10, textTransform: "uppercase", letterSpacing: "1px" }}>
+            <span style={{ fontSize: "0.72rem", color: "rgba(230, 247, 255, 0.5)", marginTop: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.8px" }}>
               {isSuccess ? "⚡ REACTOR ALIMENTADO 100%" : selectedOptionId ? "🔋 CELDA SELECCIONADA - LISTO PARA CARGAR" : "⚠️ ESPERANDO CELDA DE COMBUSTIBLE"}
             </span>
           </div>
 
           {/* Answer Combinations Grid */}
-          <div style={{ marginTop: 30, textAlign: "left" }}>
-            <h4 style={{ color: "#9be6df", marginBottom: 12, fontSize: "0.95rem", fontWeight: "bold" }}>Opciones de Combustible Disponibles:</h4>
+          <div style={{ marginTop: 14, textAlign: "left" }}>
+            <h4 style={{ color: "#9be6df", marginBottom: 8, fontSize: "0.88rem", fontWeight: "bold" }}>Opciones de Combustible Disponibles:</h4>
             <div 
               style={{ 
                 display: "grid", 
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", 
-                gap: 15 
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", 
+                gap: 10 
               }}
             >
-              {currentQuestion.options?.map((opt) => {
+              {shuffledOptions.map((opt) => {
                 const isSelected = selectedOptionId === opt.id;
                 
                 return (
@@ -209,7 +225,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                     key={opt.id}
                     onClick={() => handleOptionSelect(opt)}
                     style={{
-                      padding: "18px 20px",
+                      padding: "11px 14px",
                       borderRadius: 10,
                       border: isSelected 
                         ? "2px solid #b8fff9" 
@@ -218,7 +234,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                         ? "rgba(46, 196, 182, 0.2)" 
                         : "rgba(0, 0, 0, 0.4)",
                       color: isSelected ? "#b8fff9" : "#e6f7ff",
-                      fontSize: "1.1rem",
+                      fontSize: "0.95rem",
                       fontWeight: "bold",
                       cursor: "pointer",
                       margin: 0,
@@ -236,17 +252,17 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
           </div>
 
           {/* Action buttons */}
-          <div style={{ marginTop: 35, display: "flex", justifyContent: "center" }}>
+          <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
             <button 
               className="btn-create" 
               style={{ 
                 width: "100%", 
                 maxWidth: 320, 
-                padding: "16px 24px",
+                padding: "12px 24px",
                 background: "linear-gradient(135deg, #ffd166, #ffb84d)",
                 color: "#1a1a00",
-                fontSize: "1.05rem",
-                fontWeight: "bold",
+                fontSize: "1rem",
+                fontWeight: "900",
                 margin: 0,
                 boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
               }} 
@@ -258,13 +274,13 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
           </div>
 
           {isError && (
-            <div style={{ marginTop: 20, color: "#ff6b6b", fontWeight: "bold", textAlign: "center" }} className="animate-shake">
+            <div style={{ marginTop: 10, color: "#ff6b6b", fontWeight: "bold", textAlign: "center", fontSize: "0.88rem" }} className="animate-shake">
               💥 ¡INCOMPATIBILIDAD DE COMBUSTIBLE! Inestabilidad detectada en el reactor.
             </div>
           )}
 
           {isSuccess && (
-            <div style={{ marginTop: 20, color: "#2ec4b6", fontWeight: "bold", textAlign: "center" }}>
+            <div style={{ marginTop: 10, color: "#2ec4b6", fontWeight: "bold", textAlign: "center", fontSize: "0.88rem" }}>
               ✨ ¡CELDA ACOPLADA! Energía inyectada con éxito.
             </div>
           )}
@@ -282,5 +298,7 @@ WordRecoveryGame.propTypes = {
     questions: PropTypes.array
   }).isRequired,
   onComplete: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  hideHeader: PropTypes.bool
 };
+

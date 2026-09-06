@@ -1,18 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
+
+// Helper to shuffle array
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export function ComicGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [viewMode, setViewMode] = useState("reading"); // "reading" or "quiz"
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
   const [mistakes, setMistakes] = useState(0);
   const [showStatusText, setShowStatusText] = useState("SISTEMA OK");
 
   const questions = activity.questions || [];
   const missionId = activity.mission || 1;
+  const currentQuestion = questions[currentQIndex];
+
+  useEffect(() => {
+    setSelectedOptionId(null);
+    setIsError(false);
+    setShowStatusText("SISTEMA OK");
+
+    if (currentQuestion?.options && currentQuestion.options.length > 0) {
+      setShuffledOptions(shuffle(currentQuestion.options));
+    } else {
+      setShuffledOptions([]);
+    }
+  }, [currentQIndex, currentQuestion]);
 
   const panelsMap = {
     1: [
@@ -467,22 +491,20 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
     }
   };
 
-  const currentQuestion = questions[currentQIndex];
-
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 800, width: "100%", padding: 30, position: "relative", margin: "auto" }}>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 760, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 25, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 15 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 15, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
-              Misión 1: Lectura de Archivos de Bitácora
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+              Etapa 3: Bitácora y Lectura de Cómic
             </span>
-            <h2 style={{ margin: "5px 0 0 0", color: "#b8fff9", fontSize: "1.6rem" }}>{activity.title}</h2>
+            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity.title}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "8px 16px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
             Cerrar X
           </button>
         </div>
@@ -526,20 +548,20 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                 </div>
 
                 {/* Floating Vector crewmate icon based on panel theme */}
-                <div style={{ display: "flex", justifyContent: "center", gap: 15, alignItems: "center", margin: "15px 0" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: 10, alignItems: "center", margin: "8px 0" }}>
                   <div className="floating-crewmate" style={{ display: "flex", justifyContent: "center" }}>
                     <img 
                       src={ReclutaPrincipal} 
                       alt="Recluta" 
                       style={{ 
-                        width: "120px", 
-                        height: "120px",
+                        width: "80px", 
+                        height: "80px",
                         filter: idx % 2 === 0 ? "hue-rotate(130deg) saturate(1.5)" : "none",
                         objectFit: "contain"
                       }} 
                     />
                   </div>
-                  <span style={{ fontSize: "2.5rem" }}>{panel.illustration}</span>
+                  <span style={{ fontSize: "2rem" }}>{panel.illustration}</span>
                 </div>
 
                 <p style={{ margin: "10px 0", fontSize: "0.95rem", color: "#e6f7ff", lineHeight: "1.4" }}>
@@ -604,20 +626,20 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                       ? "2px solid #2ec4b6" 
                       : "1.5px solid rgba(184, 255, 249, 0.2)",
                   borderRadius: 12,
-                  padding: "20px 25px",
-                  marginBottom: 25,
+                  padding: "12px 18px",
+                  marginBottom: 16,
                   position: "relative",
                   transition: "all 0.3s ease"
                 }}
               >
-                <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+                <div style={{ display: "flex", gap: 15, alignItems: "center" }}>
                   <div className="floating-crewmate">
                     <img 
                       src={ReclutaPrincipal} 
                       alt="Recluta Principal" 
                       style={{ 
-                        width: "130px", 
-                        height: "130px", 
+                        width: "85px", 
+                        height: "85px", 
                         filter: isError 
                           ? "hue-rotate(130deg) saturate(1.5) drop-shadow(0 0 8px #ff6b6b)" 
                           : selectedOptionId && !isError 
@@ -628,14 +650,14 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                       }} 
                     />
                   </div>
-                  <h3 style={{ color: "#e6f7ff", margin: 0, fontSize: "1.15rem", lineHeight: "1.4" }}>
+                  <h3 style={{ color: "#e6f7ff", margin: 0, fontSize: "1.05rem", lineHeight: "1.4" }}>
                     {currentQuestion.text}
                   </h3>
                 </div>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {currentQuestion.options?.map((opt) => {
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {shuffledOptions.map((opt) => {
                   const isSelected = selectedOptionId === opt.id;
                   let borderStyle = "1px solid rgba(255, 255, 255, 0.15)";
                   let bgStyle = "rgba(255, 255, 255, 0.04)";
@@ -658,13 +680,13 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                       key={opt.id}
                       onClick={() => handleOptionClick(opt)}
                       style={{
-                        padding: "16px 20px",
+                        padding: "12px 16px",
                         borderRadius: 10,
                         border: borderStyle,
                         background: bgStyle,
                         color: colorStyle,
                         textAlign: "left",
-                        fontSize: "0.95rem",
+                        fontSize: "0.9rem",
                         fontWeight: "600",
                         cursor: "pointer",
                         margin: 0,
