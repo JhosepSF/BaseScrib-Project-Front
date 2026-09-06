@@ -474,63 +474,73 @@ export default function AvatarShowcase({
           />
         </div>
 
-        {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS) */}
-        {(accessory === "goggles" || (visorColor && visorColor !== "none")) && glassesMap[visorColor] && (
-          <img
-            src={glassesMap[visorColor]}
-            alt="Gafas Cibernéticas"
-            style={{
-              position: "absolute",
-              top: pos.goggles.top,
-              left: pos.goggles.left,
-              transform: "translateX(-50%)",
-              width: pos.goggles.width,
-              pointerEvents: "none",
-              zIndex: 6,
-              filter: "drop-shadow(0 0 10px rgba(184, 255, 249, 0.7))"
-            }}
-          />
-        )}
-        {accessory === "antenna" && (
-          <div style={{
-            position: "absolute",
-            top: pos.antenna.top,
-            left: pos.antenna.left,
-            transform: "translateX(-50%)",
-            fontSize: pos.antenna.fontSize,
-            pointerEvents: "none",
-            zIndex: 6
-          }}>📡</div>
-        )}
-        {accessory === "crown" && (
-          <div style={{
-            position: "absolute",
-            top: pos.crown.top,
-            left: pos.crown.left,
-            transform: "translateX(-50%)",
-            fontSize: pos.crown.fontSize,
-            pointerEvents: "none",
-            filter: "drop-shadow(0 0 12px #ffd166)",
-            zIndex: 6
-          }}>👑</div>
-        )}
+        {/* Calculate if active outfit is base default skin */}
+        {(() => {
+          const isBaseSkin = currentOutfit === "m_base" || currentOutfit === "f_base" || currentOutfit === "default" || currentOutfit === "lia_base" || currentOutfit === "leo_base";
+          if (!isBaseSkin) return null;
 
-        {/* OVERLAY INSIGNIAS INDIVIDUALES DE PECHO */}
-        {decal === "star" && (
-          <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, zIndex: 7 }}>⭐</div>
-        )}
-        {decal === "heart" && (
-          <div style={{ position: "absolute", top: pos.decals.heart.top, left: pos.decals.heart.left, transform: "translateX(-50%)", fontSize: pos.decals.heart.fontSize, zIndex: 7 }}>❤️</div>
-        )}
-        {decal === "planet" && (
-          <div style={{ position: "absolute", top: pos.decals.planet.top, left: pos.decals.planet.left, transform: "translateX(-50%)", fontSize: pos.decals.planet.fontSize, zIndex: 7 }}>🪐</div>
-        )}
-        {decal === "lightning" && (
-          <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ffd166)", zIndex: 7 }}>⚡</div>
-        )}
-        {decal === "fire" && (
-          <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ff6b35)", zIndex: 7 }}>🔥</div>
-        )}
+          return (
+            <>
+              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS) — SOLO EN SKIN BASE */}
+              {(accessory === "goggles" || (visorColor && visorColor !== "none")) && glassesMap[visorColor] && (
+                <img
+                  src={glassesMap[visorColor]}
+                  alt="Gafas Cibernéticas"
+                  style={{
+                    position: "absolute",
+                    top: pos.goggles.top,
+                    left: pos.goggles.left,
+                    transform: "translateX(-50%)",
+                    width: pos.goggles.width,
+                    pointerEvents: "none",
+                    zIndex: 6,
+                    filter: "drop-shadow(0 0 10px rgba(184, 255, 249, 0.7))"
+                  }}
+                />
+              )}
+              {accessory === "antenna" && (
+                <div style={{
+                  position: "absolute",
+                  top: pos.antenna.top,
+                  left: pos.antenna.left,
+                  transform: "translateX(-50%)",
+                  fontSize: pos.antenna.fontSize,
+                  pointerEvents: "none",
+                  zIndex: 6
+                }}>📡</div>
+              )}
+              {accessory === "crown" && (
+                <div style={{
+                  position: "absolute",
+                  top: pos.crown.top,
+                  left: pos.crown.left,
+                  transform: "translateX(-50%)",
+                  fontSize: pos.crown.fontSize,
+                  pointerEvents: "none",
+                  filter: "drop-shadow(0 0 12px #ffd166)",
+                  zIndex: 6
+                }}>👑</div>
+              )}
+
+              {/* OVERLAY INSIGNIAS INDIVIDUALES DE PECHO — SOLO EN SKIN BASE */}
+              {decal === "star" && (
+                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, zIndex: 7 }}>⭐</div>
+              )}
+              {decal === "heart" && (
+                <div style={{ position: "absolute", top: pos.decals.heart.top, left: pos.decals.heart.left, transform: "translateX(-50%)", fontSize: pos.decals.heart.fontSize, zIndex: 7 }}>❤️</div>
+              )}
+              {decal === "planet" && (
+                <div style={{ position: "absolute", top: pos.decals.planet.top, left: pos.decals.planet.left, transform: "translateX(-50%)", fontSize: pos.decals.planet.fontSize, zIndex: 7 }}>🪐</div>
+              )}
+              {decal === "lightning" && (
+                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ffd166)", zIndex: 7 }}>⚡</div>
+              )}
+              {decal === "fire" && (
+                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ff6b35)", zIndex: 7 }}>🔥</div>
+              )}
+            </>
+          );
+        })()}
 
         {/* PET COMPANION FLOATING NEXT TO RECRUIT (LEFT SIDE) */}
         {showPet && (

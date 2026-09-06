@@ -6,7 +6,15 @@ import AvatarFrame from "./AvatarFrame";
 
 export default function StoreModal({ user, token, onClose, onUserUpdated }) {
   const [activeStoreTab, setActiveStoreTab] = useState("outfits");
-  const [skinFilterGender, setSkinFilterGender] = useState(user?.gender || (user?.selected_outfit?.startsWith("m_") ? "male" : "female"));
+
+  // Determine user character strictly: male = Leo, female = Lia
+  const userCharacter = (
+    user?.selected_avatar === "leo" ||
+    user?.gender === "male" ||
+    user?.gender === "M" ||
+    user?.selected_outfit?.startsWith("m_")
+  ) ? "male" : "female";
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -378,44 +386,29 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
         {/* CONTENIDO DE OUTFITS EN VENTA */}
         {activeStoreTab === "outfits" && (
           <div>
-            {/* SUB-FILTRO DE PERSONAJE (LIA VS LEO) */}
-            <div style={{ display: "flex", gap: 10, marginBottom: 14, background: "rgba(0,0,0,0.2)", padding: 6, borderRadius: 12 }}>
-              <button
-                onClick={() => setSkinFilterGender("female")}
-                style={{
-                  flex: 1,
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  border: skinFilterGender === "female" ? "1.5px solid #f72585" : "none",
-                  background: skinFilterGender === "female" ? "rgba(247, 37, 133, 0.25)" : "transparent",
-                  color: skinFilterGender === "female" ? "#f72585" : "#94a3b8",
-                  fontWeight: "bold",
-                  fontSize: "0.85rem",
-                  cursor: "pointer"
-                }}
-              >
-                👩‍🚀 Skins de Entrenadora Lia
-              </button>
-              <button
-                onClick={() => setSkinFilterGender("male")}
-                style={{
-                  flex: 1,
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  border: skinFilterGender === "male" ? "1.5px solid #2ec4b6" : "none",
-                  background: skinFilterGender === "male" ? "rgba(46, 196, 182, 0.25)" : "transparent",
-                  color: skinFilterGender === "male" ? "#2ec4b6" : "#94a3b8",
-                  fontWeight: "bold",
-                  fontSize: "0.85rem",
-                  cursor: "pointer"
-                }}
-              >
-                🧑‍🚀 Skins de Recluta Leo
-              </button>
+            {/* TÍTULO DE SKINS DE PERSONAJE DEL ALUMNO */}
+            <div style={{
+              marginBottom: 14,
+              background: "rgba(0,0,0,0.25)",
+              padding: "10px 16px",
+              borderRadius: 12,
+              border: userCharacter === "male" ? "1.5px solid #2ec4b6" : "1.5px solid #f72585",
+              display: "flex",
+              alignItems: "center",
+              gap: 10
+            }}>
+              <span style={{ fontSize: "1.2rem" }}>{userCharacter === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+              <span style={{
+                color: userCharacter === "male" ? "#2ec4b6" : "#f72585",
+                fontWeight: "bold",
+                fontSize: "0.95rem"
+              }}>
+                Skins Disponibles para {userCharacter === "male" ? "Recluta Leo" : "Entrenadora Lia"}
+              </span>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
-              {outfits.filter(o => skinFilterGender === "male" ? o.id.startsWith("m_") : o.id.startsWith("f_")).map((o) => {
+              {outfits.filter(o => userCharacter === "male" ? o.id.startsWith("m_") : o.id.startsWith("f_")).map((o) => {
                 const isUnlocked = unlockedOutfits.includes(o.id);
                 const isSelected = selectedOutfit === o.id;
                 const canAfford = (user?.coins || 0) >= o.cost;

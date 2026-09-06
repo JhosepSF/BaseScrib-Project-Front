@@ -5,7 +5,14 @@ import AvatarShowcase from "./AvatarShowcase";
 import AvatarFrame from "./AvatarFrame";
 
 export default function InventoryModal({ user, token, onClose, onUserUpdated }) {
-  const [gender, setGender] = useState(user?.gender || (user?.selected_outfit?.startsWith("m_") ? "male" : "female"));
+  const userCharacter = (
+    user?.selected_avatar === "leo" ||
+    user?.gender === "male" ||
+    user?.gender === "M" ||
+    user?.selected_outfit?.startsWith("m_")
+  ) ? "male" : "female";
+
+  const [gender] = useState(userCharacter);
   const [suitColor, setSuitColor] = useState(user?.suit_color || "#2ec4b6");
   const [visorColor, setVisorColor] = useState(user?.visor_color || "#a3e2f7");
   const [accessory, setAccessory] = useState(user?.accessory || "none");
@@ -251,48 +258,23 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         {/* OPCIONES DE PERSONALIZACIÓN */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           
-          {/* SELECCIÓN DE GÉNERO / BASE */}
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 14 }}>
-            <h4 style={{ margin: "0 0 10px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👤 Personaje Base:</h4>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                onClick={() => {
-                  setGender("female");
-                  setSelectedOutfit("f_base");
-                  saveCustomization({ gender: "female", selectedOutfit: "f_base" });
-                }}
-                style={{
-                  flex: 1,
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  border: gender === "female" ? "2px solid #f72585" : "1px solid rgba(255,255,255,0.1)",
-                  background: gender === "female" ? "rgba(247, 37, 133, 0.2)" : "rgba(255,255,255,0.04)",
-                  color: gender === "female" ? "#f72585" : "#94a3b8",
-                  fontWeight: "bold",
-                  cursor: "pointer"
-                }}
-              >
-                👩‍🚀 Entrenadora Lia
-              </button>
-              <button
-                onClick={() => {
-                  setGender("male");
-                  setSelectedOutfit("m_base");
-                  saveCustomization({ gender: "male", selectedOutfit: "m_base" });
-                }}
-                style={{
-                  flex: 1,
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  border: gender === "male" ? "2px solid #4cc9f0" : "1px solid rgba(255,255,255,0.1)",
-                  background: gender === "male" ? "rgba(76, 201, 240, 0.2)" : "rgba(255,255,255,0.04)",
-                  color: gender === "male" ? "#4cc9f0" : "#94a3b8",
-                  fontWeight: "bold",
-                  cursor: "pointer"
-                }}
-              >
-                🧑‍🚀 Recluta Leo
-              </button>
+          {/* PERSONAJE SELECCIONADO POR EL ALUMNO */}
+          <div style={{ background: "rgba(255,255,255,0.03)", border: userCharacter === "male" ? "1px solid rgba(76, 201, 240, 0.3)" : "1px solid rgba(247, 37, 133, 0.3)", borderRadius: 16, padding: 14 }}>
+            <h4 style={{ margin: "0 0 10px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👤 Personaje Seleccionado:</h4>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 14px",
+              borderRadius: 10,
+              background: userCharacter === "male" ? "rgba(76, 201, 240, 0.15)" : "rgba(247, 37, 133, 0.15)",
+              border: userCharacter === "male" ? "1.5px solid #4cc9f0" : "1.5px solid #f72585",
+              color: userCharacter === "male" ? "#4cc9f0" : "#f72585",
+              fontWeight: "bold",
+              fontSize: "0.95rem"
+            }}>
+              <span style={{ fontSize: "1.3rem" }}>{userCharacter === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+              <span>{userCharacter === "male" ? "Recluta Leo" : "Entrenadora Lia"}</span>
             </div>
           </div>
 
@@ -332,7 +314,6 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                       <button
                         onClick={() => {
                           const newGender = o.id.startsWith("m_") ? "male" : "female";
-                          setGender(newGender);
                           setSelectedOutfit(o.id);
                           saveCustomization({ selectedOutfit: o.id, gender: newGender });
                         }}
@@ -447,35 +428,71 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
             </div>
 
             {/* INSIGNIAS */}
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: 14 }}>
-              <h4 style={{ margin: "0 0 10px 0", color: "#2ec4b6", fontSize: "0.85rem" }}>🛡️ Insignia de Pecho:</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: 8 }}>
-                {decalsList.map((d) => {
-                  const isSel = decal === d.id;
-                  return (
-                    <button
-                      key={d.id}
-                      onClick={() => {
-                        setDecal(d.id);
-                        saveCustomization({ decal: d.id });
-                      }}
-                      style={{
-                        padding: "8px 6px",
-                        borderRadius: 10,
-                        border: isSel ? "2px solid #2ec4b6" : "1px solid rgba(255,255,255,0.1)",
-                        background: isSel ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
-                        color: isSel ? "#2ec4b6" : "#e2e8f0",
-                        fontSize: "0.78rem",
-                        fontWeight: "bold",
-                        cursor: "pointer"
-                      }}
-                    >
-                      {d.icon} {d.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            {(() => {
+              const isBaseSkinSelected = selectedOutfit === "m_base" || selectedOutfit === "f_base" || selectedOutfit === "default";
+              return (
+                <div style={{
+                  background: isBaseSkinSelected ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.25)",
+                  border: isBaseSkinSelected ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(239, 68, 68, 0.35)",
+                  borderRadius: 14,
+                  padding: 14
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <h4 style={{ margin: 0, color: "#2ec4b6", fontSize: "0.85rem" }}>🛡️ Insignia de Pecho:</h4>
+                    {!isBaseSkinSelected && (
+                      <span style={{ fontSize: "0.75rem", color: "#f87171", fontWeight: "bold" }}>
+                        🔒 Bloqueado
+                      </span>
+                    )}
+                  </div>
+
+                  {!isBaseSkinSelected && (
+                    <div style={{
+                      marginBottom: 10,
+                      padding: "8px 12px",
+                      borderRadius: 8,
+                      background: "rgba(239, 68, 68, 0.15)",
+                      border: "1px dashed rgba(239, 68, 68, 0.4)",
+                      color: "#fca5a5",
+                      fontSize: "0.76rem"
+                    }}>
+                      🔒 Las insignias de pecho solo están disponibles con la <strong>Skin Base por defecto</strong>. Selecciona la Skin Base para usarlas.
+                    </div>
+                  )}
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))", gap: 8 }}>
+                    {decalsList.map((d) => {
+                      const isSel = decal === d.id;
+                      const isDisabled = !isBaseSkinSelected;
+                      return (
+                        <button
+                          key={d.id}
+                          disabled={isDisabled}
+                          onClick={() => {
+                            if (isDisabled) return;
+                            setDecal(d.id);
+                            saveCustomization({ decal: d.id });
+                          }}
+                          style={{
+                            padding: "8px 6px",
+                            borderRadius: 10,
+                            border: isSel && isBaseSkinSelected ? "2px solid #2ec4b6" : "1px solid rgba(255,255,255,0.1)",
+                            background: isSel && isBaseSkinSelected ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
+                            color: isDisabled ? "#64748b" : (isSel ? "#2ec4b6" : "#e2e8f0"),
+                            fontSize: "0.78rem",
+                            fontWeight: "bold",
+                            cursor: isDisabled ? "not-allowed" : "pointer",
+                            opacity: isDisabled ? 0.45 : 1
+                          }}
+                        >
+                          {d.icon} {d.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* MASCOTA EQUIPADA */}
