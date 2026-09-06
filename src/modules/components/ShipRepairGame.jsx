@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
+import { soundFx } from "../utils/soundEffects";
 
 // Helper to shuffle an array
 function shuffle(array) {
@@ -17,6 +18,8 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
+  const [failedUserText, setFailedUserText] = useState("");
   const [mistakes, setMistakes] = useState(0);
 
   // Word-Pill Assembly State
@@ -35,8 +38,10 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   useEffect(() => {
     setIsError(false);
     setIsSuccess(false);
+    setShowSolution(false);
     setSelectedOptionId(null);
     setAssembledWords([]);
+    setFailedUserText("");
 
     if (!currentQuestion) return;
 
@@ -72,7 +77,7 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
 
   // Click word pill in bank to add to sentence
   const handleAddWord = (pill) => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     setAvailableWords(prev => prev.filter(p => p.id !== pill.id));
     setAssembledWords(prev => [...prev, pill]);
     setIsError(false);
@@ -80,7 +85,7 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
 
   // Click word pill in assembled area to return to bank
   const handleRemoveWord = (pill) => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     setAssembledWords(prev => prev.filter(p => p.id !== pill.id));
     setAvailableWords(prev => [...prev, pill]);
     setIsError(false);
@@ -88,7 +93,7 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
 
   // Reset assembled sentence
   const handleResetWords = () => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     const all = [...availableWords, ...assembledWords];
     setAvailableWords(shuffle(all));
     setAssembledWords([]);
@@ -96,15 +101,18 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   };
 
   const handleOptionSelect = (optionId) => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     setSelectedOptionId(optionId);
     setIsError(false);
   };
 
   const handleVerify = () => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || showSolution || isSuccess) return;
 
     let isCorrectAnswer = false;
+    const userAttemptStr = (availableWords.length > 0 || assembledWords.length > 0)
+      ? assembledWords.map(p => p.word).join(" ")
+      : shuffledOptions.find(o => o.id === selectedOptionId)?.text || "";
 
     if (availableWords.length > 0 || assembledWords.length > 0) {
       // Verify word pill assembly
@@ -139,6 +147,20 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
       setMistakes((prev) => prev + 1);
       soundFx.playError();
       setIsError(true);
+      setFailedUserText(userAttemptStr);
+      setShowSolution(true);
+    }
+  };
+
+  const handleNextAfterError = () => {
+    setShowSolution(false);
+    setIsError(false);
+    if (currentQIndex < questions.length - 1) {
+      setCurrentQIndex(prev => prev + 1);
+    } else {
+      soundFx.playCoin();
+      soundFx.playStreakBonus();
+      onComplete(15, 15, mistakes);
     }
   };
 
@@ -151,17 +173,17 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const isSentenceMode = availableWords.length > 0 || assembledWords.length > 0;
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 720, width: "100%", padding: "18px 22px", position: "relative", margin: "auto" }}>
+    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 720, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 15, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 8 }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ff6b6b", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#ff6b6b", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
               Etapa 2: Vocabulario y Construcción de Oraciones
             </span>
-            <h2 style={{ margin: "4px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity?.title || "Reparación de Módulos"}</h2>
+            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.35rem" }}>{activity?.title || "Reparación de Módulos"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
             Cerrar X
@@ -171,12 +193,12 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
 
       {currentQuestion ? (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 8 }}>
             <span>Sección de Escudos: {currentQIndex + 1} de {questions.length}</span>
             <span>Estabilidad de Escudo: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
-          <h3 style={{ color: "#ffd166", marginBottom: 12, fontSize: "0.98rem", textAlign: "left", lineHeight: "1.4" }}>
+          <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
             ⚡ Instructions / Instrucciones: {isSentenceMode ? "Selecciona y ordena las palabras clave para construir la oración gramatical correcta." : "Selecciona el nodo con el diagnóstico de corrección gramatical adecuado."}
           </h3>
 
@@ -184,13 +206,19 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
           <div 
             className="repair-deck" 
             style={{ 
-              background: "rgba(255, 107, 107, 0.04)", 
-              border: isSuccess 
-                ? "2px solid #2ec4b6" 
-                : "2px solid rgba(255, 107, 107, 0.3)", 
+              background: showSolution 
+                ? "rgba(239, 68, 68, 0.08)" 
+                : isSuccess 
+                  ? "rgba(46, 196, 182, 0.08)" 
+                  : "rgba(255, 107, 107, 0.04)", 
+              border: showSolution 
+                ? "2px solid #ef4444" 
+                : isSuccess 
+                  ? "2px solid #2ec4b6" 
+                  : "2px solid rgba(255, 107, 107, 0.3)", 
               borderRadius: 14, 
-              padding: "14px 18px", 
-              minHeight: 110, 
+              padding: "12px 16px", 
+              minHeight: 100, 
               display: "flex", 
               flexDirection: "column",
               alignItems: "center",
@@ -199,21 +227,21 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
               overflow: "hidden"
             }}
           >
-            <div style={{ position: "absolute", top: 8, right: 12, color: isSuccess ? "#2ec4b6" : "#ff6b6b", fontWeight: "bold", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px" }}>
-              {isSuccess ? "✓ SHIELD STABLE" : "⚠️ SHIELD ANOMALY DETECTED"}
+            <div style={{ position: "absolute", top: 6, right: 10, color: showSolution ? "#ef4444" : isSuccess ? "#2ec4b6" : "#ff6b6b", fontWeight: "bold", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+              {showSolution ? "💥 ANOMALÍA REGISTRADA (-0.75 PTS)" : isSuccess ? "✓ SHIELD STABLE" : "⚠️ SHIELD ANOMALY DETECTED"}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
               <img 
                 src={ReclutaPrincipal} 
                 alt="Operador de Escudo" 
                 className="floating-crewmate"
                 style={{ 
-                  width: "90px", 
-                  height: "90px", 
+                  width: "85px", 
+                  height: "85px", 
                   filter: isSuccess 
                     ? "hue-rotate(85deg) saturate(1.6) drop-shadow(0 0 10px #2ec4b6)" 
-                    : isError 
+                    : showSolution 
                       ? "hue-rotate(130deg) saturate(1.5) drop-shadow(0 0 10px #ff6b6b)" 
                       : "drop-shadow(0 0 8px rgba(0, 245, 255, 0.4))",
                   objectFit: "contain",
@@ -222,162 +250,209 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
               />
             </div>
 
-            <div style={{ fontSize: "1.15rem", color: isSuccess ? "#2ec4b6" : "#ff8787", fontWeight: "bold", letterSpacing: 0.5 }}>
+            <div style={{ fontSize: "1.1rem", color: isSuccess ? "#2ec4b6" : showSolution ? "#ff8787" : "#ff8787", fontWeight: "bold", letterSpacing: 0.5 }}>
               "{getIncorrectSentence(currentQuestion.text)}"
             </div>
           </div>
 
-          {/* WORD ASSEMBLY GAME MODE */}
-          {isSentenceMode ? (
-            <div style={{ marginTop: 16, textAlign: "left" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <h4 style={{ color: "#9be6df", margin: 0, fontSize: "0.9rem", fontWeight: "bold" }}>
-                  🧩 Construye la Oración Correcta:
-                </h4>
-                {assembledWords.length > 0 && (
-                  <button 
-                    onClick={handleResetWords}
-                    style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#ffd166", padding: "3px 10px", borderRadius: 8, fontSize: "0.75rem", cursor: "pointer" }}
+          {/* GAMEPLAY MODE WHEN NOT SHOWING SOLUTION */}
+          {!showSolution ? (
+            <>
+              {/* WORD ASSEMBLY GAME MODE */}
+              {isSentenceMode ? (
+                <div style={{ marginTop: 14, textAlign: "left" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <h4 style={{ color: "#9be6df", margin: 0, fontSize: "0.88rem", fontWeight: "bold" }}>
+                      🧩 Construye la Oración Correcta:
+                    </h4>
+                    {assembledWords.length > 0 && (
+                      <button 
+                        onClick={handleResetWords}
+                        style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "#ffd166", padding: "2px 8px", borderRadius: 6, fontSize: "0.72rem", cursor: "pointer" }}
+                      >
+                        🔄 Reiniciar
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Assembled Sentence Dropzone Box */}
+                  <div 
+                    style={{
+                      minHeight: "50px",
+                      background: "rgba(0, 0, 0, 0.45)",
+                      border: isError ? "2px solid #ff6b6b" : isSuccess ? "2px solid #2ec4b6" : "2px dashed #2ec4b6",
+                      borderRadius: 12,
+                      padding: "8px 12px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 6,
+                      alignItems: "center",
+                      boxShadow: "inset 0 0 15px rgba(0,0,0,0.5)"
+                    }}
                   >
-                    🔄 Reiniciar
-                  </button>
-                )}
+                    {assembledWords.length === 0 ? (
+                      <span style={{ color: "rgba(184, 255, 249, 0.5)", fontSize: "0.82rem", fontStyle: "italic" }}>
+                        Haz clic en las palabras de abajo para armar la oración aquí...
+                      </span>
+                    ) : (
+                      assembledWords.map((pill) => (
+                        <button
+                          key={pill.id}
+                          onClick={() => handleRemoveWord(pill)}
+                          style={{
+                            padding: "5px 12px",
+                            background: "linear-gradient(135deg, #2ec4b6, #208b81)",
+                            color: "#002427",
+                            border: "none",
+                            borderRadius: 8,
+                            fontWeight: "900",
+                            fontSize: "0.88rem",
+                            cursor: "pointer",
+                            boxShadow: "0 0 8px rgba(46, 196, 182, 0.4)"
+                          }}
+                          title="Haz clic para quitar palabra"
+                        >
+                          {pill.word} ✖
+                        </button>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Available Words Bank */}
+                  <div style={{ marginTop: 10 }}>
+                    <span style={{ fontSize: "0.75rem", color: "#94a3b8", display: "block", marginBottom: 4, fontWeight: "bold" }}>
+                      BANCO DE PALABRAS DISPONIBLES:
+                    </span>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {availableWords.map((pill) => (
+                        <button
+                          key={pill.id}
+                          onClick={() => handleAddWord(pill)}
+                          style={{
+                            padding: "6px 13px",
+                            background: "rgba(255, 255, 255, 0.08)",
+                            border: "1.5px solid #ffd166",
+                            color: "#ffd166",
+                            borderRadius: 8,
+                            fontWeight: "bold",
+                            fontSize: "0.85rem",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease"
+                          }}
+                        >
+                          + {pill.word}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* MULTIPLE CHOICE MODE WITH SHUFFLED OPTIONS */
+                <div style={{ marginTop: 14, textAlign: "left" }}>
+                  <h4 style={{ color: "#9be6df", marginBottom: 8, fontSize: "0.85rem", fontWeight: "bold" }}>Nodos del Generador de Escudo:</h4>
+                  <div className="shield-hex-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 8 }}>
+                    {shuffledOptions.map((opt) => {
+                      const isSelected = selectedOptionId === opt.id;
+                      const isRepaired = isSuccess && opt.is_correct;
+                      
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => handleOptionSelect(opt.id)}
+                          style={{
+                            padding: "10px 12px",
+                            borderRadius: 8,
+                            border: isSelected ? "2px solid #b8fff9" : isRepaired ? "2px solid #2ec4b6" : "1.5px solid rgba(255, 255, 255, 0.15)",
+                            background: isSelected ? "rgba(46, 196, 182, 0.2)" : isRepaired ? "rgba(46, 196, 182, 0.25)" : "rgba(0, 0, 0, 0.4)",
+                            color: isSelected ? "#b8fff9" : "#e6f7ff",
+                            fontSize: "0.85rem",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            textAlign: "center"
+                          }}
+                        >
+                          🛠️ {opt.text}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Action button */}
+              <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+                <button 
+                  className="btn-create" 
+                  style={{ 
+                    width: "100%", 
+                    maxWidth: 320, 
+                    padding: "11px 22px",
+                    background: "linear-gradient(135deg, #ffd166, #ffb84d)",
+                    color: "#1a1a00",
+                    fontSize: "0.95rem",
+                    fontWeight: "900",
+                    margin: 0,
+                    boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
+                  }} 
+                  disabled={(isSentenceMode ? assembledWords.length === 0 : !selectedOptionId) || isSuccess}
+                  onClick={handleVerify}
+                >
+                  🛡️ Calibrar Shield Node
+                </button>
+              </div>
+            </>
+          ) : (
+            /* EXPLICIT ERROR SOLUTION FEEDBACK PANEL WITH BUTTON */
+            <div 
+              style={{ 
+                background: "rgba(239, 68, 68, 0.12)", 
+                border: "1.5px solid #ef4444", 
+                borderRadius: "14px", 
+                padding: "14px 18px", 
+                marginTop: "14px", 
+                textAlign: "center" 
+              }} 
+              className="animate-fadeIn"
+            >
+              <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.05rem", marginBottom: "8px" }}>
+                💥 ¡CALIBRACIÓN INCORRECTA REGISTRADA! (-0.75 pts)
               </div>
 
-              {/* Assembled Sentence Dropzone Box */}
-              <div 
-                style={{
-                  minHeight: "55px",
-                  background: "rgba(0, 0, 0, 0.45)",
-                  border: isError ? "2px solid #ff6b6b" : isSuccess ? "2px solid #2ec4b6" : "2px dashed #2ec4b6",
-                  borderRadius: 14,
-                  padding: "10px 14px",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 8,
-                  alignItems: "center",
-                  boxShadow: "inset 0 0 15px rgba(0,0,0,0.5)"
-                }}
-              >
-                {assembledWords.length === 0 ? (
-                  <span style={{ color: "rgba(184, 255, 249, 0.5)", fontSize: "0.85rem", fontStyle: "italic" }}>
-                    Haz clic en las palabras de abajo para armar la oración aquí...
-                  </span>
-                ) : (
-                  assembledWords.map((pill) => (
-                    <button
-                      key={pill.id}
-                      onClick={() => handleRemoveWord(pill)}
-                      style={{
-                        padding: "6px 14px",
-                        background: "linear-gradient(135deg, #2ec4b6, #208b81)",
-                        color: "#002427",
-                        border: "none",
-                        borderRadius: 10,
-                        fontWeight: "900",
-                        fontSize: "0.92rem",
-                        cursor: "pointer",
-                        boxShadow: "0 0 8px rgba(46, 196, 182, 0.4)"
-                      }}
-                      title="Haz clic para quitar palabra"
-                    >
-                      {pill.word} ✖
-                    </button>
-                  ))
-                )}
-              </div>
-
-              {/* Available Words Bank */}
-              <div style={{ marginTop: 12 }}>
-                <span style={{ fontSize: "0.78rem", color: "#94a3b8", display: "block", marginBottom: 6, fontWeight: "bold" }}>
-                  BANCO DE PALABRAS DISPONIBLES:
-                </span>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {availableWords.map((pill) => (
-                    <button
-                      key={pill.id}
-                      onClick={() => handleAddWord(pill)}
-                      style={{
-                        padding: "7px 15px",
-                        background: "rgba(255, 255, 255, 0.08)",
-                        border: "1.5px solid #ffd166",
-                        color: "#ffd166",
-                        borderRadius: 10,
-                        fontWeight: "bold",
-                        fontSize: "0.9rem",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease"
-                      }}
-                    >
-                      + {pill.word}
-                    </button>
-                  ))}
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "10px 14px", borderRadius: 10, textAlign: "left", marginBottom: 12, border: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ color: "#fca5a5", fontSize: "0.9rem", marginBottom: 6 }}>
+                  ❌ <strong>Tu intento:</strong> {failedUserText || "(Incompleto)"}
+                </div>
+                <div style={{ color: "#2ec4b6", fontSize: "0.95rem", fontWeight: "bold" }}>
+                  ✔️ <strong>Oración Gramatical Correcta:</strong> {targetSentence}
                 </div>
               </div>
-            </div>
-          ) : (
-            /* MULTIPLE CHOICE MODE WITH SHUFFLED OPTIONS */
-            <div style={{ marginTop: 16, textAlign: "left" }}>
-              <h4 style={{ color: "#9be6df", marginBottom: 10, fontSize: "0.88rem", fontWeight: "bold" }}>Nodos del Generador de Escudo:</h4>
-              <div className="shield-hex-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
-                {shuffledOptions.map((opt) => {
-                  const isSelected = selectedOptionId === opt.id;
-                  const isRepaired = isSuccess && opt.is_correct;
-                  
-                  return (
-                    <button
-                      key={opt.id}
-                      onClick={() => handleOptionSelect(opt.id)}
-                      style={{
-                        padding: "12px 14px",
-                        borderRadius: 10,
-                        border: isSelected ? "2px solid #b8fff9" : isRepaired ? "2px solid #2ec4b6" : "1.5px solid rgba(255, 255, 255, 0.15)",
-                        background: isSelected ? "rgba(46, 196, 182, 0.2)" : isRepaired ? "rgba(46, 196, 182, 0.25)" : "rgba(0, 0, 0, 0.4)",
-                        color: isSelected ? "#b8fff9" : "#e6f7ff",
-                        fontSize: "0.88rem",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        textAlign: "center"
-                      }}
-                    >
-                      🛠️ {opt.text}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          {/* Action buttons */}
-          <div style={{ marginTop: 20, display: "flex", justifyContent: "center" }}>
-            <button 
-              className="btn-create" 
-              style={{ 
-                width: "100%", 
-                maxWidth: 320, 
-                padding: "12px 24px",
-                background: "linear-gradient(135deg, #ffd166, #ffb84d)",
-                color: "#1a1a00",
-                fontSize: "1rem",
-                fontWeight: "900",
-                margin: 0,
-                boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
-              }} 
-              disabled={(isSentenceMode ? assembledWords.length === 0 : !selectedOptionId) || isSuccess}
-              onClick={handleVerify}
-            >
-              🛡️ Calibrar Shield Node
-            </button>
-          </div>
+              <p style={{ color: "#cbd5e0", fontSize: "0.85rem", margin: "0 0 12px 0", lineHeight: "1.4" }}>
+                Revisa detenidamente la corrección arriba para identificar tu error gramatical.
+              </p>
 
-          {isError && (
-            <div style={{ marginTop: 12, color: "#ff6b6b", fontWeight: "bold", textAlign: "center", fontSize: "0.9rem" }} className="animate-shake">
-              💥 ERROR DE RED: La ordenación de palabras es incorrecta. Inténtalo de nuevo.
+              <button
+                onClick={handleNextAfterError}
+                style={{
+                  padding: "12px 28px",
+                  background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                  border: "none",
+                  borderRadius: "12px",
+                  color: "#0d1b2a",
+                  fontWeight: "900",
+                  fontSize: "0.98rem",
+                  cursor: "pointer",
+                  boxShadow: "0 0 20px rgba(255, 209, 102, 0.5)",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                💡 ENTENDIDO - CONTINUAR A LA SIGUIENTE SECCIÓN ➔
+              </button>
             </div>
           )}
 
           {isSuccess && (
-            <div style={{ marginTop: 12, color: "#2ec4b6", fontWeight: "bold", textAlign: "center", fontSize: "0.9rem" }}>
+            <div style={{ marginTop: 10, color: "#2ec4b6", fontWeight: "bold", textAlign: "center", fontSize: "0.88rem" }}>
               ✨ CALIBRACIÓN COMPLETADA: Escudo de energía normalizado al 100%.
             </div>
           )}
@@ -398,3 +473,4 @@ ShipRepairGame.propTypes = {
   onClose: PropTypes.func,
   hideHeader: PropTypes.bool
 };
+

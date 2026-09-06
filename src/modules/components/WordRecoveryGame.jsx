@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
+import { soundFx } from "../utils/soundEffects";
 
 // Helper to shuffle array
 function shuffle(array) {
@@ -20,6 +21,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
   const [mistakes, setMistakes] = useState(0);
 
   const questions = activity.questions || [];
@@ -30,6 +32,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     setFilledWords([]);
     setIsError(false);
     setIsSuccess(false);
+    setShowSolution(false);
 
     if (currentQuestion?.options && currentQuestion.options.length > 0) {
       setShuffledOptions(shuffle(currentQuestion.options));
@@ -39,7 +42,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   }, [currentQIndex, currentQuestion]);
 
   const handleOptionSelect = (option) => {
-    if (isSuccess) return;
+    if (isSuccess || showSolution) return;
     setSelectedOptionId(option.id);
     setIsError(false);
     setIsSuccess(false);
@@ -50,30 +53,48 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   };
 
   const handleVerify = () => {
-    if (!currentQuestion) return;
+    if (!currentQuestion || showSolution || isSuccess) return;
     const selectedOption = currentQuestion.options?.find(o => o.id === selectedOptionId);
 
     if (!selectedOption) return;
 
     if (selectedOption.is_correct) {
+      soundFx.playLaser();
+      soundFx.playSuccess();
       setIsSuccess(true);
       setTimeout(() => {
         if (currentQIndex < questions.length - 1) {
           setCurrentQIndex(currentQIndex + 1);
         } else {
+          soundFx.playCoin();
+          soundFx.playStreakBonus();
           onComplete(15, 15, mistakes); // 15 XP, 15 Coins, mistakes
         }
       }, 1500);
     } else {
+      soundFx.playError();
       setMistakes((prev) => prev + 1);
       setIsError(true);
-      setTimeout(() => {
-        setIsError(false);
-        setSelectedOptionId(null);
-        setFilledWords([]);
-      }, 1500);
+      setShowSolution(true);
     }
   };
+
+  const handleNextAfterError = () => {
+    setShowSolution(false);
+    setIsError(false);
+    setSelectedOptionId(null);
+    setFilledWords([]);
+    if (currentQIndex < questions.length - 1) {
+      setCurrentQIndex(prev => prev + 1);
+    } else {
+      soundFx.playCoin();
+      soundFx.playStreakBonus();
+      onComplete(15, 15, mistakes);
+    }
+  };
+
+  const correctOption = currentQuestion?.options?.find(o => o.is_correct);
+  const selectedUserOption = currentQuestion?.options?.find(o => o.id === selectedOptionId);
 
   // Helper to render the sentence with highlighted blanks
   const renderSentenceWithBlanks = (text, filled) => {
@@ -101,9 +122,9 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               {!isLast && (
                 <span 
                   style={{ 
-                    borderBottom: isEmpty ? "2.5px dashed #ffd166" : "2.5px solid #2ec4b6",
-                    background: isEmpty ? "rgba(255, 209, 102, 0.08)" : "rgba(46, 196, 182, 0.18)",
-                    color: isEmpty ? "#ffd166" : "#b8fff9",
+                    borderBottom: isEmpty ? "2.5px dashed #ffd166" : showSolution ? "2.5px solid #ef4444" : "2.5px solid #2ec4b6",
+                    background: isEmpty ? "rgba(255, 209, 102, 0.08)" : showSolution ? "rgba(239, 68, 68, 0.18)" : "rgba(46, 196, 182, 0.18)",
+                    color: isEmpty ? "#ffd166" : showSolution ? "#fca5a5" : "#b8fff9",
                     padding: "3px 12px",
                     borderRadius: 6,
                     margin: "0 6px",
@@ -163,7 +184,9 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               position: "relative",
               overflow: "hidden",
               transition: "all 0.3s ease",
-              padding: "14px 18px"
+              padding: "14px 18px",
+              border: showSolution ? "2px solid #ef4444" : isSuccess ? "2px solid #2ec4b6" : "1.5px solid rgba(255, 209, 102, 0.3)",
+              background: showSolution ? "rgba(239, 68, 68, 0.08)" : isSuccess ? "rgba(46, 196, 182, 0.08)" : "rgba(0, 0, 0, 0.4)"
             }}
           >
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
@@ -176,7 +199,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                   height: "90px", 
                   filter: isSuccess 
                     ? "hue-rotate(85deg) saturate(1.6) drop-shadow(0 0 8px #2ec4b6)" 
-                    : isError 
+                    : showSolution 
                       ? "hue-rotate(130deg) saturate(1.5) drop-shadow(0 0 8px #ff6b6b)" 
                       : "drop-shadow(0 0 5px rgba(255, 209, 102, 0.45))",
                   objectFit: "contain",
@@ -191,19 +214,21 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               <div 
                 style={{ 
                   height: "100%", 
-                  width: isSuccess ? "100%" : selectedOptionId ? "60%" : "15%",
+                  width: isSuccess ? "100%" : showSolution ? "20%" : selectedOptionId ? "60%" : "15%",
                   background: isSuccess 
                     ? "linear-gradient(90deg, #2ec4b6, #00ff87)" 
-                    : selectedOptionId 
-                      ? "linear-gradient(90deg, #ffb84d, #ffd166)" 
-                      : "linear-gradient(90deg, #ff6b6b, #ff8787)",
+                    : showSolution 
+                      ? "linear-gradient(90deg, #ef4444, #fca5a5)" 
+                      : selectedOptionId 
+                        ? "linear-gradient(90deg, #ffb84d, #ffd166)" 
+                        : "linear-gradient(90deg, #ff6b6b, #ff8787)",
                   boxShadow: isSuccess ? "0 0 10px #00ff87" : "none",
                   transition: "width 0.8s ease, background-color 0.4s ease"
                 }} 
               />
             </div>
-            <span style={{ fontSize: "0.72rem", color: "rgba(230, 247, 255, 0.5)", marginTop: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.8px" }}>
-              {isSuccess ? "⚡ REACTOR ALIMENTADO 100%" : selectedOptionId ? "🔋 CELDA SELECCIONADA - LISTO PARA CARGAR" : "⚠️ ESPERANDO CELDA DE COMBUSTIBLE"}
+            <span style={{ fontSize: "0.72rem", color: showSolution ? "#fca5a5" : "rgba(230, 247, 255, 0.5)", marginTop: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.8px" }}>
+              {showSolution ? "💥 INCOMPATIBILIDAD DE CELDA REGISTRADA" : isSuccess ? "⚡ REACTOR ALIMENTADO 100%" : selectedOptionId ? "🔋 CELDA SELECCIONADA - LISTO PARA CARGAR" : "⚠️ ESPERANDO CELDA DE COMBUSTIBLE"}
             </span>
           </div>
 
@@ -219,24 +244,41 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
             >
               {shuffledOptions.map((opt) => {
                 const isSelected = selectedOptionId === opt.id;
+                const isRightOpt = showSolution && opt.is_correct;
+                const isWrongOpt = showSolution && isSelected && !opt.is_correct;
+
+                let borderStyle = "1.5px solid rgba(255, 255, 255, 0.15)";
+                let bgStyle = "rgba(0, 0, 0, 0.4)";
+                let colorStyle = "#e6f7ff";
+
+                if (isRightOpt) {
+                  borderStyle = "2px solid #2ec4b6";
+                  bgStyle = "rgba(46, 196, 182, 0.25)";
+                  colorStyle = "#b8fff9";
+                } else if (isWrongOpt) {
+                  borderStyle = "2px solid #ef4444";
+                  bgStyle = "rgba(239, 68, 68, 0.25)";
+                  colorStyle = "#fca5a5";
+                } else if (isSelected) {
+                  borderStyle = "2px solid #b8fff9";
+                  bgStyle = "rgba(46, 196, 182, 0.2)";
+                  colorStyle = "#b8fff9";
+                }
                 
                 return (
                   <button
                     key={opt.id}
                     onClick={() => handleOptionSelect(opt)}
+                    disabled={showSolution}
                     style={{
                       padding: "11px 14px",
                       borderRadius: 10,
-                      border: isSelected 
-                        ? "2px solid #b8fff9" 
-                        : "1.5px solid rgba(255, 255, 255, 0.15)",
-                      background: isSelected 
-                        ? "rgba(46, 196, 182, 0.2)" 
-                        : "rgba(0, 0, 0, 0.4)",
-                      color: isSelected ? "#b8fff9" : "#e6f7ff",
+                      border: borderStyle,
+                      background: bgStyle,
+                      color: colorStyle,
                       fontSize: "0.95rem",
                       fontWeight: "bold",
-                      cursor: "pointer",
+                      cursor: showSolution ? "default" : "pointer",
                       margin: 0,
                       boxShadow: isSelected ? "0 0 15px rgba(46, 196, 182, 0.25)" : "none",
                       transition: "all 0.2s ease",
@@ -245,37 +287,79 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                     className="reactor-cell-btn"
                   >
                     🔋 {opt.text}
+                    {isRightOpt && <span style={{ display: "block", fontSize: "0.75rem", color: "#2ec4b6" }}>✔️ CORRECTO</span>}
+                    {isWrongOpt && <span style={{ display: "block", fontSize: "0.75rem", color: "#ef4444" }}>❌ TU ELECCIÓN</span>}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Action buttons */}
-          <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
-            <button 
-              className="btn-create" 
+          {!showSolution ? (
+            /* Action buttons */
+            <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+              <button 
+                className="btn-create" 
+                style={{ 
+                  width: "100%", 
+                  maxWidth: 320, 
+                  padding: "12px 24px",
+                  background: "linear-gradient(135deg, #ffd166, #ffb84d)",
+                  color: "#1a1a00",
+                  fontSize: "1rem",
+                  fontWeight: "900",
+                  margin: 0,
+                  boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
+                }} 
+                disabled={!selectedOptionId || isSuccess}
+                onClick={handleVerify}
+              >
+                ⚡ ¡Inyectar Celda de Energía!
+              </button>
+            </div>
+          ) : (
+            /* EXPLICIT SOLUTION ERROR FEEDBACK PANEL WITH BUTTON */
+            <div 
               style={{ 
-                width: "100%", 
-                maxWidth: 320, 
-                padding: "12px 24px",
-                background: "linear-gradient(135deg, #ffd166, #ffb84d)",
-                color: "#1a1a00",
-                fontSize: "1rem",
-                fontWeight: "900",
-                margin: 0,
-                boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
+                background: "rgba(239, 68, 68, 0.12)", 
+                border: "1.5px solid #ef4444", 
+                borderRadius: "14px", 
+                padding: "14px 18px", 
+                marginTop: "14px", 
+                textAlign: "center" 
               }} 
-              disabled={!selectedOptionId || isSuccess}
-              onClick={handleVerify}
+              className="animate-fadeIn"
             >
-              ⚡ ¡Inyectar Celda de Energía!
-            </button>
-          </div>
+              <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.05rem", marginBottom: "6px" }}>
+                💥 ¡CELDA DE ENERGÍA INCOMPATIBLE! (-0.75 pts)
+              </div>
 
-          {isError && (
-            <div style={{ marginTop: 10, color: "#ff6b6b", fontWeight: "bold", textAlign: "center", fontSize: "0.88rem" }} className="animate-shake">
-              💥 ¡INCOMPATIBILIDAD DE COMBUSTIBLE! Inestabilidad detectada en el reactor.
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "10px 14px", borderRadius: 10, textAlign: "left", marginBottom: 12, border: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ color: "#fca5a5", fontSize: "0.88rem", marginBottom: 4 }}>
+                  ❌ <strong>Tu combinación elegida:</strong> {selectedUserOption?.text || "Incompleta"}
+                </div>
+                <div style={{ color: "#2ec4b6", fontSize: "0.92rem", fontWeight: "bold" }}>
+                  ✔️ <strong>Combinación Correcta del Reactor:</strong> {correctOption?.text}
+                </div>
+              </div>
+
+              <button
+                onClick={handleNextAfterError}
+                style={{
+                  padding: "12px 28px",
+                  background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                  border: "none",
+                  borderRadius: "12px",
+                  color: "#0d1b2a",
+                  fontWeight: "900",
+                  fontSize: "0.98rem",
+                  cursor: "pointer",
+                  boxShadow: "0 0 20px rgba(255, 209, 102, 0.5)",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                💡 ENTENDIDO - CONTINUAR A LA SIGUIENTE CELDA ➔
+              </button>
             </div>
           )}
 
