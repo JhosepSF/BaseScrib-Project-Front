@@ -217,8 +217,9 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         border: "2px solid #2ec4b6",
         borderRadius: 24,
         padding: "24px 26px",
-        maxWidth: 860,
+        maxWidth: 880,
         width: "100%",
+        height: 650,
         maxHeight: "92vh",
         display: "flex",
         flexDirection: "column",
@@ -316,15 +317,12 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           </div>
         </div>
 
-        {/* NAVEGACIÓN DE APARTADOS HORIZONTALES (TABS) */}
+        {/* NAVEGACIÓN DE APARTADOS HORIZONTALES (7 TABS VISIBLES SIDE-BY-SIDE) */}
         <div style={{
-          display: "flex",
-          gap: 8,
-          marginBottom: 16,
-          overflowX: "auto",
-          paddingBottom: 4,
-          scrollbarWidth: "none",
-          msOverflowStyle: "none"
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(105px, 1fr))",
+          gap: 6,
+          marginBottom: 16
         }}>
           {tabs.map((t) => {
             const isActive = activeTab === t.id;
@@ -338,29 +336,31 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 6,
-                  padding: "9px 16px",
-                  borderRadius: 14,
+                  justifyContent: "center",
+                  gap: 4,
+                  padding: "8px 4px",
+                  borderRadius: 12,
                   border: isActive ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.12)",
                   background: isActive
                     ? "linear-gradient(135deg, rgba(46, 196, 182, 0.25), rgba(15, 76, 92, 0.4))"
                     : "rgba(255, 255, 255, 0.04)",
                   color: isActive ? "#2ec4b6" : "#94a3b8",
                   fontWeight: "bold",
-                  fontSize: "0.85rem",
+                  fontSize: "0.78rem",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
-                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                  boxShadow: isActive ? "0 0 15px rgba(46, 196, 182, 0.3)" : "none",
+                  transition: "all 0.15s ease",
+                  boxShadow: isActive ? "0 0 12px rgba(46, 196, 182, 0.3)" : "none",
                   transform: isActive ? "scale(1.02)" : "scale(1)"
                 }}
               >
-                <span style={{ fontSize: "1.1rem" }}>{t.icon}</span>
+                <span style={{ fontSize: "1.05rem" }}>{t.icon}</span>
                 <span>{t.label}</span>
               </button>
             );
           })}
         </div>
+
 
         {/* CONTENIDOR DEL APARTADO SELECCIONADO */}
         <div style={{

@@ -480,8 +480,8 @@ export default function AvatarShowcase({
 
           return (
             <>
-              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS / CORONAS) — VISIBLES EN TODAS LAS SKINS */}
-              {(accessory === "goggles" || (visorColor && visorColor !== "none")) && (glassesMap[visorColor] || glassesMap["#a3e2f7"]) && (
+              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS / CORONAS) — SOLO MOSTRAR GAFAS SI ACCESSORY === GOGGLES */}
+              {accessory === "goggles" && (glassesMap[visorColor] || glassesMap["#a3e2f7"]) && (
                 <img
                   src={glassesMap[visorColor] || glassesMap["#a3e2f7"]}
                   alt="Gafas Cibernéticas"
