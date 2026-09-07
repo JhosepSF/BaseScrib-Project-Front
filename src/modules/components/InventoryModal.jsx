@@ -216,16 +216,18 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         background: "linear-gradient(150deg, #0f172a, #030712)",
         border: "2px solid #2ec4b6",
         borderRadius: 24,
-        padding: "24px 26px",
+        padding: 0,
         maxWidth: 880,
         width: "100%",
-        height: 650,
-        maxHeight: "92vh",
+        maxHeight: "90vh",
+        height: 660,
         display: "flex",
         flexDirection: "column",
         boxShadow: "0 0 60px rgba(46, 196, 182, 0.35)",
         position: "relative",
-        color: "#e2e8f0"
+        color: "#e2e8f0",
+        overflow: "hidden",
+        boxSizing: "border-box"
       }}>
         {/* BOTÓN CERRAR */}
         <button 
@@ -280,9 +282,16 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         )}
 
         {/* HEADER DEL INVENTARIO + AVATAR PREVIEW */}
-        <div style={{ display: "flex", gap: 20, alignItems: "center", marginBottom: 16, flexWrap: "wrap" }}>
+        <div style={{
+          display: "flex",
+          gap: 20,
+          alignItems: "center",
+          padding: "20px 24px 12px 24px",
+          flexShrink: 0,
+          flexWrap: "wrap"
+        }}>
           <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
               <span style={{ fontSize: "2.3rem" }}>🎨</span>
               <div>
                 <h2 style={{ color: "#2ec4b6", margin: 0, fontSize: "1.55rem", textShadow: "0 0 15px rgba(46, 196, 182, 0.5)" }}>
@@ -322,7 +331,8 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(105px, 1fr))",
           gap: 6,
-          marginBottom: 16
+          padding: "0 24px 12px 24px",
+          flexShrink: 0
         }}>
           {tabs.map((t) => {
             const isActive = activeTab === t.id;
@@ -361,13 +371,11 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           })}
         </div>
 
-
         {/* CONTENIDOR DEL APARTADO SELECCIONADO */}
         <div style={{
           flex: 1,
           overflowY: "auto",
-          paddingRight: 4,
-          minHeight: 280,
+          padding: "0 24px 16px 24px",
           display: "flex",
           flexDirection: "column",
           gap: 16
@@ -810,8 +818,13 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
 
         </div>
 
-        {/* BOTÓN CERRAR / LISTO FINAL */}
-        <div style={{ marginTop: 14, paddingTop: 10, borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+        {/* BOTÓN CERRAR / LISTO FINAL (FOOTER DENTRO DE LA TARJETA CON FLEX-SHRINK 0) */}
+        <div style={{
+          padding: "12px 24px 20px 24px",
+          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "rgba(15, 23, 42, 0.95)",
+          flexShrink: 0
+        }}>
           <button
             onClick={() => {
               soundFx.playClick();
