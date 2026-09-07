@@ -93,10 +93,10 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   const accessoriesList = [
     { id: "none", name: "Sin Base", icon: "🚫" },
     { id: "ring", name: "Aro Neón Carmesí", icon: "⭕" },
-    { id: "aura_cyan", name: "Portal Radar Cibernético Cian", icon: "🌀" },
-    { id: "aura_quantum", name: "Campo Cuántico Violáceo", icon: "🔮" },
-    { id: "aura_gold", name: "Cresta Celestial Dorada", icon: "⚜️" },
-    { id: "aura_solar", name: "Plataforma Sol Estelar", icon: "🔥" },
+    { id: "aura_cyan", name: "Portal Radar Cian", icon: "🌀" },
+    { id: "aura_quantum", name: "Campo Cuántico", icon: "🔮" },
+    { id: "aura_gold", name: "Cresta Celestial", icon: "⚜️" },
+    { id: "aura_solar", name: "Plataforma Sol", icon: "🔥" },
     { id: "goggles", name: "Gafas Cibernéticas", icon: "🥽" },
     { id: "antenna", name: "Antena Espacial", icon: "📡" },
     { id: "crown", name: "Corona Estelar", icon: "👑" }
@@ -497,7 +497,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           {activeTab === "accessories" && (
             <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
               <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👓 Accesorio de Casco / Cabeza:</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
                 {accessoriesList.map((acc) => {
                   const isSel = accessory === acc.id;
                   return (
@@ -519,11 +519,22 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: 4
+                        textAlign: "center",
+                        gap: 6,
+                        overflow: "hidden"
                       }}
                     >
                       <span style={{ fontSize: "1.3rem" }}>{acc.icon}</span>
-                      <span>{acc.name}</span>
+                      <span style={{
+                        width: "100%",
+                        wordBreak: "break-word",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "normal",
+                        lineHeight: 1.25,
+                        textAlign: "center"
+                      }}>
+                        {acc.name}
+                      </span>
                     </button>
                   );
                 })}
@@ -564,7 +575,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                   </div>
                 )}
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 10 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
                   {decalsList.map((d) => {
                     const isSel = decal === d.id;
                     const isDisabled = !isBaseSkinSelected;
@@ -590,11 +601,22 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
-                          gap: 4
+                          textAlign: "center",
+                          gap: 6,
+                          overflow: "hidden"
                         }}
                       >
                         <span style={{ fontSize: "1.3rem" }}>{d.icon}</span>
-                        <span>{d.name}</span>
+                        <span style={{
+                          width: "100%",
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
+                          whiteSpace: "normal",
+                          lineHeight: 1.25,
+                          textAlign: "center"
+                        }}>
+                          {d.name}
+                        </span>
                       </button>
                     );
                   })}
