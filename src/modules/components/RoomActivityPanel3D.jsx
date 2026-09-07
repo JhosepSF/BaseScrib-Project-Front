@@ -470,83 +470,9 @@ export function RoomActivityPanel3D({
           onOpenEval={onOpenEval}
           onOpenInventory={onOpenInventory}
           onLogout={onLogout}
+          onToggleViewMode={onToggleViewMode}
+          is3DView={true}
         />
-      </div>
-
-      {/* TOP BAR CONTROLS */}
-      <div style={{ position: "absolute", top: 75, left: 20, zIndex: 999, display: "flex", gap: 10 }}>
-        <button
-          onClick={() => { soundFx.playWarp(); setShowOnboarding(true); }}
-          style={{
-            padding: "6px 14px",
-            background: "linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9))",
-            border: "1.5px solid #60a5fa",
-            borderRadius: "20px",
-            color: "#ffffff",
-            fontWeight: "bold",
-            fontSize: "0.75rem",
-            cursor: "pointer",
-            boxShadow: "0 0 15px rgba(59, 130, 246, 0.6)"
-          }}
-        >
-          📜 Cinemáticas & Tutorial
-        </button>
-
-        <button
-          onClick={() => {
-            soundFx.playWarp();
-            localStorage.removeItem("basescrib_onboarding_completed");
-            setShowOnboarding(true);
-          }}
-          style={{
-            padding: "6px 14px",
-            background: "linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9))",
-            border: "1.5px solid #fca5a5",
-            borderRadius: "20px",
-            color: "#ffffff",
-            fontWeight: "bold",
-            fontSize: "0.75rem",
-            cursor: "pointer",
-            boxShadow: "0 0 15px rgba(239, 68, 68, 0.6)"
-          }}
-          title="Reinicia el registro para probar las cinemáticas como un usuario nuevo"
-        >
-          🔄 Reiniciar Onboarding (Pruebas)
-        </button>
-
-        <button
-          onClick={onToggleViewMode}
-          style={{
-            padding: "6px 14px",
-            background: "rgba(10, 25, 45, 0.9)",
-            border: "1.5px solid #9be6df",
-            borderRadius: "20px",
-            color: "#9be6df",
-            fontWeight: "bold",
-            fontSize: "0.75rem",
-            cursor: "pointer",
-            boxShadow: "0 0 15px rgba(46, 196, 182, 0.4)"
-          }}
-        >
-          🖥️ Volver a Vista Clásica
-        </button>
-
-        <button
-          onClick={() => setShowCalibrator(!showCalibrator)}
-          style={{
-            padding: "6px 14px",
-            background: showCalibrator ? "#f72585" : "rgba(10, 25, 45, 0.9)",
-            border: showCalibrator ? "2px solid #ffffff" : "1.5px solid #f72585",
-            borderRadius: "20px",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "0.75rem",
-            cursor: "pointer",
-            boxShadow: showCalibrator ? "0 0 25px #f72585" : "0 0 15px rgba(247, 37, 133, 0.4)"
-          }}
-        >
-          👁️ {showCalibrator ? "Ocultar Zonas / Modo Calibración" : "👁️ Ver Zonas de Calibración"}
-        </button>
       </div>
 
       {/* ONBOARDING & TUTORIAL SYSTEM MODAL */}

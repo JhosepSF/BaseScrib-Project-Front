@@ -9,7 +9,7 @@ import { API_BASE } from "../../config";
 /**
  * RecluteHUD — Floating HUD bar with avatar identity, stats, notifications, and navigation.
  */
-export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, onOpenInventory, onLogout, onToggle3D }) {
+export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, onOpenInventory, onLogout, onToggleViewMode, is3DView = false }) {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -219,20 +219,22 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
         >
           🎨 Avatar
         </button>
-        {onToggle3D && (
+        {onToggleViewMode && (
           <button
-            className="recrute-hud__btn recrute-hud__btn--3d"
-            onClick={() => { soundFx.playClick(); onToggle3D(); }}
+            className="recrute-hud__btn recrute-hud__btn--viewmode"
+            onClick={() => { soundFx.playClick(); onToggleViewMode(); }}
             style={{
-              background: "linear-gradient(135deg, #f72585, #7209b7)",
+              background: is3DView
+                ? "linear-gradient(135deg, #06b6d4, #0284c7)"
+                : "linear-gradient(135deg, #f72585, #7209b7)",
               color: "#ffffff",
               fontWeight: "bold",
-              border: "1px solid #f72585",
-              boxShadow: "0 0 12px rgba(247, 37, 133, 0.6)"
+              border: is3DView ? "1px solid #38bdf8" : "1px solid #f72585",
+              boxShadow: is3DView ? "0 0 12px rgba(56, 189, 248, 0.6)" : "0 0 12px rgba(247, 37, 133, 0.6)"
             }}
-            title="Cambiar a la Vista 3D Mapeada Interactiva"
+            title={is3DView ? "Volver a la Vista 2D Clásica" : "Cambiar a la Vista 3D Mapeada Interactiva"}
           >
-            🌀 Vista 3D
+            {is3DView ? "🖥️ Vista 2D" : "🌀 Vista 3D"}
           </button>
         )}
         <button

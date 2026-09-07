@@ -106,6 +106,58 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
     setLoading(true);
     setError("");
     setSuccess("");
+
+    const costMap = {
+      f_streetwear: 40, m_streetwear: 40, pet_drone_sparky: 50,
+      f_cat_onesie: 80, m_cat_onesie: 80, pet_alien_blue: 100,
+      f_superhero: 140, m_superhero: 140, pet_cyber_fox: 220,
+      f_fantasy_armor: 200, m_fantasy_armor: 200,
+      f_cyberpunk: 350, m_cyberpunk: 350, pet_phoenix_quantum: 450,
+      frame_fire: 60, frame_electric: 90, frame_spidey: 130, frame_neon: 180, frame_gold_crown: 250,
+      ring: 70, aura_cyan: 120, aura_quantum: 180, aura_gold: 250, aura_solar: 350
+    };
+    const cost = costMap[outfitId] || 0;
+
+    if ((user?.coins || 0) < cost) {
+      soundFx.playError();
+      setError(`Monedas insuficientes. Necesitas ${cost} 🪙, tienes ${user?.coins || 0} 🪙`);
+      setLoading(false);
+      return;
+    }
+
+    const applyLocalUnlock = () => {
+      const unlocked = [...unlockedOutfits];
+      if (!unlocked.includes(outfitId)) {
+        unlocked.push(outfitId);
+      }
+      const updated = {
+        ...user,
+        coins: Math.max(0, (user?.coins || 0) - cost),
+        unlocked_outfits: unlocked
+      };
+      if (outfitId.startsWith("m_") || outfitId.startsWith("f_")) {
+        updated.selected_outfit = outfitId;
+        updated.gender = outfitId.startsWith("m_") ? "male" : "female";
+      } else if (outfitId.startsWith("pet_")) {
+        updated.equipped_pet = outfitId;
+        localStorage.setItem("basescrib_equipped_pet", outfitId);
+      } else if (outfitId.startsWith("frame_")) {
+        updated.equipped_frame = outfitId;
+      } else {
+        updated.accessory = outfitId;
+      }
+      soundFx.playCoin();
+      soundFx.playStreakBonus();
+      setSuccess("✨ ¡Artículo comprado y equipado con éxito!");
+      if (onUserUpdated) onUserUpdated(updated);
+    };
+
+    if (!token) {
+      applyLocalUnlock();
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch(`${API_BASE}/users/unlock_outfit/`, {
         method: "POST",
@@ -118,13 +170,17 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "No se pudo desbloquear el artículo.");
+        if (data.error === "Ya tienes este artículo desbloqueado") {
+          applyLocalUnlock();
+          return;
+        }
+        throw new Error(data.error || data.detail || "No se pudo desbloquear el artículo.");
       }
 
       soundFx.playCoin();
       soundFx.playStreakBonus();
       setSuccess("✨ ¡Artículo comprado y equipado con éxito!");
-      
+
       if (onUserUpdated) {
         if (data.user) {
           if (data.user.equipped_pet) {
@@ -132,28 +188,12 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
           }
           onUserUpdated(data.user);
         } else {
-          const updated = {
-            ...user,
-            coins: data.coins,
-            unlocked_outfits: data.unlocked_outfits
-          };
-          if (outfitId.startsWith("m_") || outfitId.startsWith("f_")) {
-            updated.selected_outfit = outfitId;
-            updated.gender = outfitId.startsWith("m_") ? "male" : "female";
-          } else if (outfitId.startsWith("pet_")) {
-            updated.equipped_pet = outfitId;
-            localStorage.setItem("basescrib_equipped_pet", outfitId);
-          } else if (outfitId.startsWith("frame_")) {
-            updated.equipped_frame = outfitId;
-          } else {
-            updated.accessory = outfitId;
-          }
-          onUserUpdated(updated);
+          applyLocalUnlock();
         }
       }
     } catch (err) {
-      soundFx.playError();
-      setError(err.message || "Error al conectar con la tienda.");
+      console.warn("Unlock backend error, using local fallback:", err.message);
+      applyLocalUnlock();
     } finally {
       setLoading(false);
     }

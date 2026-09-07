@@ -673,7 +673,8 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         }}
         onOpenInventory={() => setShowInventory(true)}
         onLogout={onBack}
-        onToggle3D={() => setViewMode("3d")}
+        onToggleViewMode={() => setViewMode("3d")}
+        is3DView={false}
       />
 
       {/* MAIN DIEGETIC LAYOUT */}
