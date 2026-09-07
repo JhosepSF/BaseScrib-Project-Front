@@ -204,7 +204,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
       left: 0,
       width: "100vw",
       height: "100vh",
-      background: "radial-gradient(circle at center, rgba(15, 23, 42, 0.95), rgba(3, 7, 18, 0.99))",
+      background: "radial-gradient(circle at center, rgba(13, 27, 42, 0.95), rgba(3, 10, 20, 0.99))",
       backdropFilter: "blur(12px)",
       display: "flex",
       alignItems: "center",
@@ -213,23 +213,23 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
       padding: 20
     }}>
       <div className="modal-card animate-scaleUp" style={{
-        background: "linear-gradient(150deg, #0f172a, #030712)",
-        border: "2px solid #2ec4b6",
+        background: "linear-gradient(150deg, #0d1b2a, #050c18)",
+        border: "2px solid #ffd166",
         borderRadius: 24,
         padding: 0,
-        maxWidth: 880,
+        maxWidth: 940,
         width: "100%",
+        height: 700,
         maxHeight: "90vh",
-        height: 660,
         display: "flex",
         flexDirection: "column",
-        boxShadow: "0 0 60px rgba(46, 196, 182, 0.35)",
+        boxShadow: "0 0 55px rgba(255, 209, 102, 0.4), inset 0 0 25px rgba(255, 209, 102, 0.05)",
         position: "relative",
         color: "#e2e8f0",
         overflow: "hidden",
         boxSizing: "border-box"
       }}>
-        {/* BOTÓN CERRAR */}
+        {/* BOTÓN CERRAR CON NEÓN DORADO */}
         <button 
           onClick={() => { soundFx.playClick(); onClose(); }}
           style={{
@@ -239,15 +239,16 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
             width: 36,
             height: 36,
             borderRadius: "50%",
-            background: "rgba(255, 255, 255, 0.08)",
-            border: "1px solid rgba(46, 196, 182, 0.4)",
-            color: "#2ec4b6",
+            background: "rgba(255, 209, 102, 0.12)",
+            border: "1px solid rgba(255, 209, 102, 0.5)",
+            color: "#ffd166",
             fontSize: "1.1rem",
             cursor: "pointer",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 10
+            zIndex: 10,
+            boxShadow: "0 0 12px rgba(255, 209, 102, 0.3)"
           }}
         >
           ✖
@@ -263,14 +264,14 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
             zIndex: 10050,
             background: saveMessage.includes("⚠️")
               ? "linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(153, 27, 27, 0.95))"
-              : "linear-gradient(135deg, rgba(46, 196, 182, 0.95), rgba(15, 76, 92, 0.95))",
-            border: saveMessage.includes("⚠️") ? "1.5px solid #fca5a5" : "1.5px solid #b8fff9",
+              : "linear-gradient(135deg, rgba(255, 209, 102, 0.95), rgba(245, 158, 11, 0.95))",
+            border: saveMessage.includes("⚠️") ? "1.5px solid #fca5a5" : "1.5px solid #fff3c4",
             borderRadius: 20,
-            padding: "8px 22px",
-            color: "#ffffff",
+            padding: "8px 24px",
+            color: saveMessage.includes("⚠️") ? "#ffffff" : "#1a1a00",
             fontWeight: "bold",
-            fontSize: "0.85rem",
-            boxShadow: saveMessage.includes("⚠️") ? "0 8px 25px rgba(239, 68, 68, 0.6)" : "0 8px 25px rgba(46, 196, 182, 0.6)",
+            fontSize: "0.88rem",
+            boxShadow: saveMessage.includes("⚠️") ? "0 8px 25px rgba(239, 68, 68, 0.6)" : "0 8px 25px rgba(255, 209, 102, 0.6)",
             pointerEvents: "none",
             display: "flex",
             alignItems: "center",
@@ -286,19 +287,19 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           display: "flex",
           gap: 20,
           alignItems: "center",
-          padding: "20px 24px 12px 24px",
+          padding: "20px 26px 12px 26px",
           flexShrink: 0,
           flexWrap: "wrap"
         }}>
           <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-              <span style={{ fontSize: "2.3rem" }}>🎨</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
+              <span style={{ fontSize: "2.5rem" }}>🎨</span>
               <div>
-                <h2 style={{ color: "#2ec4b6", margin: 0, fontSize: "1.55rem", textShadow: "0 0 15px rgba(46, 196, 182, 0.5)" }}>
+                <h2 style={{ color: "#ffd166", margin: 0, fontSize: "1.65rem", textShadow: "0 0 20px rgba(255, 209, 102, 0.6)" }}>
                   Inventario & Armario
                 </h2>
-                <p style={{ color: "#94a3b8", fontSize: "0.85rem", margin: "2px 0 0 0" }}>
-                  Selecciona la pestaña para personalizar tu recluta. Todo se aplica al instante.
+                <p style={{ color: "#94a3b8", fontSize: "0.88rem", margin: "3px 0 0 0" }}>
+                  Personaliza a tu recluta. Todos los cambios se aplican y guardan al instante.
                 </p>
               </div>
             </div>
@@ -307,10 +308,10 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           {/* PREVISUALIZACIÓN DEL AVATAR */}
           <div style={{
             background: "rgba(255, 255, 255, 0.03)",
-            border: "1.5px solid rgba(46, 196, 182, 0.3)",
+            border: "1.5px solid rgba(255, 209, 102, 0.4)",
             borderRadius: 20,
             padding: 6,
-            boxShadow: "0 0 20px rgba(0,0,0,0.3)"
+            boxShadow: "0 0 25px rgba(255, 209, 102, 0.25)"
           }}>
             <AvatarShowcase 
               outfitId={selectedOutfit} 
@@ -326,12 +327,12 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           </div>
         </div>
 
-        {/* NAVEGACIÓN DE APARTADOS HORIZONTALES (7 TABS VISIBLES SIDE-BY-SIDE) */}
+        {/* NAVEGACIÓN DE APARTADOS HORIZONTALES CON NEÓN DORADO */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(105px, 1fr))",
-          gap: 6,
-          padding: "0 24px 12px 24px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+          gap: 8,
+          padding: "0 26px 14px 26px",
           flexShrink: 0
         }}>
           {tabs.map((t) => {
@@ -347,24 +348,24 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: 4,
-                  padding: "8px 4px",
-                  borderRadius: 12,
-                  border: isActive ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.12)",
+                  gap: 5,
+                  padding: "9px 6px",
+                  borderRadius: 14,
+                  border: isActive ? "2px solid #ffd166" : "1px solid rgba(255, 255, 255, 0.15)",
                   background: isActive
-                    ? "linear-gradient(135deg, rgba(46, 196, 182, 0.25), rgba(15, 76, 92, 0.4))"
+                    ? "linear-gradient(135deg, rgba(255, 209, 102, 0.35), rgba(245, 158, 11, 0.5))"
                     : "rgba(255, 255, 255, 0.04)",
-                  color: isActive ? "#2ec4b6" : "#94a3b8",
+                  color: isActive ? "#ffffff" : "#94a3b8",
                   fontWeight: "bold",
-                  fontSize: "0.78rem",
+                  fontSize: "0.82rem",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
-                  transition: "all 0.15s ease",
-                  boxShadow: isActive ? "0 0 12px rgba(46, 196, 182, 0.3)" : "none",
-                  transform: isActive ? "scale(1.02)" : "scale(1)"
+                  transition: "all 0.18s ease",
+                  boxShadow: isActive ? "0 0 18px rgba(255, 209, 102, 0.5)" : "none",
+                  transform: isActive ? "scale(1.03)" : "scale(1)"
                 }}
               >
-                <span style={{ fontSize: "1.05rem" }}>{t.icon}</span>
+                <span style={{ fontSize: "1.1rem" }}>{t.icon}</span>
                 <span>{t.label}</span>
               </button>
             );
@@ -375,7 +376,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         <div style={{
           flex: 1,
           overflowY: "auto",
-          padding: "0 24px 16px 24px",
+          padding: "0 26px 18px 26px",
           display: "flex",
           flexDirection: "column",
           gap: 16
@@ -818,11 +819,11 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
 
         </div>
 
-        {/* BOTÓN CERRAR / LISTO FINAL (FOOTER DENTRO DE LA TARJETA CON FLEX-SHRINK 0) */}
+        {/* BOTÓN CERRAR / LISTO FINAL CON NEÓN DORADO */}
         <div style={{
-          padding: "12px 24px 20px 24px",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          background: "rgba(15, 23, 42, 0.95)",
+          padding: "14px 26px 20px 26px",
+          borderTop: "1px solid rgba(255, 209, 102, 0.15)",
+          background: "rgba(13, 27, 42, 0.96)",
           flexShrink: 0
         }}>
           <button
@@ -834,18 +835,19 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
             disabled={saving}
             style={{
               width: "100%",
-              padding: "12px",
+              padding: "13px",
               borderRadius: 14,
               border: "none",
-              background: "linear-gradient(135deg, #2ec4b6, #00ff87)",
-              color: "#031720",
+              background: "linear-gradient(135deg, #ffd166, #ff9f1c)",
+              color: "#0d1b2a",
               fontWeight: "bold",
-              fontSize: "1rem",
+              fontSize: "1.05rem",
               cursor: saving ? "wait" : "pointer",
-              boxShadow: "0 0 20px rgba(46, 196, 182, 0.4)"
+              boxShadow: "0 0 25px rgba(255, 209, 102, 0.5)",
+              transition: "all 0.2s ease"
             }}
           >
-            {saving ? "💾 Guardando..." : "✨ Guardar y Aplicar Cambios"}
+            {saving ? "💾 Guardando Cambios..." : "✨ Guardar y Aplicar Cambios"}
           </button>
         </div>
       </div>

@@ -293,17 +293,21 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
       padding: 20
     }}>
       <div className="modal-card animate-scaleUp" style={{
-        background: "linear-gradient(150deg, #18092e, #070212)",
+        background: "linear-gradient(150deg, #0d1b2a, #050c18)",
         border: "2px solid #ffd166",
         borderRadius: 24,
-        padding: 26,
-        maxWidth: 780,
+        padding: 0,
+        maxWidth: 940,
         width: "100%",
+        height: 700,
         maxHeight: "90vh",
-        overflowY: "auto",
-        boxShadow: "0 0 60px rgba(255, 209, 102, 0.35)",
+        display: "flex",
+        flexDirection: "column",
+        boxShadow: "0 0 55px rgba(255, 209, 102, 0.4), inset 0 0 25px rgba(255, 209, 102, 0.05)",
         position: "relative",
-        color: "#e6f7ff"
+        color: "#e6f7ff",
+        overflow: "hidden",
+        boxSizing: "border-box"
       }}>
         {/* BOTÓN CERRAR */}
         <button 
@@ -315,21 +319,30 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             width: 36,
             height: 36,
             borderRadius: "50%",
-            background: "rgba(255, 255, 255, 0.08)",
+            background: "rgba(255, 209, 102, 0.12)",
             border: "1px solid rgba(255, 209, 102, 0.5)",
             color: "#ffd166",
             fontSize: "1.1rem",
             cursor: "pointer",
             display: "inline-flex",
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
+            zIndex: 10,
+            boxShadow: "0 0 12px rgba(255, 209, 102, 0.3)"
           }}
         >
           ✖
         </button>
 
         {/* HEADER DE LA TIENDA */}
-        <div style={{ display: "flex", gap: 20, alignItems: "center", marginBottom: 20, flexWrap: "wrap", paddingRight: 40 }}>
+        <div style={{
+          display: "flex",
+          gap: 20,
+          alignItems: "center",
+          padding: "20px 26px 12px 26px",
+          flexShrink: 0,
+          flexWrap: "wrap"
+        }}>
           <div style={{ flex: 1, minWidth: 240 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: "2.5rem" }}>🛒</span>
@@ -354,7 +367,7 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
           </div>
 
           {/* PREVISUALIZACIÓN DE SKIN EN VENTA */}
-          <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1.5px solid rgba(255, 209, 102, 0.3)", borderRadius: 20, padding: 8 }}>
+          <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1.5px solid rgba(255, 209, 102, 0.3)", borderRadius: 20, padding: 6 }}>
             <AvatarShowcase 
               outfitId={selectedOutfit} 
               petId={equippedPet} 
@@ -364,7 +377,7 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
               decal={user?.decal || "none"}
               gender={user?.gender || (selectedOutfit.startsWith("m_") ? "male" : "female")}
               previewItem={hoveredPreview} 
-              size="large"
+              size="medium"
             />
           </div>
         </div>
@@ -422,18 +435,25 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
         )}
 
         {/* PESTAÑAS DE CATEGORÍA DE TIENDA */}
-        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+        <div style={{
+          display: "flex",
+          gap: 10,
+          padding: "0 26px 14px 26px",
+          flexShrink: 0,
+          overflowX: "auto"
+        }}>
           <button 
             onClick={() => setActiveStoreTab("outfits")}
             style={{
               background: activeStoreTab === "outfits" ? "linear-gradient(135deg, #ffd166, #ffb84d)" : "rgba(255,255,255,0.04)",
               color: activeStoreTab === "outfits" ? "#1a1a00" : "#9be6df",
-              border: activeStoreTab === "outfits" ? "none" : "1px solid rgba(255, 209, 102, 0.3)",
+              border: activeStoreTab === "outfits" ? "2px solid #ffd166" : "1px solid rgba(255, 209, 102, 0.3)",
               padding: "8px 18px",
-              borderRadius: 10,
+              borderRadius: 12,
               fontWeight: "bold",
               fontSize: "0.9rem",
-              cursor: "pointer"
+              cursor: "pointer",
+              boxShadow: activeStoreTab === "outfits" ? "0 0 15px rgba(255, 209, 102, 0.4)" : "none"
             }}
           >
             👗 Trajes Especiales
@@ -443,12 +463,13 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             style={{
               background: activeStoreTab === "pets" ? "linear-gradient(135deg, #f72585, #7209b7)" : "rgba(255,255,255,0.04)",
               color: activeStoreTab === "pets" ? "white" : "#9be6df",
-              border: activeStoreTab === "pets" ? "none" : "1px solid rgba(247, 37, 133, 0.3)",
+              border: activeStoreTab === "pets" ? "2px solid #f72585" : "1px solid rgba(247, 37, 133, 0.3)",
               padding: "8px 18px",
-              borderRadius: 10,
+              borderRadius: 12,
               fontWeight: "bold",
               fontSize: "0.9rem",
-              cursor: "pointer"
+              cursor: "pointer",
+              boxShadow: activeStoreTab === "pets" ? "0 0 15px rgba(247, 37, 133, 0.4)" : "none"
             }}
           >
             👾 Mascotas Companions
@@ -458,12 +479,13 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             style={{
               background: activeStoreTab === "frames" ? "linear-gradient(135deg, #00f0ff, #7000ff)" : "rgba(255,255,255,0.04)",
               color: activeStoreTab === "frames" ? "white" : "#9be6df",
-              border: activeStoreTab === "frames" ? "none" : "1px solid rgba(0, 240, 255, 0.3)",
+              border: activeStoreTab === "frames" ? "2px solid #00f0ff" : "1px solid rgba(0, 240, 255, 0.3)",
               padding: "8px 18px",
-              borderRadius: 10,
+              borderRadius: 12,
               fontWeight: "bold",
               fontSize: "0.9rem",
-              cursor: "pointer"
+              cursor: "pointer",
+              boxShadow: activeStoreTab === "frames" ? "0 0 15px rgba(0, 240, 255, 0.4)" : "none"
             }}
           >
             🖼️ Marcos de Avatar
@@ -473,19 +495,29 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             style={{
               background: activeStoreTab === "bases" ? "linear-gradient(135deg, #ff4d4d, #ff9f1c)" : "rgba(255,255,255,0.04)",
               color: activeStoreTab === "bases" ? "white" : "#9be6df",
-              border: activeStoreTab === "bases" ? "none" : "1px solid rgba(255, 77, 77, 0.3)",
+              border: activeStoreTab === "bases" ? "2px solid #ff4d4d" : "1px solid rgba(255, 77, 77, 0.3)",
               padding: "8px 18px",
-              borderRadius: 10,
+              borderRadius: 12,
               fontWeight: "bold",
               fontSize: "0.9rem",
-              cursor: "pointer"
+              cursor: "pointer",
+              boxShadow: activeStoreTab === "bases" ? "0 0 15px rgba(255, 77, 77, 0.4)" : "none"
             }}
           >
             🌀 Bases de Suelo
           </button>
         </div>
 
-        {/* CONTENIDO DE OUTFITS EN VENTA */}
+        {/* CONTENEDOR PRINCIPAL SCROLLABLE DE TIENDA */}
+        <div style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "0 26px 20px 26px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16
+        }}>
+          {/* CONTENIDO DE OUTFITS EN VENTA */}
         {activeStoreTab === "outfits" && (
           <div>
             {/* TÍTULO DE SKINS DE PERSONAJE DEL ALUMNO */}
@@ -853,6 +885,8 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             })}
           </div>
         )}
+
+        </div>
       </div>
     </div>
   );
