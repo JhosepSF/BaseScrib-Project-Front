@@ -662,32 +662,6 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         ))}
       </div>
 
-      {/* VIEW MODE TOGGLE FLOATING BUTTON (TOP-LEFT POSITION AWAY FROM PORTAL) */}
-      <button
-        onClick={() => setViewMode("3d")}
-        style={{
-          position: "fixed",
-          top: 75,
-          left: 20,
-          zIndex: 999,
-          padding: "8px 16px",
-          background: "linear-gradient(135deg, #f72585, #7209b7)",
-          color: "white",
-          border: "1.5px solid rgba(255, 255, 255, 0.4)",
-          borderRadius: "20px",
-          fontWeight: "bold",
-          fontSize: "0.82rem",
-          cursor: "pointer",
-          boxShadow: "0 0 15px rgba(247, 37, 133, 0.6)",
-          display: "flex",
-          alignItems: "center",
-          gap: 6
-        }}
-        title="Cambiar a la vista 3D de la Estación"
-      >
-        🌀 Probar Vista 3D Mapeada (Beta)
-      </button>
-
       {/* TOP HUD */}
       <RecluteHUD
         user={user}
