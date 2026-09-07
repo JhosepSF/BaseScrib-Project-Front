@@ -90,13 +90,17 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
     { name: "Visor Oscuro", hex: "#1a1a1a" }
   ];
 
-  const accessoriesList = [
+  const basesList = [
     { id: "none", name: "Sin Base", icon: "🚫" },
     { id: "ring", name: "Aro Neón Carmesí", icon: "⭕" },
     { id: "aura_cyan", name: "Portal Radar Cian", icon: "🌀" },
     { id: "aura_quantum", name: "Campo Cuántico", icon: "🔮" },
     { id: "aura_gold", name: "Cresta Celestial", icon: "⚜️" },
-    { id: "aura_solar", name: "Plataforma Sol", icon: "🔥" },
+    { id: "aura_solar", name: "Plataforma Sol", icon: "🔥" }
+  ];
+
+  const headAccessoriesList = [
+    { id: "none", name: "Sin Accesorio", icon: "🚫" },
     { id: "goggles", name: "Gafas Cibernéticas", icon: "🥽" },
     { id: "antenna", name: "Antena Espacial", icon: "📡" },
     { id: "crown", name: "Corona Estelar", icon: "👑" }
@@ -186,6 +190,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   const tabs = [
     { id: "skins", label: "Armario Skins", icon: "👗" },
     { id: "colors", label: "Colores", icon: "🎨" },
+    { id: "bases", label: "Bases de Suelo", icon: "🌀" },
     { id: "accessories", label: "Accesorios", icon: "👓" },
     { id: "decals", label: "Insignias", icon: "🛡️" },
     { id: "pets", label: "Mascotas", icon: "👾" },
@@ -437,68 +442,151 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           )}
 
           {/* TAB: COLORES */}
-          {activeTab === "colors" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
-              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🎨 Color de Traje Base:</h4>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                  {suitColorsList.map((c, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setSuitColor(c.hex);
-                        saveCustomization({ suitColor: c.hex });
-                      }}
-                      style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: "50%",
-                        background: c.hex,
-                        border: suitColor === c.hex ? "3px solid #2ec4b6" : "1px solid rgba(255,255,255,0.3)",
-                        cursor: "pointer",
-                        boxShadow: suitColor === c.hex ? "0 0 12px #2ec4b6" : "none",
-                        transition: "transform 0.15s ease"
-                      }}
-                      title={c.name}
-                    />
-                  ))}
+          {activeTab === "colors" && (() => {
+            const isBaseSkinSelected = selectedOutfit === "m_base" || selectedOutfit === "f_base" || selectedOutfit === "default";
+            return (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+                {/* COLOR DE TRAJE BASE */}
+                <div style={{
+                  background: isBaseSkinSelected ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.25)",
+                  border: isBaseSkinSelected ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(239, 68, 68, 0.35)",
+                  borderRadius: 16,
+                  padding: 16
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                    <h4 style={{ margin: 0, color: "#2ec4b6", fontSize: "0.9rem" }}>🎨 Color de Traje Base:</h4>
+                    {!isBaseSkinSelected && (
+                      <span style={{ fontSize: "0.78rem", color: "#f87171", fontWeight: "bold" }}>
+                        🔒 Bloqueado en Skins Especiales
+                      </span>
+                    )}
+                  </div>
+
+                  {!isBaseSkinSelected && (
+                    <div style={{
+                      marginBottom: 12,
+                      padding: "8px 12px",
+                      borderRadius: 10,
+                      background: "rgba(239, 68, 68, 0.15)",
+                      border: "1px dashed rgba(239, 68, 68, 0.4)",
+                      color: "#fca5a5",
+                      fontSize: "0.78rem"
+                    }}>
+                      🔒 El color de traje base solo se puede cambiar con la <strong>Skin Base por defecto</strong>. Las skins compradas poseen su propia paleta de ropa.
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 10, opacity: isBaseSkinSelected ? 1 : 0.45 }}>
+                    {suitColorsList.map((c, idx) => (
+                      <button
+                        key={idx}
+                        disabled={!isBaseSkinSelected}
+                        onClick={() => {
+                          if (!isBaseSkinSelected) return;
+                          setSuitColor(c.hex);
+                          saveCustomization({ suitColor: c.hex });
+                        }}
+                        style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: "50%",
+                          background: c.hex,
+                          border: suitColor === c.hex && isBaseSkinSelected ? "3px solid #2ec4b6" : "1px solid rgba(255,255,255,0.3)",
+                          cursor: isBaseSkinSelected ? "pointer" : "not-allowed",
+                          boxShadow: suitColor === c.hex && isBaseSkinSelected ? "0 0 12px #2ec4b6" : "none",
+                          transition: "transform 0.15s ease"
+                        }}
+                        title={c.name}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* COLOR DE VISOR / LENTES (SIEMPRE DISPONIBLE EN TODAS LAS SKINS) */}
+                <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
+                  <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🥽 Color de Visor / Lentes:</h4>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                    {visorColorsList.map((c, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setVisorColor(c.hex);
+                          saveCustomization({ visorColor: c.hex });
+                        }}
+                        style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: "50%",
+                          background: c.hex,
+                          border: visorColor === c.hex ? "3px solid #ffd166" : "1px solid rgba(255,255,255,0.3)",
+                          cursor: "pointer",
+                          boxShadow: visorColor === c.hex ? "0 0 12px #ffd166" : "none",
+                          transition: "transform 0.15s ease"
+                        }}
+                        title={c.name}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
+            );
+          })()}
 
-              <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🥽 Color de Visor / Lentes:</h4>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                  {visorColorsList.map((c, idx) => (
+          {/* TAB: BASES DE SUELO */}
+          {activeTab === "bases" && (
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
+              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🌀 Plataformas & Auras de Suelo:</h4>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
+                {basesList.map((b) => {
+                  const isSel = accessory === b.id;
+                  return (
                     <button
-                      key={idx}
+                      key={b.id}
                       onClick={() => {
-                        setVisorColor(c.hex);
-                        saveCustomization({ visorColor: c.hex });
+                        setAccessory(b.id);
+                        saveCustomization({ accessory: b.id });
                       }}
                       style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: "50%",
-                        background: c.hex,
-                        border: visorColor === c.hex ? "3px solid #ffd166" : "1px solid rgba(255,255,255,0.3)",
+                        padding: "10px 8px",
+                        borderRadius: 12,
+                        border: isSel ? "2px solid #2ec4b6" : "1px solid rgba(255,255,255,0.1)",
+                        background: isSel ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
+                        color: isSel ? "#2ec4b6" : "#e2e8f0",
+                        fontSize: "0.8rem",
+                        fontWeight: "bold",
                         cursor: "pointer",
-                        boxShadow: visorColor === c.hex ? "0 0 12px #ffd166" : "none",
-                        transition: "transform 0.15s ease"
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        textAlign: "center",
+                        gap: 6,
+                        overflow: "hidden"
                       }}
-                      title={c.name}
-                    />
-                  ))}
-                </div>
+                    >
+                      <span style={{ fontSize: "1.3rem" }}>{b.icon}</span>
+                      <span style={{
+                        width: "100%",
+                        wordBreak: "break-word",
+                        overflowWrap: "anywhere",
+                        whiteSpace: "normal",
+                        lineHeight: 1.25,
+                        textAlign: "center"
+                      }}>
+                        {b.name}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* TAB: ACCESORIOS */}
+          {/* TAB: ACCESORIOS DE CABEZA */}
           {activeTab === "accessories" && (
             <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
               <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👓 Accesorio de Casco / Cabeza:</h4>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
-                {accessoriesList.map((acc) => {
+                {headAccessoriesList.map((acc) => {
                   const isSel = accessory === acc.id;
                   return (
                     <button
