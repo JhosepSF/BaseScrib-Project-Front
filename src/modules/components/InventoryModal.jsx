@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { soundFx } from "../utils/soundEffects";
 import { API_BASE } from "../../config";
 import AvatarShowcase from "./AvatarShowcase";
@@ -23,6 +23,21 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   const [hoveredPreview, setHoveredPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+
+  useEffect(() => {
+    if (saveMessage) {
+      const timer = setTimeout(() => setSaveMessage(""), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [saveMessage]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   const outfits = [
     { id: "f_base", name: "Entrenadora Lia (Base)", icon: "👩‍🚀", desc: "Traje reglamentario de la entrenadora Lia." },
@@ -230,14 +245,36 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                   Equipa tus skins, lentes amarillos, accesorios y mascotas. Todo cambio se guarda permanentemente.
                 </p>
               </div>
-            </div>
-
-            {saveMessage && (
-              <div style={{ marginTop: 10, fontSize: "0.85rem", fontWeight: "bold", color: "#b8fff9" }}>
-                {saveMessage}
-              </div>
-            )}
           </div>
+        </div>
+
+        {/* FLOATING TOAST NOTIFICATION (ZERO LAYOUT SHIFT) */}
+        {saveMessage && (
+          <div style={{
+            position: "absolute",
+            top: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10050,
+            background: saveMessage.includes("⚠️")
+              ? "linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(153, 27, 27, 0.95))"
+              : "linear-gradient(135deg, rgba(46, 196, 182, 0.95), rgba(15, 76, 92, 0.95))",
+            border: saveMessage.includes("⚠️") ? "1.5px solid #fca5a5" : "1.5px solid #b8fff9",
+            borderRadius: 20,
+            padding: "8px 22px",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.85rem",
+            boxShadow: saveMessage.includes("⚠️") ? "0 8px 25px rgba(239, 68, 68, 0.6)" : "0 8px 25px rgba(46, 196, 182, 0.6)",
+            pointerEvents: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+          }}>
+            <span>{saveMessage}</span>
+          </div>
+        )}
 
           {/* PREVISUALIZACIÓN DEL AVATAR */}
           <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1.5px solid rgba(46, 196, 182, 0.3)", borderRadius: 20, padding: 8 }}>

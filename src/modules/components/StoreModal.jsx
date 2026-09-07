@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
 import AvatarShowcase from "./AvatarShowcase";
@@ -19,6 +19,28 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [hoveredPreview, setHoveredPreview] = useState(null);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(""), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   const outfits = [
     { id: "f_base", name: "Entrenadora Lia (Base)", cost: 0, icon: "👩‍🚀", rarity: "Gratuito 🟢", desc: "Traje reglamentario de la entrenadora Lia." },
@@ -347,15 +369,55 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
           </div>
         </div>
 
-        {/* NOTIFICACIONES */}
+        {/* FLOATING TOAST NOTIFICATIONS (ZERO LAYOUT SHIFT) */}
         {error && (
-          <div style={{ background: "rgba(255, 107, 107, 0.15)", border: "1px solid #ff6b6b", color: "#ff6b6b", padding: "10px 14px", borderRadius: 12, marginBottom: 14, fontSize: "0.85rem", fontWeight: "bold" }}>
-            ⚠️ {error}
+          <div style={{
+            position: "absolute",
+            top: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10050,
+            background: "linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(153, 27, 27, 0.95))",
+            border: "1.5px solid #fca5a5",
+            borderRadius: 20,
+            padding: "8px 22px",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.85rem",
+            boxShadow: "0 8px 25px rgba(239, 68, 68, 0.6)",
+            pointerEvents: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+          }}>
+            <span>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
         {success && (
-          <div style={{ background: "rgba(46, 196, 182, 0.15)", border: "1px solid #2ec4b6", color: "#b8fff9", padding: "10px 14px", borderRadius: 12, marginBottom: 14, fontSize: "0.85rem", fontWeight: "bold" }}>
-            ✨ {success}
+          <div style={{
+            position: "absolute",
+            top: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10050,
+            background: "linear-gradient(135deg, rgba(46, 196, 182, 0.95), rgba(15, 76, 92, 0.95))",
+            border: "1.5px solid #b8fff9",
+            borderRadius: 20,
+            padding: "8px 22px",
+            color: "#ffffff",
+            fontWeight: "bold",
+            fontSize: "0.85rem",
+            boxShadow: "0 8px 25px rgba(46, 196, 182, 0.6)",
+            pointerEvents: "none",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+          }}>
+            <span>✨</span>
+            <span>{success}</span>
           </div>
         )}
 
