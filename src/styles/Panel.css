@@ -2494,3 +2494,15 @@ html {
 .neon-scrollbar::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(0, 245, 255, 0.8), rgba(46, 196, 182, 0.6));
 }
+
+/* ── Toast Slide Down Animation (Centered Horizontally) ──────────────── */
+@keyframes toastSlideDown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -24px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}

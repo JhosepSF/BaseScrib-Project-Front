@@ -86,9 +86,9 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
 
       {/* Stats */}
       <div className="recrute-hud__stats">
-        <span className="recrute-hud__stat recrute-hud__stat--xp">⭐ {user.xp || 0} XP</span>
-        <span className="recrute-hud__stat recrute-hud__stat--coins" data-tour="coins-card">🪙 {user.coins || 0}</span>
-        <span className="recrute-hud__stat recrute-hud__stat--streak" data-tour="streak-card">🔥 {user.streak_count || 0}d</span>
+        <span className="recrute-hud__stat recrute-hud__stat--xp" title="Experiencia total acumulada (XP). ¡Gana más completando las misiones diarias!">⭐ {user.xp || 0} XP</span>
+        <span className="recrute-hud__stat recrute-hud__stat--coins" data-tour="coins-card" title="Monedas espaciales. Úsalas en la Tienda para desbloquear trajes, marcos y mascotas.">🪙 {user.coins || 0}</span>
+        <span className="recrute-hud__stat recrute-hud__stat--streak" data-tour="streak-card" title="Días de racha consecutivos practicando en la estación espacio-temporal.">🔥 {user.streak_count || 0}d</span>
       </div>
 
       {/* Action Buttons & Notification Bell */}

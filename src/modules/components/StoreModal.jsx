@@ -369,13 +369,13 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
           </div>
         </div>
 
-        {/* FLOATING TOAST NOTIFICATIONS (ZERO LAYOUT SHIFT) */}
+        {/* FLOATING TOAST NOTIFICATIONS (PERFECTLY CENTERED, ZERO LAYOUT SHIFT) */}
         {error && (
           <div style={{
             position: "absolute",
             top: 16,
             left: "50%",
-            transform: "translateX(-50%)",
+            transform: "translate(-50%, 0)",
             zIndex: 10050,
             background: "linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(153, 27, 27, 0.95))",
             border: "1.5px solid #fca5a5",
@@ -389,7 +389,7 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+            animation: "toastSlideDown 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards"
           }}>
             <span>⚠️</span>
             <span>{error}</span>
@@ -400,7 +400,7 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             position: "absolute",
             top: 16,
             left: "50%",
-            transform: "translateX(-50%)",
+            transform: "translate(-50%, 0)",
             zIndex: 10050,
             background: "linear-gradient(135deg, rgba(46, 196, 182, 0.95), rgba(15, 76, 92, 0.95))",
             border: "1.5px solid #b8fff9",
@@ -414,7 +414,7 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+            animation: "toastSlideDown 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards"
           }}>
             <span>✨</span>
             <span>{success}</span>

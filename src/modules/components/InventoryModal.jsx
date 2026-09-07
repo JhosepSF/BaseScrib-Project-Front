@@ -248,13 +248,13 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           </div>
         </div>
 
-        {/* FLOATING TOAST NOTIFICATION (ZERO LAYOUT SHIFT) */}
+        {/* FLOATING TOAST NOTIFICATION (PERFECTLY CENTERED, ZERO LAYOUT SHIFT) */}
         {saveMessage && (
           <div style={{
             position: "absolute",
             top: 16,
             left: "50%",
-            transform: "translateX(-50%)",
+            transform: "translate(-50%, 0)",
             zIndex: 10050,
             background: saveMessage.includes("⚠️")
               ? "linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(153, 27, 27, 0.95))"
@@ -270,7 +270,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
             display: "flex",
             alignItems: "center",
             gap: 8,
-            animation: "slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+            animation: "toastSlideDown 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards"
           }}>
             <span>{saveMessage}</span>
           </div>
