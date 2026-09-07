@@ -477,14 +477,13 @@ export default function AvatarShowcase({
         {/* Calculate if active outfit is base default skin */}
         {(() => {
           const isBaseSkin = currentOutfit === "m_base" || currentOutfit === "f_base" || currentOutfit === "default" || currentOutfit === "lia_base" || currentOutfit === "leo_base";
-          if (!isBaseSkin) return null;
 
           return (
             <>
-              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS) — SOLO EN SKIN BASE */}
-              {(accessory === "goggles" || (visorColor && visorColor !== "none")) && glassesMap[visorColor] && (
+              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS / CORONAS) — VISIBLES EN TODAS LAS SKINS */}
+              {(accessory === "goggles" || (visorColor && visorColor !== "none")) && (glassesMap[visorColor] || glassesMap["#a3e2f7"]) && (
                 <img
-                  src={glassesMap[visorColor]}
+                  src={glassesMap[visorColor] || glassesMap["#a3e2f7"]}
                   alt="Gafas Cibernéticas"
                   style={{
                     position: "absolute",
@@ -523,20 +522,24 @@ export default function AvatarShowcase({
               )}
 
               {/* OVERLAY INSIGNIAS INDIVIDUALES DE PECHO — SOLO EN SKIN BASE */}
-              {decal === "star" && (
-                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, zIndex: 7 }}>⭐</div>
-              )}
-              {decal === "heart" && (
-                <div style={{ position: "absolute", top: pos.decals.heart.top, left: pos.decals.heart.left, transform: "translateX(-50%)", fontSize: pos.decals.heart.fontSize, zIndex: 7 }}>❤️</div>
-              )}
-              {decal === "planet" && (
-                <div style={{ position: "absolute", top: pos.decals.planet.top, left: pos.decals.planet.left, transform: "translateX(-50%)", fontSize: pos.decals.planet.fontSize, zIndex: 7 }}>🪐</div>
-              )}
-              {decal === "lightning" && (
-                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ffd166)", zIndex: 7 }}>⚡</div>
-              )}
-              {decal === "fire" && (
-                <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ff6b35)", zIndex: 7 }}>🔥</div>
+              {isBaseSkin && (
+                <>
+                  {decal === "star" && (
+                    <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, zIndex: 7 }}>⭐</div>
+                  )}
+                  {decal === "heart" && (
+                    <div style={{ position: "absolute", top: pos.decals.heart.top, left: pos.decals.heart.left, transform: "translateX(-50%)", fontSize: pos.decals.heart.fontSize, zIndex: 7 }}>❤️</div>
+                  )}
+                  {decal === "planet" && (
+                    <div style={{ position: "absolute", top: pos.decals.planet.top, left: pos.decals.planet.left, transform: "translateX(-50%)", fontSize: pos.decals.planet.fontSize, zIndex: 7 }}>🪐</div>
+                  )}
+                  {decal === "lightning" && (
+                    <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ffd166)", zIndex: 7 }}>⚡</div>
+                  )}
+                  {decal === "fire" && (
+                    <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ff6b35)", zIndex: 7 }}>🔥</div>
+                  )}
+                </>
               )}
             </>
           );
