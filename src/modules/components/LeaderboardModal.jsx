@@ -121,13 +121,13 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
             Aún no hay reclutas registrados en esta sala.
           </div>
         ) : (
-          <div style={{ overflowY: "auto", paddingRight: 6 }}>
+          <div style={{ overflowY: "auto", paddingTop: 18, paddingRight: 6 }}>
             {/* TOP 3 PODIUM */}
             {top3.length > 0 && (
               <div style={{
                 display: "grid",
-                gridTemplateColumns: top3.length === 3 ? "1fr 1.1fr 1fr" : "repeat(auto-fit, minmax(120px, 1fr))",
-                gap: 10,
+                gridTemplateColumns: top3.length >= 3 ? "1fr 1.15fr 1fr" : (top3.length === 2 ? "1fr 1.15fr" : "1fr"),
+                gap: 12,
                 marginBottom: 25,
                 alignItems: "end"
               }}>
@@ -137,7 +137,7 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     background: "rgba(192, 192, 192, 0.15)",
                     border: "1px solid #c0c0c0",
                     borderRadius: 16,
-                    padding: 15,
+                    padding: 14,
                     textAlign: "center",
                     boxShadow: "0 0 15px rgba(192, 192, 192, 0.2)",
                     display: "flex",
@@ -159,18 +159,18 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                 {/* 1ST PLACE (GOLD) */}
                 {top3[0] && (
                   <div style={{
-                    background: "linear-gradient(145deg, rgba(255, 209, 102, 0.25), rgba(255, 184, 77, 0.1))",
+                    background: "linear-gradient(145deg, rgba(255, 209, 102, 0.3), rgba(255, 184, 77, 0.15))",
                     border: "2px solid #ffd166",
                     borderRadius: 18,
-                    padding: 18,
+                    padding: 16,
                     textAlign: "center",
-                    boxShadow: "0 0 25px rgba(255, 209, 102, 0.4)",
-                    transform: "scale(1.05)",
+                    boxShadow: "0 0 30px rgba(255, 209, 102, 0.5)",
                     display: "flex",
                     flexDirection: "column",
-                    alignItems: "center"
+                    alignItems: "center",
+                    position: "relative"
                   }}>
-                    <span style={{ fontSize: "2.2rem" }}>👑</span>
+                    <span style={{ fontSize: "2.2rem", filter: "drop-shadow(0 0 8px #ffd166)" }}>👑</span>
                     <AvatarFrame frameId={top3[0].equipped_frame || "frame_gold_crown"} size="large">
                       <span style={{ fontSize: "1.6rem" }}>{top3[0].gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
                     </AvatarFrame>
@@ -188,7 +188,7 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
                     background: "rgba(205, 127, 50, 0.15)",
                     border: "1px solid #cd7f32",
                     borderRadius: 16,
-                    padding: 15,
+                    padding: 14,
                     textAlign: "center",
                     boxShadow: "0 0 15px rgba(205, 127, 50, 0.2)",
                     display: "flex",
