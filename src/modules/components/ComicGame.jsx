@@ -14,9 +14,69 @@ function shuffle(array) {
   return arr;
 }
 
+// Curricular Comic Comprehension Questions for all 14 Days
+const DEFAULT_COMIC_QUESTIONS = {
+  1: [
+    { id: "cq1-1", text: "¿Cuál es la estación espacial a la que arriba el recluta?", options: [{ id: "co1-1", text: "Base ONE", is_correct: true }, { id: "co1-2", text: "Estación Cero", is_correct: false }, { id: "co1-3", text: "Nave Impostora", is_correct: false }] },
+    { id: "cq1-2", text: "¿Quién es el asistente de vuelo con inteligencia artificial?", options: [{ id: "co1-4", text: "Sparky Bot", is_correct: true }, { id: "co1-5", text: "Capitán Bric", is_correct: false }, { id: "co1-6", text: "Recluta Leo", is_correct: false }] }
+  ],
+  2: [
+    { id: "cq2-1", text: "¿Dónde descansan los miembros de la tripulación?", options: [{ id: "co2-1", text: "En los dormitorios de la base", is_correct: true }, { id: "co2-2", text: "En la esclusa de aire", is_correct: false }, { id: "co2-3", text: "Fuera de la órbita", is_correct: false }] },
+    { id: "cq2-2", text: "¿Qué elemento protege al explorador en el vacío espacial?", options: [{ id: "co2-4", text: "El traje espacial y casco", is_correct: true }, { id: "co2-5", text: "Una manta térmica", is_correct: false }, { id: "co2-6", text: "El radar de consola", is_correct: false }] }
+  ],
+  3: [
+    { id: "cq3-1", text: "¿Qué actividad realiza la tripulación al inicio del turno?", options: [{ id: "co3-1", text: "Reunión informativa y desayuno", is_correct: true }, { id: "co3-2", text: "Dormir todo el día", is_correct: false }, { id: "co3-3", text: "Abandonar la estación", is_correct: false }] },
+    { id: "cq3-2", text: "¿A qué hora reportan los reclutas su informe?", options: [{ id: "co3-4", text: "Al finalizar su turno diario", is_correct: true }, { id: "co3-5", text: "Nunca reportan", is_correct: false }, { id: "co3-6", text: "Solo los domingos", is_correct: false }] }
+  ],
+  4: [
+    { id: "cq4-1", text: "¿Qué tarea técnica está supervisando Dani?", options: [{ id: "co4-1", text: "La calibración del radar estelar", is_correct: true }, { id: "co4-2", text: "Cocinar la cena", is_correct: false }, { id: "co4-3", text: "Pintar los pasillos", is_correct: false }] },
+    { id: "cq4-2", text: "¿Quién está reparando la bobina del motor?", options: [{ id: "co4-4", text: "Sparky Bot", is_correct: true }, { id: "co4-5", text: "El General Bric", is_correct: false }, { id: "co4-6", text: "Un visitante desconocido", is_correct: false }] }
+  ],
+  5: [
+    { id: "cq5-1", text: "¿Qué regla de seguridad es obligatoria en la base?", options: [{ id: "co5-1", text: "Llevar casco en zonas de descompresión", is_correct: true }, { id: "co5-2", text: "Apagar los escudos", is_correct: false }, { id: "co5-3", text: "Abrir las compuertas sin aviso", is_correct: false }] },
+    { id: "cq5-2", text: "¿Quién tiene autorización para acceder al núcleo del reactor?", options: [{ id: "co5-4", text: "Solo oficiales autorizados", is_correct: true }, { id: "co5-5", text: "Cualquier recluta nuevo", is_correct: false }, { id: "co5-6", text: "Nadie en absoluto", is_correct: false }] }
+  ],
+  6: [
+    { id: "cq6-1", text: "¿Qué descubrió la tripulación en su bitácora pasada?", options: [{ id: "co6-1", text: "Un campo de asteroides luminosos", is_correct: true }, { id: "co6-2", text: "Un agujero negro gigante", is_correct: false }, { id: "co6-3", text: "Una flota enemiga", is_correct: false }] },
+    { id: "cq6-2", text: "¿Logró el equipo aterrizar la sonda?", options: [{ id: "co6-4", text: "Sí, aterrizó con éxito", is_correct: true }, { id: "co6-5", text: "No, se perdió en el espacio", is_correct: false }, { id: "co6-6", text: "Nunca despegaron", is_correct: false }] }
+  ],
+  7: [
+    { id: "cq7-1", text: "¿De dónde provino la señal de socorro registrada?", options: [{ id: "co7-1", text: "Del Sector 4 de Scribtonia", is_correct: true }, { id: "co7-2", text: "Del planeta Tierra", is_correct: false }, { id: "co7-3", text: "De la propia nave", is_correct: false }] },
+    { id: "cq7-2", text: "¿Qué acción tomó el equipo al escuchar la señal?", options: [{ id: "co7-4", text: "Enviaron un informe al General Bric", is_correct: true }, { id: "co7-5", text: "Ignoraron la alerta", is_correct: false }, { id: "co7-6", text: "Apagaron la radio", is_correct: false }] }
+  ],
+  8: [
+    { id: "cq8-1", text: "¿Cómo se compara el motor de iones con el cohete químico?", options: [{ id: "co8-1", text: "Es más rápido y eficiente", is_correct: true }, { id: "co8-2", text: "Es más lento y ruidoso", is_correct: false }, { id: "co8-3", text: "Es exactamente idéntico", is_correct: false }] },
+    { id: "cq8-2", text: "¿Qué planeta tiene una atmósfera más densa?", options: [{ id: "co8-4", text: "Scribtonia", is_correct: true }, { id: "co8-5", text: "La Luna", is_correct: false }, { id: "co8-6", text: "Marte", is_correct: false }] }
+  ],
+  9: [
+    { id: "cq9-1", text: "¿Cuál es la instalación más avanzada de la flota?", options: [{ id: "co9-1", text: "La Base ONE", is_correct: true }, { id: "co9-2", text: "El puesto minero", is_correct: false }, { id: "co9-3", text: "La nave de carga", is_correct: false }] },
+    { id: "cq9-2", text: "¿Cuál es la estrella más brillante de la constelación?", options: [{ id: "co9-4", text: "Nova Scrib", is_correct: true }, { id: "co9-5", text: "Alpha Centauri", is_correct: false }, { id: "co9-6", text: "El Sol", is_correct: false }] }
+  ],
+  10: [
+    { id: "cq10-1", text: "¿Qué maniobra planea realizar el comandante mañana?", options: [{ id: "co10-1", text: "Navegar a través de la nebulosa", is_correct: true }, { id: "co10-2", text: "Regresar a la Tierra", is_correct: false }, { id: "co10-3", text: "Desmantelar la nave", is_correct: false }] },
+    { id: "cq10-2", text: "¿A qué hora está programado el acoplamiento del módulo?", options: [{ id: "co10-4", text: "A las 14:00 horas", is_correct: true }, { id: "co10-5", text: "A medianoche", is_correct: false }, { id: "co10-6", text: "En tres semanas", is_correct: false }] }
+  ],
+  11: [
+    { id: "cq11-1", text: "¿Qué sucederá si los escudos de plasma fallan?", options: [{ id: "co11-1", text: "El casco sufrirá una brecha de presión", is_correct: true }, { id: "co11-2", text: "La nave irá más rápido", is_correct: false }, { id: "co11-3", text: "Se apagarán las luces interiores", is_correct: false }] },
+    { id: "cq11-2", text: "¿Cómo asegurará el escuadrón su supervivencia?", options: [{ id: "co11-4", text: "Siguiendo el protocolo al pie de la letra", is_correct: true }, { id: "co11-5", text: "Desconectando los sensores", is_correct: false }, { id: "co11-6", text: "Saliendo sin traje", is_correct: false }] }
+  ],
+  12: [
+    { id: "cq12-1", text: "¿Cuántas estaciones orbitales ha visitado la tripulación?", options: [{ id: "co12-1", text: "Tres estaciones alienígenas", is_correct: true }, { id: "co12-2", text: "Ninguna hasta ahora", is_correct: false }, { id: "co12-3", text: "Más de cien", is_correct: false }] },
+    { id: "cq12-2", text: "¿Ha completado el oficial científico los análisis?", options: [{ id: "co12-4", text: "Sí, ya completó todos los escaneos", is_correct: true }, { id: "co12-5", text: "No, aún no ha comenzado", is_correct: false }, { id: "co12-6", text: "Perdió los datos", is_correct: false }] }
+  ],
+  13: [
+    { id: "cq13-1", text: "¿Cómo fue detectada la señal en la anomalía?", options: [{ id: "co13-1", text: "Fue captada por los sensores de radar de la base", is_correct: true }, { id: "co13-2", text: "Por observación visual directa", is_correct: false }, { id: "co13-3", text: "Por un mensaje de texto", is_correct: false }] },
+    { id: "cq13-2", text: "¿Dónde deben almacenarse las muestras cósmicas?", options: [{ id: "co13-4", text: "En cápsulas de biocontención", is_correct: true }, { id: "co13-5", text: "En la cocina de la nave", is_correct: false }, { id: "co13-6", text: "En los casilleros de ropa", is_correct: false }] }
+  ],
+  14: [
+    { id: "cq14-1", text: "¿Qué logro celebra hoy el escuadrón de Base ONE?", options: [{ id: "co14-1", text: "Completar la formación lingüística y de vuelo", is_correct: true }, { id: "co14-2", text: "El fin de la misión de rescate", is_correct: false }, { id: "co14-3", text: "El retiro del General Bric", is_correct: false }] },
+    { id: "cq14-2", text: "¿Para qué está preparado el equipo de expedición?", options: [{ id: "co14-4", text: "Para la exploración del espacio profundo", is_correct: true }, { id: "co14-5", text: "Para quedarse en los dormitorios", is_correct: false }, { id: "co14-6", text: "Para reiniciar el curso básico", is_correct: false }] }
+  ]
+};
+
 export function ComicGame({ activity, onComplete, onClose, hideHeader = false }) {
-  const [viewMode, setViewMode] = useState("reading"); // "reading" or "quiz"
   const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [viewMode, setViewMode] = useState("reading"); // "reading" | "quiz"
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
@@ -24,8 +84,11 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const [mistakes, setMistakes] = useState(0);
   const [showStatusText, setShowStatusText] = useState("SISTEMA OK");
 
-  const questions = activity.questions || [];
-  const missionId = activity.mission || 1;
+  const dayNum = activity?.dayNumber || activity?.day_num || 1;
+  const questions = (activity?.questions && activity.questions.length > 0)
+    ? activity.questions
+    : (DEFAULT_COMIC_QUESTIONS[dayNum] || DEFAULT_COMIC_QUESTIONS[1]);
+  const missionId = activity?.mission || (dayNum + 6);
   const currentQuestion = questions[currentQIndex];
 
   useEffect(() => {

@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import "../../styles/Panel.css";
 import { soundFx } from "../utils/soundEffects";
 
-// Vocabulary Dictionary by Day
+// Vocabulary Dictionary by Day (25 curated items per day across 14 curriculum days)
 const VOCAB_BY_DAY = {
   1: [
+    { en: "recruit", es: "recluta" },
     { en: "spaceship", es: "nave espacial" },
     { en: "planet", es: "planeta" },
     { en: "crew", es: "tripulación" },
@@ -13,17 +14,50 @@ const VOCAB_BY_DAY = {
     { en: "country", es: "país" },
     { en: "skills", es: "habilidades" },
     { en: "favorite", es: "favorito" },
-    { en: "fly", es: "volar" }
+    { en: "fly", es: "volar" },
+    { en: "astronaut", es: "astronauta" },
+    { en: "captain", es: "capitán" },
+    { en: "galaxy", es: "galaxia" },
+    { en: "star", es: "estrella" },
+    { en: "orbit", es: "órbita" },
+    { en: "repair", es: "reparar" },
+    { en: "explore", es: "explorar" },
+    { en: "discover", es: "descubrir" },
+    { en: "alien", es: "alienígena" },
+    { en: "earth", es: "tierra" },
+    { en: "language", es: "idioma" },
+    { en: "cadet", es: "cadete" },
+    { en: "badge", es: "insignia" },
+    { en: "scanner", es: "escáner" },
+    { en: "signal", es: "señal" },
+    { en: "suit", es: "traje" }
   ],
   2: [
-    { en: "alien", es: "alienígena" },
+    { en: "cabin", es: "cabina" },
     { en: "robot", es: "robot" },
     { en: "spacesuit", es: "traje espacial" },
     { en: "helmet", es: "casco" },
     { en: "computer", es: "computadora" },
     { en: "table", es: "mesa" },
+    { en: "chair", es: "silla" },
     { en: "star", es: "estrella" },
-    { en: "chair", es: "silla" }
+    { en: "screen", es: "pantalla" },
+    { en: "monitor", es: "monitor" },
+    { en: "door", es: "puerta" },
+    { en: "airlock", es: "esclusa de aire" },
+    { en: "oxygen tank", es: "tanque de oxígeno" },
+    { en: "battery", es: "batería" },
+    { en: "map", es: "mapa" },
+    { en: "radar", es: "radar" },
+    { en: "locker", es: "casillero" },
+    { en: "bed", es: "cama" },
+    { en: "hatch", es: "escotilla" },
+    { en: "sensor", es: "sensor" },
+    { en: "flashlight", es: "linterna" },
+    { en: "toolkit", es: "caja de herramientas" },
+    { en: "cable", es: "cable" },
+    { en: "button", es: "botón" },
+    { en: "window", es: "ventana" }
   ],
   3: [
     { en: "wake up", es: "despertarse" },
@@ -33,7 +67,24 @@ const VOCAB_BY_DAY = {
     { en: "eat", es: "comer" },
     { en: "write", es: "escribir" },
     { en: "sleep", es: "dormir" },
-    { en: "inspect", es: "inspeccionar" }
+    { en: "inspect", es: "inspeccionar" },
+    { en: "schedule", es: "horario" },
+    { en: "monitor", es: "monitorear" },
+    { en: "exercise", es: "hacer ejercicio" },
+    { en: "cook", es: "cocinar" },
+    { en: "shower", es: "ducharse" },
+    { en: "breakfast", es: "desayuno" },
+    { en: "dinner", es: "cena" },
+    { en: "briefing", es: "reunión informativa" },
+    { en: "duty", es: "deber / guardia" },
+    { en: "shift", es: "turno" },
+    { en: "report", es: "informe" },
+    { en: "morning", es: "mañana" },
+    { en: "evening", es: "tarde / noche" },
+    { en: "clock", es: "reloj" },
+    { en: "alarm", es: "alarma" },
+    { en: "relax", es: "relajarse" },
+    { en: "routine", es: "rutina" }
   ],
   4: [
     { en: "studying", es: "estudiando" },
@@ -43,17 +94,51 @@ const VOCAB_BY_DAY = {
     { en: "eating", es: "comiendo" },
     { en: "talking", es: "conversando" },
     { en: "working", es: "trabajando" },
-    { en: "repairing", es: "reparando" }
+    { en: "repairing", es: "reparando" },
+    { en: "scanning", es: "escaneando" },
+    { en: "flying", es: "volando" },
+    { en: "calibrating", es: "calibrando" },
+    { en: "broadcasting", es: "transmitiendo" },
+    { en: "navigating", es: "navegando" },
+    { en: "troubleshooting", es: "solucionando fallos" },
+    { en: "checking", es: "comprobando" },
+    { en: "assembling", es: "ensamblando" },
+    { en: "coding", es: "programando" },
+    { en: "observing", es: "observando" },
+    { en: "listening", es: "escuchando" },
+    { en: "testing", es: "probando" },
+    { en: "fixing", es: "arreglando" },
+    { en: "charging", es: "cargando" },
+    { en: "launching", es: "lanzando" },
+    { en: "operating", es: "operando" },
+    { en: "docking", es: "acoplando" }
   ],
   5: [
     { en: "always", es: "siempre" },
     { en: "sometimes", es: "a veces" },
     { en: "never", es: "nunca" },
+    { en: "usually", es: "usualmente" },
+    { en: "rarely", es: "raramente" },
+    { en: "often", es: "a menudo" },
+    { en: "daily", es: "a diario" },
+    { en: "weekly", es: "semanalmente" },
+    { en: "monthly", es: "mensualmente" },
+    { en: "seldom", es: "casi nunca" },
+    { en: "frequently", es: "frecuentemente" },
+    { en: "schedule", es: "horario" },
+    { en: "time", es: "tiempo / hora" },
+    { en: "checklist", es: "lista de control" },
+    { en: "drill", es: "simulacro" },
+    { en: "protocol", es: "protocolo" },
+    { en: "inspection", es: "inspección" },
+    { en: "timeline", es: "cronograma" },
+    { en: "punctual", es: "puntual" },
+    { en: "practice", es: "practicar" },
+    { en: "workout", es: "entrenamiento físico" },
     { en: "help", es: "ayudar" },
     { en: "meet", es: "reunirse" },
     { en: "explore", es: "explorar" },
-    { en: "schedule", es: "horario" },
-    { en: "time", es: "tiempo" }
+    { en: "reminder", es: "recordatorio" }
   ],
   6: [
     { en: "have", es: "tener" },
@@ -63,7 +148,24 @@ const VOCAB_BY_DAY = {
     { en: "oxygen tank", es: "tanque de oxígeno" },
     { en: "scanner", es: "escáner" },
     { en: "energy cell", es: "célula de energía" },
-    { en: "key code", es: "código de acceso" }
+    { en: "key code", es: "código de acceso" },
+    { en: "laser torch", es: "antorcha láser" },
+    { en: "multi-tool", es: "multiherramienta" },
+    { en: "power core", es: "núcleo de poder" },
+    { en: "battery pack", es: "paquete de baterías" },
+    { en: "probe", es: "sonda espacial" },
+    { en: "transceiver", es: "transceptor" },
+    { en: "fuse", es: "fusible" },
+    { en: "circuit", es: "circuito" },
+    { en: "wrench", es: "llave inglesa" },
+    { en: "generator", es: "generador" },
+    { en: "harness", es: "arnés" },
+    { en: "connector", es: "conector" },
+    { en: "display", es: "pantalla" },
+    { en: "spare", es: "repuesto" },
+    { en: "gear", es: "equipo / engranaje" },
+    { en: "gadget", es: "dispositivo" },
+    { en: "supplies", es: "suministros" }
   ],
   7: [
     { en: "what", es: "qué / cuál" },
@@ -72,18 +174,52 @@ const VOCAB_BY_DAY = {
     { en: "who", es: "quién" },
     { en: "why", es: "por qué" },
     { en: "how", es: "cómo" },
+    { en: "which", es: "cuál (opción)" },
+    { en: "whose", es: "de quién" },
     { en: "signal", es: "señal" },
-    { en: "frequency", es: "frecuencia" }
+    { en: "frequency", es: "frecuencia" },
+    { en: "anomaly", es: "anomalía" },
+    { en: "origin", es: "origen" },
+    { en: "destination", es: "destino" },
+    { en: "location", es: "ubicación" },
+    { en: "query", es: "consulta" },
+    { en: "answer", es: "respuesta" },
+    { en: "reason", es: "razón / motivo" },
+    { en: "trajectory", es: "trayectoria" },
+    { en: "distance", es: "distancia" },
+    { en: "speed", es: "velocidad" },
+    { en: "target", es: "objetivo" },
+    { en: "beacon", es: "baliza" },
+    { en: "transmission", es: "transmisión" },
+    { en: "transmitter", es: "transmisor" },
+    { en: "status", es: "estado" }
   ],
   8: [
     { en: "my", es: "mi" },
     { en: "your", es: "tu" },
     { en: "his", es: "su (de él)" },
     { en: "her", es: "su (de ella)" },
+    { en: "our", es: "nuestro" },
+    { en: "their", es: "su (de ellos)" },
     { en: "mine", es: "mío" },
     { en: "yours", es: "tuyo" },
+    { en: "hers", es: "suyo (de ella)" },
+    { en: "ours", es: "nuestro (pronombre)" },
+    { en: "theirs", es: "de ellos (pronombre)" },
     { en: "visor", es: "visor" },
-    { en: "badge", es: "insignia" }
+    { en: "badge", es: "insignia" },
+    { en: "datapad", es: "tableta de datos" },
+    { en: "backpack", es: "mochila" },
+    { en: "insignia", es: "distintivo" },
+    { en: "tag", es: "etiqueta" },
+    { en: "credentials", es: "credenciales" },
+    { en: "token", es: "ficha / pase" },
+    { en: "emblem", es: "emblema" },
+    { en: "belongings", es: "pertenencias" },
+    { en: "locker", es: "casillero" },
+    { en: "identity", es: "identidad" },
+    { en: "keycard", es: "tarjeta llave" },
+    { en: "uniform", es: "uniforme" }
   ],
   9: [
     { en: "me", es: "mí / me" },
@@ -93,17 +229,159 @@ const VOCAB_BY_DAY = {
     { en: "them", es: "ellos / los" },
     { en: "transmission", es: "transmisión" },
     { en: "channel", es: "canal" },
-    { en: "coordinates", es: "coordenadas" }
+    { en: "coordinates", es: "coordenadas" },
+    { en: "message", es: "mensaje" },
+    { en: "dispatcher", es: "despachador" },
+    { en: "receiver", es: "receptor" },
+    { en: "sender", es: "remitente" },
+    { en: "audio", es: "audio" },
+    { en: "frequency", es: "frecuencia" },
+    { en: "uplink", es: "enlace de subida" },
+    { en: "downlink", es: "enlace de bajada" },
+    { en: "satellite", es: "satélite" },
+    { en: "relay", es: "repetidor" },
+    { en: "antenna", es: "antena" },
+    { en: "broadcast", es: "difusión" },
+    { en: "intercom", es: "intercomunicador" },
+    { en: "ping", es: "pulso de señal" },
+    { en: "wavelength", es: "longitud de onda" },
+    { en: "listen", es: "escuchar" },
+    { en: "send", es: "enviar" }
   ],
   10: [
     { en: "this", es: "este / esta" },
-    { en: "that", es: "ese / esa" },
+    { en: "that", es: "ese / esa / aquel" },
     { en: "these", es: "estos / estas" },
     { en: "those", es: "esos / esas" },
     { en: "shield", es: "escudo" },
     { en: "console", es: "consola" },
     { en: "controls", es: "controles" },
-    { en: "deck", es: "cubierta" }
+    { en: "deck", es: "cubierta" },
+    { en: "terminal", es: "terminal" },
+    { en: "switch", es: "interruptor" },
+    { en: "lever", es: "palanca" },
+    { en: "dashboard", es: "panel de control" },
+    { en: "indicator", es: "indicador" },
+    { en: "gauge", es: "manómetro / medidor" },
+    { en: "dial", es: "cuadrante" },
+    { en: "screen", es: "pantalla" },
+    { en: "panel", es: "panel" },
+    { en: "keyboard", es: "teclado" },
+    { en: "interface", es: "interfaz" },
+    { en: "mechanism", es: "mecanismo" },
+    { en: "unit", es: "unidad" },
+    { en: "mainframe", es: "servidor central" },
+    { en: "apparatus", es: "aparato" },
+    { en: "cyberdeck", es: "ciberconsola" },
+    { en: "system", es: "sistema" }
+  ],
+  11: [
+    { en: "faster", es: "más rápido" },
+    { en: "bigger", es: "más grande" },
+    { en: "smaller", es: "más pequeño" },
+    { en: "brighter", es: "más brillante" },
+    { en: "stronger", es: "más fuerte" },
+    { en: "colder", es: "más frío" },
+    { en: "warmer", es: "más cálido" },
+    { en: "closer", es: "más cercano" },
+    { en: "heavier", es: "más pesado" },
+    { en: "lighter", es: "más liviano" },
+    { en: "farther", es: "más lejos" },
+    { en: "nearer", es: "más cerca" },
+    { en: "higher", es: "más alto" },
+    { en: "deeper", es: "más profundo" },
+    { en: "safer", es: "más seguro" },
+    { en: "better", es: "mejor" },
+    { en: "worse", es: "peor" },
+    { en: "explorer", es: "explorador" },
+    { en: "speed", es: "velocidad" },
+    { en: "propulsion", es: "propulsión" },
+    { en: "thrust", es: "empuje" },
+    { en: "engine", es: "motor" },
+    { en: "booster", es: "propulsor" },
+    { en: "starship", es: "astronave" },
+    { en: "altitude", es: "altitud" }
+  ],
+  12: [
+    { en: "fastest", es: "el más rápido" },
+    { en: "brightest", es: "el más brillante" },
+    { en: "biggest", es: "el más grande" },
+    { en: "smallest", es: "el más pequeño" },
+    { en: "furthest", es: "el más lejano" },
+    { en: "deepest", es: "el más profundo" },
+    { en: "safest", es: "el más seguro" },
+    { en: "oldest", es: "el más antiguo" },
+    { en: "newest", es: "el más nuevo" },
+    { en: "greatest", es: "el más grandioso" },
+    { en: "highest", es: "el más alto" },
+    { en: "coldest", es: "el más frío" },
+    { en: "record", es: "récord" },
+    { en: "champion", es: "campeón" },
+    { en: "peak", es: "cima / cúspide" },
+    { en: "nebula", es: "nebulosa" },
+    { en: "supernova", es: "supernova" },
+    { en: "black hole", es: "agujero negro" },
+    { en: "cosmos", es: "cosmos" },
+    { en: "quasar", es: "cuásar" },
+    { en: "asteroid", es: "asteroide" },
+    { en: "comet", es: "cometa" },
+    { en: "zenith", es: "cénit" },
+    { en: "cluster", es: "cúmulo estelar" },
+    { en: "infinity", es: "infinito" }
+  ],
+  13: [
+    { en: "visited", es: "visitó / visitado" },
+    { en: "landed", es: "aterrizó" },
+    { en: "launched", es: "lanzó / despegó" },
+    { en: "discovered", es: "descubrió" },
+    { en: "traveled", es: "viajó" },
+    { en: "repaired", es: "reparó" },
+    { en: "transmitted", es: "transmitió" },
+    { en: "detected", es: "detectó" },
+    { en: "arrived", es: "llegó" },
+    { en: "departed", es: "partió" },
+    { en: "unlocked", es: "desbloqueó" },
+    { en: "solved", es: "resolvió" },
+    { en: "calibrated", es: "calibró" },
+    { en: "recorded", es: "grabó / registró" },
+    { en: "explored", es: "exploró" },
+    { en: "yesterday", es: "ayer" },
+    { en: "last night", es: "anoche" },
+    { en: "mission", es: "misión" },
+    { en: "expedition", es: "expedición" },
+    { en: "logbook", es: "cuaderno de bitácora" },
+    { en: "voyage", es: "travesía" },
+    { en: "milestone", es: "hito" },
+    { en: "history", es: "historia" },
+    { en: "chronicle", es: "crónica" },
+    { en: "memory", es: "recuerdo" }
+  ],
+  14: [
+    { en: "graduation", es: "graduación" },
+    { en: "commander", es: "comandante" },
+    { en: "cadet", es: "cadete" },
+    { en: "honors", es: "honores" },
+    { en: "certificate", es: "certificado" },
+    { en: "mission", es: "misión" },
+    { en: "victory", es: "victoria" },
+    { en: "celebration", es: "celebración" },
+    { en: "achievement", es: "logro" },
+    { en: "starbase", es: "base estelar" },
+    { en: "alliance", es: "alianza" },
+    { en: "future", es: "futuro" },
+    { en: "universe", es: "universo" },
+    { en: "journey", es: "viaje" },
+    { en: "stellar", es: "estelar" },
+    { en: "honor", es: "honor" },
+    { en: "badge", es: "insignia" },
+    { en: "diploma", es: "diploma" },
+    { en: "legacy", es: "legado" },
+    { en: "tribute", es: "homenaje" },
+    { en: "outpost", es: "puesto de avanzada" },
+    { en: "galaxy", es: "galaxia" },
+    { en: "pioneer", es: "pionero" },
+    { en: "leader", es: "líder" },
+    { en: "legend", es: "leyenda" }
   ]
 };
 
@@ -152,6 +430,10 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Dynamic API vocabulary state
+  const [fetchedVocab, setFetchedVocab] = useState([]);
+  const [usedWordsHistory, setUsedWordsHistory] = useState(new Set());
+
   // Solution feedback evaluation state
   const [showSolution, setShowSolution] = useState(false);
   const [evalResults, setEvalResults] = useState({}); // { leftIdx: { userRightIdx, isCorrect, correctRightIdx } }
@@ -195,14 +477,49 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setPortCoords(newCoords);
   };
 
+  // Fetch expanded vocabulary from backend database API for the day
+  useEffect(() => {
+    let isMounted = true;
+    const dayNum = activity?.dayNumber || activity?.day || 1;
+    fetch(`/api/daily-vocabulary/?day=${dayNum}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (isMounted && data && Array.isArray(data) && data.length > 0) {
+          const mapped = data.map(item => ({ en: item.word_en, es: item.word_es }));
+          setFetchedVocab(mapped);
+        }
+      })
+      .catch(err => {
+        console.warn("Could not fetch remote daily vocabulary, using comprehensive offline pool:", err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [activity?.dayNumber, activity?.day]);
+
   // Build English <-> Spanish vocabulary wire pairs for current round (100% randomized per student/attempt)
   useEffect(() => {
     const dayNum = activity?.dayNumber || activity?.day || 1;
-    const dayVocab = VOCAB_BY_DAY[dayNum] || VOCAB_BY_DAY[1];
+    const fullPool = fetchedVocab.length > 0 ? fetchedVocab : (VOCAB_BY_DAY[dayNum] || VOCAB_BY_DAY[1]);
 
-    // Pick 4 random pairs from day's pool for this round
-    const shuffledDayVocab = shuffle(dayVocab);
-    const roundPairs = shuffledDayVocab.slice(0, 4);
+    // Exclude words already used in prior rounds of this session to ensure variety
+    let candidatePool = fullPool.filter(w => !usedWordsHistory.has(w.en.toLowerCase()));
+    if (candidatePool.length < 4) {
+      // If pool is exhausted across multiple rounds, reset history
+      candidatePool = fullPool;
+      setUsedWordsHistory(new Set());
+    }
+
+    // Pick 4 random pairs from available pool
+    const shuffledPool = shuffle(candidatePool);
+    const roundPairs = shuffledPool.slice(0, 4);
+
+    // Record used words
+    setUsedWordsHistory(prev => {
+      const next = new Set(prev);
+      roundPairs.forEach(p => next.add(p.en.toLowerCase()));
+      return next;
+    });
 
     const { leftNodes: lNodes, rightNodes: rNodes } = createGameNodes(roundPairs);
 
@@ -214,7 +531,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setIsSuccess(false);
     setShowSolution(false);
     setEvalResults({});
-  }, [currentQIndex, activity]);
+  }, [currentQIndex, activity, fetchedVocab]);
 
   // Update port coordinates on render / window resize
   useEffect(() => {

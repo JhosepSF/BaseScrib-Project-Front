@@ -75,6 +75,12 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
     ]
   };
 
+  const getTimeForQuestion = (questionObj) => {
+    const isBoss = (questionObj?.mode || "").toLowerCase().includes("boss") ||
+                   (questionObj?.q || "").toLowerCase().includes("boss");
+    return isBoss ? 45 : 35;
+  };
+
   useEffect(() => {
     let timer;
     if (inChallenge && !completed && !failed && timeLeft > 0) {
@@ -101,21 +107,27 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
     setMaxCombo(0);
     setLives(3);
     setCoinsEarned(0);
-    setTimeLeft(12);
+    setSelectedOption(null); // Fix: Reset selectedOption so buttons are completely fresh and clickable
+    const firstQ = activeQuestions[0];
+    setTimeLeft(getTimeForQuestion(firstQ));
     setCompleted(false);
     setFailed(false);
+    setRunStarsEarned(0);
+    setRunNewStars(0);
+    setRunCoinsAwarded(0);
   };
 
   const handleMistake = () => {
     soundFx.playError();
     setCombo(0);
+    setSelectedOption(null); // Fix: Reset selection on timeout error
     const newLives = lives - 1;
     setLives(newLives);
 
     if (newLives <= 0) {
       setFailed(true);
     } else {
-      handleNextQuestion();
+      handleNextQuestion(newLives);
     }
   };
 
@@ -140,27 +152,40 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
       const newLives = lives - 1;
       setLives(newLives);
       if (newLives <= 0) {
-        setTimeout(() => setFailed(true), 800);
+        setTimeout(() => {
+          setSelectedOption(null); // Fix: Clear before showing failed screen so retry is clean
+          setFailed(true);
+        }, 800);
         return;
       }
     }
 
+    const currentLives = isCorrect ? lives : lives - 1;
+
     setTimeout(() => {
       setSelectedOption(null);
-      handleNextQuestion();
+      handleNextQuestion(currentLives);
     }, 1000);
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = (currentLives = lives) => {
+    setSelectedOption(null);
     if (currentQIndex < activeQuestions.length - 1) {
-      setCurrentQIndex(prev => prev + 1);
-      setTimeLeft(12);
+      const nextIdx = currentQIndex + 1;
+      setCurrentQIndex(nextIdx);
+      const nextQ = activeQuestions[nextIdx];
+      setTimeLeft(getTimeForQuestion(nextQ));
     } else {
       soundFx.playCoin();
       soundFx.playStreakBonus();
       setCompleted(true);
 
       const completionTime = trialStartTime ? (Date.now() - trialStartTime) / 1000 : 25.0;
+      const finalLives = currentLives !== undefined ? currentLives : lives;
+
+      // Local fallback calculation (3 stars requires 0 mistakes / 3 lives intact and time <= 75s)
+      const localStars = finalLives >= 3 && completionTime <= 75.0 ? 3 : (finalLives >= 2 && completionTime <= 100.0 ? 2 : 1);
+      setRunStarsEarned(localStars);
 
       // Submit result to backend for Genshin star calculations and claimed coins
       if (token) {
@@ -173,7 +198,7 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
           body: JSON.stringify({
             day_number: floor,
             completion_time_seconds: completionTime,
-            lives_remaining: lives
+            lives_remaining: finalLives
           })
         })
           .then((res) => res.json())
@@ -283,9 +308,9 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
                 🎯 Desafíos de Estrellas (Recompensas Fijas):
               </strong>
               <div style={{ fontSize: "0.8rem", color: "#e6f7ff", display: "flex", flexDirection: "column", gap: 4 }}>
-                <div>⭐ <strong>1 Estrella (+50 🪙)</strong>: Completar el Abismo del Día.</div>
-                <div>⭐⭐ <strong>2 Estrellas (+100 🪙)</strong>: Completar en ≤ 50s con al menos 1 vida.</div>
-                <div>⭐⭐⭐ <strong>3 Estrellas (+150 🪙)</strong>: Completar en ≤ 35s con al menos 2 vidas.</div>
+                <div>⭐ <strong>1 Estrella (+50 🪙)</strong>: Completar el Abismo con al menos 1 vida.</div>
+                <div>⭐⭐ <strong>2 Estrellas (+100 🪙)</strong>: Completar en ≤ 100s con al menos 2 vidas (máx. 1 error).</div>
+                <div>⭐⭐⭐ <strong>3 Estrellas (+150 🪙)</strong>: Rendimiento Impecable en ≤ 75s con 3 vidas (0 errores).</div>
               </div>
             </div>
 
@@ -314,7 +339,7 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
         {/* MODO RETO DE ALTA VELOCIDAD */}
         {inChallenge && !completed && !failed && q && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, borderBottom: "1px solid rgba(247, 37, 133, 0.25)", paddingBottom: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, borderBottom: "1px solid rgba(247, 37, 133, 0.25)", paddingBottom: 10 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ background: "rgba(247, 37, 133, 0.2)", border: "1px solid #f72585", color: "#f72585", padding: "4px 10px", borderRadius: 12, fontSize: "0.78rem", fontWeight: "bold" }}>
                   {q.mode}
@@ -334,17 +359,28 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
                   {"🛡️".repeat(lives)}
                 </div>
                 <div style={{ 
-                  background: timeLeft <= 4 ? "rgba(255, 107, 107, 0.3)" : "rgba(114, 9, 183, 0.25)", 
-                  border: timeLeft <= 4 ? "1px solid #ff6b6b" : "1px solid #7209b7", 
-                  color: timeLeft <= 4 ? "#ff6b6b" : "#4cc9f0", 
+                  background: timeLeft <= 7 ? "rgba(255, 107, 107, 0.35)" : "rgba(114, 9, 183, 0.25)", 
+                  border: timeLeft <= 7 ? "1.5px solid #ff6b6b" : "1px solid #7209b7", 
+                  color: timeLeft <= 7 ? "#ff6b6b" : "#4cc9f0", 
                   padding: "5px 14px", 
                   borderRadius: 20, 
                   fontWeight: "bold", 
-                  fontSize: "1rem" 
+                  fontSize: "1rem",
+                  boxShadow: timeLeft <= 7 ? "0 0 12px rgba(255, 107, 107, 0.6)" : "none"
                 }}>
                   ⏱️ {timeLeft}s
                 </div>
               </div>
+            </div>
+
+            {/* Time progress bar */}
+            <div style={{ width: "100%", height: "4px", background: "rgba(255,255,255,0.08)", borderRadius: "2px", overflow: "hidden", marginBottom: "16px" }}>
+              <div style={{
+                width: `${Math.min(100, (timeLeft / (getTimeForQuestion(q) || 35)) * 100)}%`,
+                height: "100%",
+                background: timeLeft <= 7 ? "#ff6b6b" : "linear-gradient(90deg, #2ec4b6, #f72585)",
+                transition: "width 1s linear"
+              }} />
             </div>
 
             <h3 style={{ color: "#b8fff9", fontSize: "1.1rem", marginBottom: 20, minHeight: 48, lineHeight: 1.4 }}>

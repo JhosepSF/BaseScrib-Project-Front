@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { SentenceLaunchGame } from "./SentenceLaunchGame";
 import { ShipRepairGame } from "./ShipRepairGame";
@@ -16,15 +16,26 @@ const STAGES = [
   { id: 5, type: "writing", title: "Etapa 5: Informe Final al Profesor", icon: "✉️", component: WritingGame, desc: "Redacción y Envío al Buzón" },
 ];
 
-export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAll, onClose }) {
+export function DailyGameRunner({
+  dayNumber,
+  activities = [],
+  userId,
+  token: propToken,
+  onStageComplete,
+  onFinishAll,
+  onClose
+}) {
   const [stageIndex, setStageIndex] = useState(0); // 0 to 4
+  const [completedStages, setCompletedStages] = useState([]); // array of stage numbers, e.g. [1, 2]
   const [totalXP, setTotalXP] = useState(0);
   const [totalCoins, setTotalCoins] = useState(0);
   const [totalMistakes, setTotalMistakes] = useState(0);
   const [showTransition, setShowTransition] = useState(false);
   const [completedAutoScore, setCompletedAutoScore] = useState(null);
+  const [resumedNotice, setResumedNotice] = useState(false);
 
   const currentStage = STAGES[stageIndex];
+  const cacheKey = `basescrib_daily_progress_${userId || 'guest'}_day_${dayNumber}`;
 
   // Helper to match activity to current stage type or fallback to position
   const findActivityForStage = (stageType, index) => {
@@ -36,18 +47,130 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
     return match || activities[index] || activities[0];
   };
 
+  // 1. Initial load: Restore saved stage progress from localStorage & sync with backend
+  useEffect(() => {
+    // A. Read local cached progress
+    try {
+      const stored = localStorage.getItem(cacheKey);
+      if (stored) {
+        const cached = JSON.parse(stored);
+        if (Array.isArray(cached.completedStages) && cached.completedStages.length > 0) {
+          setCompletedStages(cached.completedStages);
+          const nextIdx = Math.max(0, Math.min(4, (cached.currentStage || 1) - 1));
+          setStageIndex(nextIdx);
+          if (nextIdx > 0) setResumedNotice(true);
+          if (cached.totalXP) setTotalXP(cached.totalXP);
+          if (cached.totalCoins) setTotalCoins(cached.totalCoins);
+          if (cached.totalMistakes) setTotalMistakes(cached.totalMistakes);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not parse local mission progress cache:", e);
+    }
+
+    // B. Fetch persistent state from backend API
+    const authToken = propToken || localStorage.getItem("basescrib_token") || localStorage.getItem("token") || "";
+    if (authToken) {
+      fetch(`/api/daily-mission-progress/by-day/?day=${dayNumber}`, {
+        headers: { Authorization: `Bearer ${authToken}` }
+      })
+        .then(res => (res.ok ? res.json() : null))
+        .then(data => {
+          if (data && data.day_number === dayNumber) {
+            const remoteStages = Array.isArray(data.completed_stages) ? data.completed_stages : [];
+            if (remoteStages.length > 0) {
+              setCompletedStages(remoteStages);
+              const nextIdx = Math.max(0, Math.min(4, (data.current_stage || 1) - 1));
+              setStageIndex(nextIdx);
+              if (nextIdx > 0) setResumedNotice(true);
+              setTotalXP(data.total_xp || 0);
+              setTotalCoins(data.total_coins || 0);
+              setTotalMistakes(data.total_mistakes || 0);
+
+              // Update local cache
+              localStorage.setItem(cacheKey, JSON.stringify({
+                completedStages: remoteStages,
+                currentStage: data.current_stage || 1,
+                totalXP: data.total_xp || 0,
+                totalCoins: data.total_coins || 0,
+                totalMistakes: data.total_mistakes || 0,
+                isCompleted: data.is_completed || false,
+                lastSavedAt: new Date().toISOString()
+              }));
+            }
+          }
+        })
+        .catch(err => {
+          console.warn("Could not load backend daily mission progress:", err);
+        });
+    }
+  }, [dayNumber, userId, propToken, cacheKey]);
+
+  // Hide resumed notice badge after 4 seconds
+  useEffect(() => {
+    if (resumedNotice) {
+      const timer = setTimeout(() => setResumedNotice(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [resumedNotice]);
+
   const handleStageComplete = (xp = 15, coins = 15, mistakes = 0) => {
     soundFx.playSuccess();
-    setTotalXP(prev => prev + xp);
-    setTotalCoins(prev => prev + coins);
-    setTotalMistakes(prev => prev + mistakes);
+    const stageNumber = stageIndex + 1;
+    const newXP = totalXP + xp;
+    const newCoins = totalCoins + coins;
+    const newMistakes = totalMistakes + mistakes;
+    const newCompleted = Array.from(new Set([...completedStages, stageNumber])).sort((a, b) => a - b);
+
+    setCompletedStages(newCompleted);
+    setTotalXP(newXP);
+    setTotalCoins(newCoins);
+    setTotalMistakes(newMistakes);
 
     const isLastAutoStage = stageIndex === 3; // Finished Stage 4 (Listening)
-    const isFinalStage = stageIndex === 4; // Finished Stage 5 (Writing)
+    const isFinalStage = stageIndex === 4 || newCompleted.length >= 5; // Finished Stage 5 (Writing)
+    const nextStageNum = Math.min(5, stageNumber + 1);
+
+    // 1. Immediately persist locally (so if user closes right away, nothing is lost)
+    localStorage.setItem(cacheKey, JSON.stringify({
+      completedStages: newCompleted,
+      currentStage: nextStageNum,
+      totalXP: newXP,
+      totalCoins: newCoins,
+      totalMistakes: newMistakes,
+      isCompleted: isFinalStage,
+      lastSavedAt: new Date().toISOString()
+    }));
+
+    // 2. Notify parent container immediately to credit live XP/coins
+    if (onStageComplete) {
+      onStageComplete(stageNumber, xp, coins, mistakes);
+    }
+
+    // 3. Immediately persist to backend API
+    const authToken = propToken || localStorage.getItem("basescrib_token") || localStorage.getItem("token") || "";
+    if (authToken) {
+      fetch(`/api/daily-mission-progress/save-stage/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          day_number: dayNumber,
+          stage: stageNumber,
+          xp,
+          coins,
+          mistakes
+        })
+      }).catch(err => {
+        console.error("Error saving stage progress to backend:", err);
+      });
+    }
 
     if (isLastAutoStage) {
       // Calculate final auto-graded score (0 to 20)
-      const cumulativeMistakes = totalMistakes + mistakes;
+      const cumulativeMistakes = newMistakes;
       const calculatedScore = Math.max(0, Number((20 - cumulativeMistakes * 0.75).toFixed(1)));
       setCompletedAutoScore(calculatedScore);
     }
@@ -58,9 +181,9 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
       if (onFinishAll) {
         onFinishAll({
           dayNumber,
-          totalXP: totalXP + xp,
-          totalCoins: totalCoins + coins,
-          totalMistakes: totalMistakes + mistakes,
+          totalXP: newXP,
+          totalCoins: newCoins,
+          totalMistakes: newMistakes,
           autoScore: completedAutoScore ?? 20
         });
       }
@@ -72,7 +195,7 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
   const handleNextStage = () => {
     soundFx.playWarp();
     setShowTransition(false);
-    setStageIndex(prev => prev + 1);
+    setStageIndex(prev => Math.min(4, prev + 1));
   };
 
   const currentActivity = findActivityForStage(currentStage.type, stageIndex);
@@ -89,29 +212,55 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
           <div className="runner-hud-meta">
             <span className="runner-day-badge">🚀 DÍA {dayNumber}</span>
             <span className="runner-step-counter">ETAPA {stageIndex + 1} / 5</span>
+            {resumedNotice && (
+              <span className="runner-resumed-pill animate-fadeIn" style={{
+                background: "rgba(0, 255, 135, 0.2)",
+                color: "#00ff87",
+                border: "1px solid #00ff87",
+                borderRadius: "10px",
+                fontSize: "0.68rem",
+                fontWeight: 800,
+                padding: "2px 8px"
+              }}>
+                💾 Progreso Guardado Recuperado
+              </span>
+            )}
           </div>
           <h3 className="runner-stage-name">
-            {currentStage.icon} {currentStage.title.split(":")[1]?.trim() || currentStage.title}
+            {completedStages.includes(currentStage.id) ? "✅ " : currentStage.icon + " "}
+            {currentStage.title.split(":")[1]?.trim() || currentStage.title}
           </h3>
         </div>
 
         {/* 5-Step Visual Stepper */}
         <div className="runner-stepper">
           {STAGES.map((stg, i) => {
+            const isDone = completedStages.includes(stg.id);
             let statusClass = "future";
-            if (i < stageIndex) statusClass = "done";
+            if (isDone) statusClass = "done";
             else if (i === stageIndex) statusClass = "active";
 
             return (
-              <div key={stg.id} className={`stepper-pill ${statusClass}`}>
-                <span className="pill-icon">{stg.icon}</span>
+              <div
+                key={stg.id}
+                className={`stepper-pill ${statusClass}`}
+                onClick={() => {
+                  if (isDone || i <= stageIndex) {
+                    setStageIndex(i);
+                    setShowTransition(false);
+                  }
+                }}
+                style={{ cursor: (isDone || i <= stageIndex) ? "pointer" : "default" }}
+                title={isDone ? `Etapa ${stg.id} superada (clic para revisar)` : `Etapa ${stg.id}`}
+              >
+                <span className="pill-icon">{isDone ? "✅" : stg.icon}</span>
                 <span className="pill-name">Etapa {stg.id}</span>
               </div>
             );
           })}
         </div>
 
-        <button className="runner-close-btn" onClick={onClose} title="Salir al Panel">
+        <button className="runner-close-btn" onClick={onClose} title="Guardar y Salir al Panel">
           ✕
         </button>
       </div>
@@ -120,7 +269,7 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
       <div className="daily-runner-content">
         {!showTransition ? (
           <StageComponent
-            activity={currentActivity}
+            activity={currentActivity ? { ...currentActivity, dayNumber } : { dayNumber, title: currentStage.title }}
             userId={userId}
             hideHeader={true}
             onComplete={handleStageComplete}
@@ -133,6 +282,17 @@ export function DailyGameRunner({ dayNumber, activities = [], userId, onFinishAl
               <div className="transition-icon-glow">{STAGES[stageIndex].icon}</div>
               <h2>¡ETAPA {stageIndex + 1} COMPLETADA!</h2>
               <p className="transition-subtitle">{STAGES[stageIndex].desc} superado con éxito.</p>
+              <div style={{
+                background: "rgba(46, 196, 182, 0.12)",
+                border: "1px dashed rgba(46, 196, 182, 0.5)",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                fontSize: "0.8rem",
+                color: "#b8fff9",
+                marginBottom: "12px"
+              }}>
+                💾 Tu progreso ha sido guardado. Si cierras ahora, podrás retomar desde la Etapa {Math.min(5, stageIndex + 2)}.
+              </div>
 
               {stageIndex < 4 ? (
                 <div className="transition-score-box">
@@ -179,6 +339,8 @@ DailyGameRunner.propTypes = {
   dayNumber: PropTypes.number.isRequired,
   activities: PropTypes.array,
   userId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  token: PropTypes.string,
+  onStageComplete: PropTypes.func,
   onFinishAll: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
 };

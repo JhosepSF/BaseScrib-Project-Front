@@ -63,6 +63,17 @@ export default function VisualNovelDialogue({
     localStorage.setItem("selected_outfit", outfitKey);
     localStorage.setItem("suit_color", selectedColor);
 
+    // Save welcome gifts into unlocked_outfits list
+    try {
+      const currentUnlocked = JSON.parse(localStorage.getItem("unlocked_outfits") || '["m_base", "f_base"]');
+      if (!currentUnlocked.includes(outfitKey)) currentUnlocked.push(outfitKey);
+      if (selectedBase && selectedBase !== "none" && !currentUnlocked.includes(selectedBase)) currentUnlocked.push(selectedBase);
+      if (selectedVisor && selectedVisor !== "none" && !currentUnlocked.includes(selectedVisor)) currentUnlocked.push(selectedVisor);
+      localStorage.setItem("unlocked_outfits", JSON.stringify(currentUnlocked));
+    } catch (e) {
+      console.warn("Could not parse unlocked_outfits:", e);
+    }
+
     if (token) {
       try {
         await fetch(`${API_BASE}/users/select_outfit/`, {
@@ -75,7 +86,8 @@ export default function VisualNovelDialogue({
             outfit_id: outfitKey,
             suit_color: selectedColor,
             visor_color: selectedVisor,
-            accessory: selectedBase,
+            accessory: selectedVisor !== "none" ? "goggles" : "none",
+            base_platform: selectedBase,
             decal: "none",
             gender: selectedGender,
           }),
@@ -234,7 +246,8 @@ export default function VisualNovelDialogue({
                 outfitId={selectedGender === "male" ? "m_base" : "f_base"}
                 suitColor={selectedColor}
                 visorColor={selectedVisor}
-                accessory={selectedBase}
+                accessory={selectedVisor !== "none" ? "goggles" : "none"}
+                basePlatform={selectedBase}
                 decal="none"
                 gender={selectedGender}
                 size="xxlarge"

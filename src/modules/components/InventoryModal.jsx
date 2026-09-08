@@ -15,7 +15,9 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   const [gender] = useState(userCharacter);
   const [suitColor, setSuitColor] = useState(user?.suit_color || "#2ec4b6");
   const [visorColor, setVisorColor] = useState(user?.visor_color || "#a3e2f7");
-  const [accessory, setAccessory] = useState(user?.accessory || "none");
+  const isLegacyBase = ["ring", "aura_cyan", "aura_gold", "aura_quantum", "aura_solar", "star", "planet", "fire_base"].includes(user?.accessory);
+  const [accessory, setAccessory] = useState(isLegacyBase ? "none" : (user?.accessory || "none"));
+  const [basePlatform, setBasePlatform] = useState(user?.base_platform || (isLegacyBase ? user.accessory : "none"));
   const [decal, setDecal] = useState(user?.decal || "none");
   const [equippedPet, setEquippedPet] = useState(user?.equipped_pet || localStorage.getItem("basescrib_equipped_pet") || "pet_alien_blue");
   const [equippedFrame, setEquippedFrame] = useState(user?.equipped_frame || "frame_default");
@@ -40,34 +42,34 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   }, [onClose]);
 
   const outfits = [
-    { id: "f_base", name: "Entrenadora Lia (Base)", icon: "👩‍🚀", desc: "Traje reglamentario de la entrenadora Lia." },
-    { id: "m_base", name: "Recluta Leo (Base)", icon: "🧑‍🚀", desc: "Traje reglamentario del recluta Leo." },
-    { id: "f_streetwear", name: "Skin Urban Streetwear (Lia)", icon: "👟", desc: "Sudadera oversize moderna con zapatillas de deporte." },
-    { id: "f_cat_onesie", name: "Skin Onesie de Gato (Lia)", icon: "🐱", desc: "Kigurumi/onesie de gato color rosa pastel." },
-    { id: "f_superhero", name: "Skin Superheroína (Lia)", icon: "🦸‍♀️", desc: "Traje de superheroína con capa pequeña y emblema de estrella." },
-    { id: "f_fantasy_armor", name: "Armadura de Fantasía (Lia)", icon: "🛡️", desc: "Armadura de caballero de fantasía blanca y dorada." },
-    { id: "f_cyberpunk", name: "Skin Cyberpunk Neón (Lia)", icon: "⚡", desc: "Traje futurista con líneas de neón rosa y cian." },
-    { id: "m_streetwear", name: "Skin Urban Streetwear (Leo)", icon: "👟", desc: "Sudadera oversize moderna con zapatillas de deporte." },
-    { id: "m_cat_onesie", name: "Skin Onesie de Gato (Leo)", icon: "🐱", desc: "Kigurumi/onesie de gato acolchado." },
-    { id: "m_superhero", name: "Skin Superhéroe (Leo)", icon: "🦸‍♂️", desc: "Traje de superhéroe con capa pequeña y emblema de estrella." },
-    { id: "m_fantasy_armor", name: "Armadura de Caballero (Leo)", icon: "🛡️", desc: "Armadura de caballero de fantasía blanca y dorada." },
-    { id: "m_cyberpunk", name: "Skin Cyberpunk Neón (Leo)", icon: "⚡", desc: "Traje futurista con líneas de neón azul y cian." }
+    { id: "f_base", name: "Entrenadora Lia (Base)", icon: "👩‍🚀", rarity: "Gratuito 🟢", desc: "Traje reglamentario de la entrenadora Lia." },
+    { id: "m_base", name: "Recluta Leo (Base)", icon: "🧑‍🚀", rarity: "Gratuito 🟢", desc: "Traje reglamentario del recluta Leo." },
+    { id: "f_streetwear", name: "Skin Urban Streetwear (Lia)", icon: "👟", rarity: "Común 🟢", desc: "Sudadera oversize moderna con zapatillas de deporte." },
+    { id: "f_cat_onesie", name: "Skin Onesie de Gato (Lia)", icon: "🐱", rarity: "Raro 🔵", desc: "Kigurumi/onesie de gato color rosa pastel." },
+    { id: "f_superhero", name: "Skin Superheroína (Lia)", icon: "🦸‍♀️", rarity: "Épico 💜", desc: "Traje de superheroína con capa pequeña y emblema de estrella." },
+    { id: "f_fantasy_armor", name: "Armadura de Fantasía (Lia)", icon: "🛡️", rarity: "Épico 💜", desc: "Armadura de caballero de fantasía blanca y dorada." },
+    { id: "f_cyberpunk", name: "Skin Cyberpunk Neón (Lia)", icon: "⚡", rarity: "Legendario 💛", desc: "Traje futurista con líneas de neón rosa y cian." },
+    { id: "m_streetwear", name: "Skin Urban Streetwear (Leo)", icon: "👟", rarity: "Común 🟢", desc: "Sudadera oversize moderna con zapatillas de deporte." },
+    { id: "m_cat_onesie", name: "Skin Onesie de Gato (Leo)", icon: "🐱", rarity: "Raro 🔵", desc: "Kigurumi/onesie de gato acolchado." },
+    { id: "m_superhero", name: "Skin Superhéroe (Leo)", icon: "🦸‍♂️", rarity: "Épico 💜", desc: "Traje de superhéroe con capa pequeña y emblema de estrella." },
+    { id: "m_fantasy_armor", name: "Armadura de Caballero (Leo)", icon: "🛡️", rarity: "Épico 💜", desc: "Armadura de caballero de fantasía blanca y dorada." },
+    { id: "m_cyberpunk", name: "Skin Cyberpunk Neón (Leo)", icon: "⚡", rarity: "Legendario 💛", desc: "Traje futurista con líneas de neón azul y cian." }
   ];
 
   const pets = [
-    { id: "pet_drone_sparky", name: "Drone Reparador Sparky", icon: "🤖", auraColor: "#2ec4b6", desc: "Mini drone que emite señales de escaneo continuo." },
-    { id: "pet_alien_blue", name: "Aliencito Nebuloso", icon: "👾", auraColor: "#4cc9f0", desc: "Acompañante espacial con aura de energía estelar." },
-    { id: "pet_cyber_fox", name: "Zorrito Cibernético", icon: "🦊", auraColor: "#b5179e", desc: "Mascota mística con colas de plasma fosforescente." },
-    { id: "pet_phoenix_quantum", name: "Fénix Cuántico de Scribtonia", icon: "🦅", auraColor: "#ffd166", desc: "Criatura legendaria envuelta en fuego estelar puro." }
+    { id: "pet_drone_sparky", name: "Drone Reparador Sparky", icon: "🤖", rarity: "Común 🟢", auraColor: "#2ec4b6", desc: "Mini drone que emite señales de escaneo continuo." },
+    { id: "pet_alien_blue", name: "Aliencito Nebuloso", icon: "👾", rarity: "Raro 🔵", auraColor: "#4cc9f0", desc: "Acompañante espacial con aura de energía estelar." },
+    { id: "pet_cyber_fox", name: "Zorrito Cibernético", icon: "🦊", rarity: "Épico 💜", auraColor: "#b5179e", desc: "Mascota mística con colas de plasma fosforescente." },
+    { id: "pet_phoenix_quantum", name: "Fénix Cuántico de Scribtonia", icon: "🦅", rarity: "Legendario 💛", auraColor: "#ffd166", desc: "Criatura legendaria envuelta en fuego estelar puro." }
   ];
 
   const framesList = [
-    { id: "frame_default", name: "Marco Base de Recluta", icon: "🔵" },
-    { id: "frame_fire", name: "Marco Fuego Infernal 🔥", icon: "🔥" },
-    { id: "frame_electric", name: "Marco Voltaje Cuántico ⚡", icon: "⚡" },
-    { id: "frame_spidey", name: "Marco Telaraña Superheroica 🕷️", icon: "🕷️" },
-    { id: "frame_neon", name: "Marco Neón Cyberpunk 🌌", icon: "🌌" },
-    { id: "frame_gold_crown", name: "Marco Corona Dorada 👑", icon: "👑" }
+    { id: "frame_default", name: "Marco Base de Recluta", icon: "🔵", rarity: "Gratuito 🟢", desc: "Borde cibernético reglamentario de la base." },
+    { id: "frame_fire", name: "Marco Fuego Infernal 🔥", icon: "🔥", rarity: "Común 🟢", desc: "Resplandor de fuego y partículas incandescentes." },
+    { id: "frame_electric", name: "Marco Voltaje Cuántico ⚡", icon: "⚡", rarity: "Raro 🔵", desc: "Borde de descarga eléctrica con chispas de plasma." },
+    { id: "frame_spidey", name: "Marco Telaraña Superheroica 🕷️", icon: "🕷️", rarity: "Épico 💜", desc: "Inspirado en el superhéroe arácnido con arañita en la esquina." },
+    { id: "frame_neon", name: "Marco Neón Cyberpunk 🌌", icon: "🌌", rarity: "Épico 💜", desc: "Aura neón rosa y magenta en constante rotación." },
+    { id: "frame_gold_crown", name: "Marco Corona Dorada 👑", icon: "👑", rarity: "Legendario 💛", desc: "Borde dorado con corona flotante reluciente." }
   ];
 
   const suitColorsList = [
@@ -91,29 +93,62 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
   ];
 
   const basesList = [
-    { id: "none", name: "Sin Base", icon: "🚫" },
-    { id: "ring", name: "Aro Neón Carmesí", icon: "⭕" },
-    { id: "aura_cyan", name: "Portal Radar Cian", icon: "🌀" },
-    { id: "aura_quantum", name: "Campo Cuántico", icon: "🔮" },
-    { id: "aura_gold", name: "Cresta Celestial", icon: "⚜️" },
-    { id: "aura_solar", name: "Plataforma Sol", icon: "🔥" }
+    { id: "none", name: "Sin Base", icon: "🚫", rarity: "Gratuito 🟢", desc: "Sin plataforma de suelo." },
+    { id: "ring", name: "Aro Neón Carmesí", icon: "⭕", rarity: "Común 🟢", desc: "Plataforma holográfica de plasma rojo con giro continuo." },
+    { id: "aura_cyan", name: "Portal Radar Cian", icon: "🌀", rarity: "Raro 🔵", desc: "Escáner táctico cibernético con barrido de radar cian." },
+    { id: "aura_quantum", name: "Campo Cuántico", icon: "🔮", rarity: "Épico 💜", desc: "Vórtice de distorsión espacio-temporal octagonal." },
+    { id: "aura_gold", name: "Cresta Celestial", icon: "⚜️", rarity: "Épico 💜", desc: "Base real cósmica con estrellas celestiales." },
+    { id: "aura_solar", name: "Plataforma Sol", icon: "🔥", rarity: "Legendario 💛", desc: "Anillo de fuego solar brillante con llamas estelares." }
   ];
 
   const headAccessoriesList = [
-    { id: "none", name: "Sin Accesorio", icon: "🚫" },
-    { id: "goggles", name: "Gafas Cibernéticas", icon: "🥽" },
-    { id: "antenna", name: "Antena Espacial", icon: "📡" },
-    { id: "crown", name: "Corona Estelar", icon: "👑" }
+    { id: "none", name: "Sin Accesorio", icon: "🚫", rarity: "Gratuito 🟢", desc: "Sin accesorio en la cabeza." },
+    { id: "goggles", name: "Gafas Cibernéticas", icon: "🥽", rarity: "Común 🟢", desc: "Lentes de visión táctica cibernética neón." },
+    { id: "antenna", name: "Antena Espacial", icon: "📡", rarity: "Raro 🔵", desc: "Transmisor de señal intergaláctica de alta frecuencia." },
+    { id: "crown", name: "Corona Estelar", icon: "👑", rarity: "Épico 💜", desc: "Corona reluciente de soberano estelar." }
   ];
 
   const decalsList = [
-    { id: "none", name: "Sin Insignia", icon: "🚫" },
-    { id: "star", name: "Estrella ⭐", icon: "⭐" },
-    { id: "heart", name: "Corazón ❤️", icon: "❤️" },
-    { id: "planet", name: "Planeta 🪐", icon: "🪐" },
-    { id: "lightning", name: "Rayo Cuántico ⚡", icon: "⚡" },
-    { id: "fire", name: "Fuego Estelar 🔥", icon: "🔥" }
+    { id: "none", name: "Sin Insignia", icon: "🚫", rarity: "Gratuito 🟢", desc: "Sin emblema en el pecho." },
+    { id: "star", name: "Estrella ⭐", icon: "⭐", rarity: "Común 🟢", desc: "Emblema de estrella de oficial espacial." },
+    { id: "heart", name: "Corazón ❤️", icon: "❤️", rarity: "Común 🟢", desc: "Insignia de vitalidad y energía." },
+    { id: "planet", name: "Planeta 🪐", icon: "🪐", rarity: "Común 🟢", desc: "Emblema de explorador planetario." },
+    { id: "lightning", name: "Rayo Cuántico ⚡", icon: "⚡", rarity: "Raro 🔵", desc: "Insignia de energía de plasma descargada." },
+    { id: "fire", name: "Fuego Estelar 🔥", icon: "🔥", rarity: "Épico 💜", desc: "Emblema de fuego estelar purificador." }
   ];
+
+  const getRarityStyle = (rarity = "") => {
+    if (rarity.includes("Legendario") || rarity.includes("💛")) {
+      return {
+        border: "1.5px solid #ffd166",
+        badgeBg: "rgba(255, 209, 102, 0.2)",
+        badgeColor: "#ffd166",
+        glow: "0 0 18px rgba(255, 209, 102, 0.4)"
+      };
+    }
+    if (rarity.includes("Épico") || rarity.includes("💜")) {
+      return {
+        border: "1.5px solid #d946ef",
+        badgeBg: "rgba(217, 70, 239, 0.2)",
+        badgeColor: "#f0abfc",
+        glow: "0 0 14px rgba(217, 70, 239, 0.35)"
+      };
+    }
+    if (rarity.includes("Raro") || rarity.includes("🔵")) {
+      return {
+        border: "1.5px solid #00f0ff",
+        badgeBg: "rgba(0, 240, 255, 0.2)",
+        badgeColor: "#7dd3fc",
+        glow: "0 0 12px rgba(0, 240, 255, 0.3)"
+      };
+    }
+    return {
+      border: "1.5px solid rgba(46, 196, 182, 0.6)",
+      badgeBg: "rgba(46, 196, 182, 0.2)",
+      badgeColor: "#b8fff9",
+      glow: "none"
+    };
+  };
 
   const unlockedOutfits = user?.unlocked_outfits || ["f_base", "m_base"];
 
@@ -127,6 +162,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
     const newSuitColor = overrides.suitColor !== undefined ? overrides.suitColor : suitColor;
     const newVisorColor = overrides.visorColor !== undefined ? overrides.visorColor : visorColor;
     const newAccessory = overrides.accessory !== undefined ? overrides.accessory : accessory;
+    const newBasePlatform = overrides.basePlatform !== undefined ? overrides.basePlatform : basePlatform;
     const newDecal = overrides.decal !== undefined ? overrides.decal : decal;
     const newPet = overrides.equippedPet !== undefined ? overrides.equippedPet : equippedPet;
     const newFrame = overrides.equippedFrame !== undefined ? overrides.equippedFrame : equippedFrame;
@@ -142,6 +178,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           suit_color: newSuitColor,
           visor_color: newVisorColor,
           accessory: newAccessory,
+          base_platform: newBasePlatform,
           decal: newDecal,
           equipped_pet: newPet,
           equipped_frame: newFrame
@@ -163,6 +200,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           suit_color: newSuitColor,
           visor_color: newVisorColor,
           accessory: newAccessory,
+          base_platform: newBasePlatform,
           decal: newDecal,
           gender: newGender,
           equipped_pet: newPet,
@@ -210,7 +248,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10000,
-      padding: 20
+      padding: 16
     }}>
       <div className="modal-card animate-scaleUp" style={{
         background: "linear-gradient(150deg, #0d1b2a, #050c18)",
@@ -219,9 +257,9 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         padding: 0,
         maxWidth: 1080,
         width: "95%",
-        height: "90vh",
-        maxHeight: 880,
-        minHeight: 680,
+        maxHeight: "calc(100vh - 32px)",
+        height: "min(92vh, 880px)",
+        minHeight: "min(540px, 86vh)",
         display: "flex",
         flexDirection: "column",
         boxShadow: "0 0 55px rgba(255, 209, 102, 0.4), inset 0 0 25px rgba(255, 209, 102, 0.05)",
@@ -283,36 +321,133 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           </div>
         )}
 
-        {/* HEADER DEL INVENTARIO + AVATAR PREVIEW */}
+        {/* HEADER DEL INVENTARIO */}
         <div style={{
           display: "flex",
-          gap: 20,
+          justifyContent: "space-between",
           alignItems: "center",
-          padding: "20px 26px 12px 26px",
+          padding: "16px 28px",
+          background: "linear-gradient(180deg, rgba(255, 209, 102, 0.08) 0%, rgba(13, 27, 42, 0.45) 100%)",
+          borderBottom: "1.5px solid rgba(255, 209, 102, 0.2)",
           flexShrink: 0,
-          flexWrap: "wrap"
+          gap: 24
         }}>
-          <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
-              <span style={{ fontSize: "2.5rem" }}>🎨</span>
-              <div>
-                <h2 style={{ color: "#ffd166", margin: 0, fontSize: "1.65rem", textShadow: "0 0 20px rgba(255, 209, 102, 0.6)" }}>
+          {/* LADO IZQUIERDO: EMBLEMA + TÍTULOS ALINEADOS + CONSOLA HUD ESTIRADA (ENCUADRE PERFECTO) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1, minWidth: 0 }}>
+            {/* BLOQUE DE IDENTIDAD: EMBLEMA + TÍTULO Y SUBTÍTULO EN EL MISMO EJE */}
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                background: "linear-gradient(135deg, rgba(255, 209, 102, 0.22), rgba(245, 158, 11, 0.38))",
+                border: "1.5px solid #ffd166",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1.65rem",
+                boxShadow: "0 0 16px rgba(255, 209, 102, 0.35)",
+                flexShrink: 0
+              }}>
+                🎨
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <h2 style={{
+                  color: "#ffd166",
+                  margin: 0,
+                  fontSize: "1.55rem",
+                  fontWeight: "900",
+                  letterSpacing: "0.5px",
+                  textShadow: "0 0 20px rgba(255, 209, 102, 0.6)",
+                  lineHeight: 1.2
+                }}>
                   Inventario & Armario
                 </h2>
-                <p style={{ color: "#94a3b8", fontSize: "0.88rem", margin: "3px 0 0 0" }}>
-                  Personaliza a tu recluta. Todos los cambios se aplican y guardan al instante.
+                <p style={{
+                  color: "#9be6df",
+                  fontSize: "0.84rem",
+                  margin: 0,
+                  lineHeight: 1.3
+                }}>
+                  Personaliza el equipamiento de tu tripulante. Los cambios se guardan y reflejan al instante.
                 </p>
+              </div>
+            </div>
+
+            {/* HUD CONSOLA DE RECURSOS: ENMARCADA Y EXTENDIDA (ELIMINA ESPACIOS VACÍOS) */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "rgba(10, 20, 36, 0.8)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255, 209, 102, 0.25)",
+              borderRadius: 12,
+              padding: "7px 22px",
+              width: "100%",
+              maxWidth: 620,
+              boxSizing: "border-box",
+              boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 4px 18px rgba(0, 0, 0, 0.35)"
+            }}>
+              {/* Monedas */}
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span style={{ fontSize: "1.2rem" }}>🪙</span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span style={{ fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.8px", color: "rgba(255, 209, 102, 0.75)", fontWeight: 700, lineHeight: 1 }}>
+                    Tus Monedas
+                  </span>
+                  <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#ffd166", letterSpacing: "0.3px", marginTop: 2, lineHeight: 1 }}>
+                    {user?.coins || 0} <span style={{ fontSize: "0.72rem", fontWeight: 600 }}>Coins</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Divisor vertical */}
+              <div style={{ width: 1, height: 26, background: "rgba(255, 209, 102, 0.2)" }} />
+
+              {/* Nivel XP */}
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span style={{ fontSize: "1.2rem" }}>⭐</span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span style={{ fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.8px", color: "rgba(46, 196, 182, 0.75)", fontWeight: 700, lineHeight: 1 }}>
+                    Progreso
+                  </span>
+                  <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#2ec4b6", letterSpacing: "0.3px", marginTop: 2, lineHeight: 1 }}>
+                    {user?.xp || 0} <span style={{ fontSize: "0.72rem", fontWeight: 600 }}>XP</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Divisor vertical */}
+              <div style={{ width: 1, height: 26, background: "rgba(255, 209, 102, 0.2)" }} />
+
+              {/* Piloto Activo */}
+              <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <span style={{ fontSize: "1.2rem" }}>{gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span style={{ fontSize: "0.62rem", textTransform: "uppercase", letterSpacing: "0.8px", color: "rgba(196, 181, 253, 0.75)", fontWeight: 700, lineHeight: 1 }}>
+                    Tripulante
+                  </span>
+                  <span style={{ fontSize: "0.92rem", fontWeight: 800, color: "#e2e8f0", letterSpacing: "0.3px", marginTop: 2, lineHeight: 1 }}>
+                    {gender === "male" ? "Recluta Leo" : "Entrenadora Lia"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* PREVISUALIZACIÓN DEL AVATAR */}
+          {/* LADO DERECHO: PREVISUALIZACIÓN DEL AVATAR */}
           <div style={{
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1.5px solid rgba(255, 209, 102, 0.4)",
-            borderRadius: 20,
+            background: "rgba(10, 20, 36, 0.6)",
+            border: "1.5px solid rgba(255, 209, 102, 0.45)",
+            borderRadius: 18,
             padding: 6,
-            boxShadow: "0 0 25px rgba(255, 209, 102, 0.25)"
+            boxShadow: "0 0 25px rgba(255, 209, 102, 0.22), inset 0 0 12px rgba(255, 209, 102, 0.05)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: 34,
+            flexShrink: 0
           }}>
             <AvatarShowcase 
               outfitId={selectedOutfit} 
@@ -322,6 +457,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
               suitColor={suitColor}
               visorColor={visorColor}
               accessory={accessory}
+              basePlatform={basePlatform}
               decal={decal}
               gender={gender}
             />
@@ -333,7 +469,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
           gap: 8,
-          padding: "0 26px 14px 26px",
+          padding: "14px 26px 14px 26px",
           flexShrink: 0
         }}>
           {tabs.map((t) => {
@@ -385,14 +521,32 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           
           {/* TAB: SKINS */}
           {activeTab === "skins" && (
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.95rem" }}>
-                👗 Armario de Skins ({gender === "male" ? "Recluta Leo 🧑‍🚀" : "Entrenadora Lia 👩‍🚀"}):
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 12 }}>
+            <div>
+              <div style={{
+                marginBottom: 14,
+                background: "rgba(0,0,0,0.25)",
+                padding: "10px 16px",
+                borderRadius: 12,
+                border: gender === "male" ? "1.5px solid #2ec4b6" : "1.5px solid #f72585",
+                display: "flex",
+                alignItems: "center",
+                gap: 10
+              }}>
+                <span style={{ fontSize: "1.2rem" }}>{gender === "male" ? "🧑‍🚀" : "👩‍🚀"}</span>
+                <span style={{
+                  color: gender === "male" ? "#2ec4b6" : "#f72585",
+                  fontWeight: "bold",
+                  fontSize: "0.95rem"
+                }}>
+                  Armario de Skins para {gender === "male" ? "Recluta Leo" : "Entrenadora Lia"}
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
                 {outfits.filter(o => gender === "male" ? o.id.startsWith("m_") : o.id.startsWith("f_")).map((o) => {
                   const isUnlocked = unlockedOutfits.includes(o.id);
                   const isSelected = selectedOutfit === o.id;
+                  const rStyle = getRarityStyle(o.rarity);
 
                   return (
                     <div
@@ -400,49 +554,61 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                       onMouseEnter={() => setHoveredPreview({ type: "outfit", id: o.id })}
                       onMouseLeave={() => setHoveredPreview(null)}
                       style={{
-                        background: isSelected ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
-                        border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1px solid rgba(46, 196, 182, 0.3)" : "1px dashed rgba(255,255,255,0.15)",
-                        borderRadius: 14,
-                        padding: 12,
-                        opacity: isUnlocked ? 1 : 0.45,
+                        background: isSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                        border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                        borderRadius: 16,
+                        padding: 14,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                        transition: "transform 0.15s ease"
+                        boxShadow: isSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow,
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease"
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: "1.6rem", marginBottom: 4 }}>{o.icon}</div>
-                        <strong style={{ color: "#f8fafc", fontSize: "0.88rem", display: "block" }}>{o.name}</strong>
-                        <p style={{ color: "#94a3b8", fontSize: "0.76rem", margin: "4px 0 10px 0" }}>{o.desc}</p>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                          <span style={{ fontSize: "1.8rem" }}>{o.icon}</span>
+                          <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                            {isUnlocked ? "🟢 Adquirido" : `🔒 ${o.rarity}`}
+                          </span>
+                        </div>
+
+                        <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block" }}>{o.name}</strong>
+                        <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0" }}>{o.desc}</p>
                       </div>
 
                       {isUnlocked ? (
-                        <button
-                          onClick={() => {
-                            const newGender = o.id.startsWith("m_") ? "male" : "female";
-                            setSelectedOutfit(o.id);
-                            saveCustomization({ selectedOutfit: o.id, gender: newGender });
-                          }}
-                          disabled={isSelected || saving}
-                          style={{
-                            width: "100%",
-                            padding: "8px",
-                            borderRadius: 10,
-                            border: "none",
-                            background: isSelected ? "#2ec4b6" : "rgba(255,255,255,0.1)",
-                            color: isSelected ? "#002427" : "#f8fafc",
-                            fontWeight: "bold",
-                            fontSize: "0.8rem",
-                            cursor: isSelected ? "default" : "pointer"
-                          }}
-                        >
-                          {isSelected ? "✓ Equipado" : "Equipar Skin"}
-                        </button>
+                        isSelected ? (
+                          <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                            ⚡ Equipado Actualmente
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              const newGender = o.id.startsWith("m_") ? "male" : "female";
+                              setSelectedOutfit(o.id);
+                              saveCustomization({ selectedOutfit: o.id, gender: newGender });
+                            }}
+                            disabled={saving}
+                            style={{
+                              width: "100%",
+                              padding: "8px",
+                              borderRadius: 10,
+                              border: "1.5px solid #2ec4b6",
+                              background: "rgba(46, 196, 182, 0.15)",
+                              color: "#b8fff9",
+                              fontWeight: "bold",
+                              fontSize: "0.82rem",
+                              cursor: "pointer"
+                            }}
+                          >
+                            👕 Equipar Skin
+                          </button>
+                        )
                       ) : (
-                        <span style={{ color: "#ef4444", fontSize: "0.75rem", fontWeight: "bold" }}>
-                          🔒 Bloqueado en Tienda
-                        </span>
+                        <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                          🔒 Bloqueado (Ir a Tienda)
+                        </div>
                       )}
                     </div>
                   );
@@ -491,6 +657,8 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                       <button
                         key={idx}
                         disabled={!isBaseSkinSelected}
+                        onMouseEnter={() => isBaseSkinSelected && setHoveredPreview({ type: "suit_color", id: c.hex })}
+                        onMouseLeave={() => setHoveredPreview(null)}
                         onClick={() => {
                           if (!isBaseSkinSelected) return;
                           setSuitColor(c.hex);
@@ -519,6 +687,8 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
                     {visorColorsList.map((c, idx) => (
                       <button
                         key={idx}
+                        onMouseEnter={() => setHoveredPreview({ type: "visor_color", id: c.hex })}
+                        onMouseLeave={() => setHoveredPreview(null)}
                         onClick={() => {
                           setVisorColor(c.hex);
                           saveCustomization({ visorColor: c.hex });
@@ -544,99 +714,151 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
 
           {/* TAB: BASES DE SUELO */}
           {activeTab === "bases" && (
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🌀 Plataformas & Auras de Suelo:</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
-                {basesList.map((b) => {
-                  const isSel = accessory === b.id;
-                  return (
-                    <button
-                      key={b.id}
-                      onClick={() => {
-                        setAccessory(b.id);
-                        saveCustomization({ accessory: b.id });
-                      }}
-                      style={{
-                        padding: "10px 8px",
-                        borderRadius: 12,
-                        border: isSel ? "2px solid #2ec4b6" : "1px solid rgba(255,255,255,0.1)",
-                        background: isSel ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
-                        color: isSel ? "#2ec4b6" : "#e2e8f0",
-                        fontSize: "0.8rem",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        textAlign: "center",
-                        gap: 6,
-                        overflow: "hidden"
-                      }}
-                    >
-                      <span style={{ fontSize: "1.3rem" }}>{b.icon}</span>
-                      <span style={{
-                        width: "100%",
-                        wordBreak: "break-word",
-                        overflowWrap: "anywhere",
-                        whiteSpace: "normal",
-                        lineHeight: 1.25,
-                        textAlign: "center"
-                      }}>
-                        {b.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
+              {basesList.map((b) => {
+                const isUnlocked = b.id === "none" || unlockedOutfits.includes(b.id);
+                const isSelected = basePlatform === b.id;
+                const rStyle = getRarityStyle(b.rarity);
+
+                return (
+                  <div
+                    key={b.id}
+                    onMouseEnter={() => setHoveredPreview({ type: "base", id: b.id })}
+                    onMouseLeave={() => setHoveredPreview(null)}
+                    style={{
+                      background: isSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                      border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                      borderRadius: 16,
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      boxShadow: isSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow,
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontSize: "2rem" }}>{b.icon}</span>
+                        <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                          {isUnlocked ? "🟢 Adquirida" : `🔒 ${b.rarity}`}
+                        </span>
+                      </div>
+
+                      <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block" }}>{b.name}</strong>
+                      <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0" }}>{b.desc}</p>
+                    </div>
+
+                    {isUnlocked ? (
+                      isSelected ? (
+                        <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                          ⚡ Equipada Actualmente
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setBasePlatform(b.id);
+                            saveCustomization({ basePlatform: b.id });
+                          }}
+                          disabled={saving}
+                          style={{
+                            width: "100%",
+                            padding: "8px",
+                            borderRadius: 10,
+                            border: "1.5px solid #2ec4b6",
+                            background: "rgba(46, 196, 182, 0.15)",
+                            color: "#b8fff9",
+                            fontWeight: "bold",
+                            fontSize: "0.82rem",
+                            cursor: "pointer"
+                          }}
+                        >
+                          🌀 Equipar Base
+                        </button>
+                      )
+                    ) : (
+                      <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                        🔒 Bloqueada (Ir a Tienda)
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
           {/* TAB: ACCESORIOS DE CABEZA */}
           {activeTab === "accessories" && (
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👓 Accesorio de Casco / Cabeza:</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
-                {headAccessoriesList.map((acc) => {
-                  const isSel = accessory === acc.id;
-                  return (
-                    <button
-                      key={acc.id}
-                      onClick={() => {
-                        setAccessory(acc.id);
-                        saveCustomization({ accessory: acc.id });
-                      }}
-                      style={{
-                        padding: "10px 8px",
-                        borderRadius: 12,
-                        border: isSel ? "2px solid #ffd166" : "1px solid rgba(255,255,255,0.1)",
-                        background: isSel ? "rgba(255, 209, 102, 0.15)" : "rgba(255,255,255,0.03)",
-                        color: isSel ? "#ffd166" : "#e2e8f0",
-                        fontSize: "0.8rem",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        textAlign: "center",
-                        gap: 6,
-                        overflow: "hidden"
-                      }}
-                    >
-                      <span style={{ fontSize: "1.3rem" }}>{acc.icon}</span>
-                      <span style={{
-                        width: "100%",
-                        wordBreak: "break-word",
-                        overflowWrap: "anywhere",
-                        whiteSpace: "normal",
-                        lineHeight: 1.25,
-                        textAlign: "center"
-                      }}>
-                        {acc.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
+              {headAccessoriesList.map((acc) => {
+                const isUnlocked = acc.id === "none" || unlockedOutfits.includes(acc.id);
+                const isSelected = accessory === acc.id;
+                const rStyle = getRarityStyle(acc.rarity);
+
+                return (
+                  <div
+                    key={acc.id}
+                    onMouseEnter={() => setHoveredPreview({ type: "accessory", id: acc.id })}
+                    onMouseLeave={() => setHoveredPreview(null)}
+                    style={{
+                      background: isSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                      border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                      borderRadius: 16,
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      boxShadow: isSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow,
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease"
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontSize: "2rem" }}>{acc.icon}</span>
+                        <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                          {isUnlocked ? "🟢 Adquirido" : `🔒 ${acc.rarity}`}
+                        </span>
+                      </div>
+
+                      <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block" }}>{acc.name}</strong>
+                      <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0" }}>{acc.desc}</p>
+                    </div>
+
+                    {isUnlocked ? (
+                      isSelected ? (
+                        <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                          ⚡ Equipado Actualmente
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setAccessory(acc.id);
+                            saveCustomization({ accessory: acc.id });
+                          }}
+                          disabled={saving}
+                          style={{
+                            width: "100%",
+                            padding: "8px",
+                            borderRadius: 10,
+                            border: "1.5px solid #2ec4b6",
+                            background: "rgba(46, 196, 182, 0.15)",
+                            color: "#b8fff9",
+                            fontWeight: "bold",
+                            fontSize: "0.82rem",
+                            cursor: "pointer"
+                          }}
+                        >
+                          👓 Equipar Accesorio
+                        </button>
+                      )
+                    ) : (
+                      <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                        🔒 Bloqueado (Ir a Tienda)
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -644,78 +866,92 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
           {activeTab === "decals" && (() => {
             const isBaseSkinSelected = selectedOutfit === "m_base" || selectedOutfit === "f_base" || selectedOutfit === "default";
             return (
-              <div style={{
-                background: isBaseSkinSelected ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.25)",
-                border: isBaseSkinSelected ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(239, 68, 68, 0.35)",
-                borderRadius: 16,
-                padding: 16
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                  <h4 style={{ margin: 0, color: "#2ec4b6", fontSize: "0.9rem" }}>🛡️ Insignia de Pecho:</h4>
-                  {!isBaseSkinSelected && (
-                    <span style={{ fontSize: "0.78rem", color: "#f87171", fontWeight: "bold" }}>
-                      🔒 Bloqueado en Skins Especiales
-                    </span>
-                  )}
-                </div>
-
+              <div>
                 {!isBaseSkinSelected && (
                   <div style={{
-                    marginBottom: 12,
+                    marginBottom: 14,
                     padding: "10px 14px",
-                    borderRadius: 10,
+                    borderRadius: 12,
                     background: "rgba(239, 68, 68, 0.15)",
                     border: "1px dashed rgba(239, 68, 68, 0.4)",
                     color: "#fca5a5",
-                    fontSize: "0.8rem"
+                    fontSize: "0.82rem"
                   }}>
                     🔒 Las insignias de pecho solo se muestran en la <strong>Skin Base por defecto</strong>. Equipa la Skin Base para usarlas.
                   </div>
                 )}
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(145px, 1fr))", gap: 10 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
                   {decalsList.map((d) => {
-                    const isSel = decal === d.id;
+                    const isUnlocked = d.id === "none" || unlockedOutfits.includes(d.id);
+                    const isSelected = decal === d.id;
+                    const rStyle = getRarityStyle(d.rarity);
                     const isDisabled = !isBaseSkinSelected;
+
                     return (
-                      <button
+                      <div
                         key={d.id}
-                        disabled={isDisabled}
-                        onClick={() => {
-                          if (isDisabled) return;
-                          setDecal(d.id);
-                          saveCustomization({ decal: d.id });
-                        }}
+                        onMouseEnter={() => isBaseSkinSelected && setHoveredPreview({ type: "decal", id: d.id })}
+                        onMouseLeave={() => setHoveredPreview(null)}
                         style={{
-                          padding: "10px 8px",
-                          borderRadius: 12,
-                          border: isSel && isBaseSkinSelected ? "2px solid #2ec4b6" : "1px solid rgba(255,255,255,0.1)",
-                          background: isSel && isBaseSkinSelected ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
-                          color: isDisabled ? "#64748b" : (isSel ? "#2ec4b6" : "#e2e8f0"),
-                          fontSize: "0.8rem",
-                          fontWeight: "bold",
-                          cursor: isDisabled ? "not-allowed" : "pointer",
-                          opacity: isDisabled ? 0.45 : 1,
+                          background: isSelected && isBaseSkinSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                          border: isSelected && isBaseSkinSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                          borderRadius: 16,
+                          padding: 14,
                           display: "flex",
                           flexDirection: "column",
-                          alignItems: "center",
-                          textAlign: "center",
-                          gap: 6,
-                          overflow: "hidden"
+                          justifyContent: "space-between",
+                          opacity: isDisabled ? 0.45 : 1,
+                          boxShadow: isSelected && isBaseSkinSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow,
+                          transition: "transform 0.2s ease, box-shadow 0.2s ease"
                         }}
                       >
-                        <span style={{ fontSize: "1.3rem" }}>{d.icon}</span>
-                        <span style={{
-                          width: "100%",
-                          wordBreak: "break-word",
-                          overflowWrap: "anywhere",
-                          whiteSpace: "normal",
-                          lineHeight: 1.25,
-                          textAlign: "center"
-                        }}>
-                          {d.name}
-                        </span>
-                      </button>
+                        <div>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                            <span style={{ fontSize: "2rem" }}>{d.icon}</span>
+                            <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                              {isUnlocked ? "🟢 Adquirida" : `🔒 ${d.rarity}`}
+                            </span>
+                          </div>
+
+                          <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block" }}>{d.name}</strong>
+                          <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0" }}>{d.desc}</p>
+                        </div>
+
+                        {isUnlocked ? (
+                          isSelected && isBaseSkinSelected ? (
+                            <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                              ⚡ Equipada Actualmente
+                            </div>
+                          ) : (
+                            <button
+                              disabled={isDisabled || saving}
+                              onClick={() => {
+                                if (isDisabled) return;
+                                setDecal(d.id);
+                                saveCustomization({ decal: d.id });
+                              }}
+                              style={{
+                                width: "100%",
+                                padding: "8px",
+                                borderRadius: 10,
+                                border: "1.5px solid #2ec4b6",
+                                background: "rgba(46, 196, 182, 0.15)",
+                                color: "#b8fff9",
+                                fontWeight: "bold",
+                                fontSize: "0.82rem",
+                                cursor: isDisabled ? "not-allowed" : "pointer"
+                              }}
+                            >
+                              🛡️ Equipar Insignia
+                            </button>
+                          )
+                        ) : (
+                          <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                            🔒 Bloqueada (Ir a Tienda)
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -725,96 +961,152 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
 
           {/* TAB: MASCOTAS */}
           {activeTab === "pets" && (
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>👾 Mascota Acompañante Equipada:</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12 }}>
-                {pets.map((p) => {
-                  const isUnlocked = unlockedOutfits.includes(p.id);
-                  const isSelected = equippedPet === p.id;
-                  return (
-                    <div
-                      key={p.id}
-                      onMouseEnter={() => setHoveredPreview({ type: "pet", id: p.id })}
-                      onMouseLeave={() => setHoveredPreview(null)}
-                      onClick={() => {
-                        if (!isUnlocked) return;
-                        setEquippedPet(p.id);
-                        saveCustomization({ equippedPet: p.id });
-                      }}
-                      style={{
-                        background: isSelected ? "rgba(46, 196, 182, 0.15)" : "rgba(255,255,255,0.03)",
-                        border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1px solid rgba(255,255,255,0.2)" : "1px dashed rgba(255,255,255,0.1)",
-                        borderRadius: 12,
-                        padding: 12,
-                        opacity: isUnlocked ? 1 : 0.45,
-                        cursor: isUnlocked ? "pointer" : "not-allowed"
-                      }}
-                    >
-                      <div style={{ fontSize: "1.6rem", marginBottom: 4 }}>{p.icon}</div>
-                      <strong style={{ color: "#f8fafc", fontSize: "0.85rem", display: "block" }}>{p.name}</strong>
-                      <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: "4px 0 8px 0" }}>{p.desc}</p>
-                      {isUnlocked ? (
-                        <span style={{ color: isSelected ? "#2ec4b6" : "#94a3b8", fontSize: "0.78rem", fontWeight: "bold" }}>
-                          {isSelected ? "✓ Equipada" : "Seleccionar"}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
+              {pets.map((p) => {
+                const isUnlocked = unlockedOutfits.includes(p.id);
+                const isSelected = equippedPet === p.id;
+                const rStyle = getRarityStyle(p.rarity);
+
+                return (
+                  <div
+                    key={p.id}
+                    onMouseEnter={() => setHoveredPreview({ type: "pet", id: p.id })}
+                    onMouseLeave={() => setHoveredPreview(null)}
+                    style={{
+                      background: isSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                      border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                      borderRadius: 16,
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      boxShadow: isSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontSize: "2rem", filter: `drop-shadow(0 0 10px ${p.auraColor})` }}>{p.icon}</span>
+                        <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                          {isUnlocked ? "🟢 Adquirida" : `🔒 ${p.rarity}`}
                         </span>
-                      ) : (
-                        <span style={{ color: "#ef4444", fontSize: "0.75rem", fontWeight: "bold" }}>
-                          🔒 Bloqueada en Tienda
-                        </span>
-                      )}
+                      </div>
+
+                      <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block" }}>{p.name}</strong>
+                      <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0" }}>{p.desc}</p>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {isUnlocked ? (
+                      isSelected ? (
+                        <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                          ⚡ Equipada Actualmente
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setEquippedPet(p.id);
+                            saveCustomization({ equippedPet: p.id });
+                          }}
+                          disabled={saving}
+                          style={{
+                            width: "100%",
+                            padding: "8px",
+                            borderRadius: 10,
+                            border: "1.5px solid #2ec4b6",
+                            background: "rgba(46, 196, 182, 0.15)",
+                            color: "#b8fff9",
+                            fontWeight: "bold",
+                            fontSize: "0.82rem",
+                            cursor: "pointer"
+                          }}
+                        >
+                          👾 Equipar Mascota
+                        </button>
+                      )
+                    ) : (
+                      <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                        🔒 Bloqueada (Ir a Tienda)
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
           {/* TAB: MARCOS */}
           {activeTab === "frames" && (
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 16 }}>
-              <h4 style={{ margin: "0 0 12px 0", color: "#2ec4b6", fontSize: "0.9rem" }}>🖼️ Marco de Usuario Equipado (Barra de Menú & HUD):</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12 }}>
-                {framesList.map((fr) => {
-                  const isUnlocked = fr.id === "frame_default" || unlockedOutfits.includes(fr.id);
-                  const isSelected = equippedFrame === fr.id;
-                  return (
-                    <div
-                      key={fr.id}
-                      onClick={() => {
-                        if (!isUnlocked) return;
-                        setEquippedFrame(fr.id);
-                        saveCustomization({ equippedFrame: fr.id });
-                      }}
-                      style={{
-                        background: isSelected ? "rgba(0, 240, 255, 0.15)" : "rgba(255,255,255,0.03)",
-                        border: isSelected ? "2px solid #00f0ff" : isUnlocked ? "1px solid rgba(255,255,255,0.2)" : "1px dashed rgba(255,255,255,0.1)",
-                        borderRadius: 12,
-                        padding: 12,
-                        opacity: isUnlocked ? 1 : 0.45,
-                        cursor: isUnlocked ? "pointer" : "not-allowed",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 6
-                      }}
-                    >
-                      <AvatarFrame frameId={fr.id} size="medium">
-                        <span style={{ fontSize: "1.2rem" }}>{fr.icon}</span>
-                      </AvatarFrame>
-                      <strong style={{ color: "#f8fafc", fontSize: "0.82rem", textAlign: "center" }}>{fr.name}</strong>
-                      {isUnlocked ? (
-                        <span style={{ color: isSelected ? "#00f0ff" : "#94a3b8", fontSize: "0.78rem", fontWeight: "bold" }}>
-                          {isSelected ? "✓ Equipado" : "Equipar Marco"}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))", gap: 14 }}>
+              {framesList.map((fr) => {
+                const isUnlocked = fr.id === "frame_default" || unlockedOutfits.includes(fr.id);
+                const isSelected = equippedFrame === fr.id;
+                const rStyle = getRarityStyle(fr.rarity);
+
+                return (
+                  <div
+                    key={fr.id}
+                    style={{
+                      background: isSelected ? "rgba(46, 196, 182, 0.18)" : isUnlocked ? "rgba(46, 196, 182, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                      border: isSelected ? "2px solid #2ec4b6" : isUnlocked ? "1.5px solid #2ec4b6" : rStyle.border,
+                      borderRadius: 16,
+                      padding: 14,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      boxShadow: isSelected ? "0 0 20px rgba(46, 196, 182, 0.4)" : isUnlocked ? "none" : rStyle.glow
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                        <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: rStyle.badgeColor, background: rStyle.badgeBg, border: `1px solid ${rStyle.badgeColor}`, padding: "2px 8px", borderRadius: 8 }}>
+                          {isUnlocked ? "🟢 Adquirido" : `🔒 ${fr.rarity}`}
                         </span>
-                      ) : (
-                        <span style={{ color: "#ef4444", fontSize: "0.75rem", fontWeight: "bold" }}>
-                          🔒 Bloqueado en Tienda
-                        </span>
-                      )}
+                      </div>
+
+                      <div style={{ display: "flex", justifyContent: "center", margin: "8px 0 14px 0" }}>
+                        <AvatarFrame frameId={fr.id} size="large">
+                          <span style={{ fontSize: "1.8rem" }}>{fr.icon}</span>
+                        </AvatarFrame>
+                      </div>
+
+                      <strong style={{ color: "#f8fafc", fontSize: "0.9rem", display: "block", textAlign: "center" }}>{fr.name}</strong>
+                      <p style={{ color: "#9be6df", fontSize: "0.78rem", margin: "4px 0 10px 0", textAlign: "center" }}>{fr.desc}</p>
                     </div>
-                  );
-                })}
-              </div>
+
+                    {isUnlocked ? (
+                      isSelected ? (
+                        <div style={{ background: "rgba(46, 196, 182, 0.25)", border: "1.5px solid #2ec4b6", color: "#b8fff9", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.82rem" }}>
+                          ⚡ Equipado Actualmente
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setEquippedFrame(fr.id);
+                            saveCustomization({ equippedFrame: fr.id });
+                          }}
+                          disabled={saving}
+                          style={{
+                            width: "100%",
+                            padding: "8px",
+                            borderRadius: 10,
+                            border: "1.5px solid #2ec4b6",
+                            background: "rgba(46, 196, 182, 0.15)",
+                            color: "#b8fff9",
+                            fontWeight: "bold",
+                            fontSize: "0.82rem",
+                            cursor: "pointer"
+                          }}
+                        >
+                          🖼️ Equipar Marco
+                        </button>
+                      )
+                    ) : (
+                      <div style={{ background: "rgba(255, 209, 102, 0.08)", border: "1px dashed rgba(255, 209, 102, 0.4)", color: "#ffd166", padding: "8px", borderRadius: 10, textAlign: "center", fontWeight: "bold", fontSize: "0.78rem" }}>
+                        🔒 Bloqueado (Ir a Tienda)
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 

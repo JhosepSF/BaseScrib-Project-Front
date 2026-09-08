@@ -111,6 +111,7 @@ export default function AvatarShowcase({
   suitColor = "#2ec4b6",
   visorColor = "#a3e2f7",
   accessory = "none",
+  basePlatform = "none",
   decal = "none",
   gender = "female",
   transparent = false,
@@ -123,21 +124,58 @@ export default function AvatarShowcase({
   const stageWidth = size === "xxlarge" ? 460 : (size === "xlarge" ? 360 : (isLarge ? 290 : 210));
   const stageHeight = size === "xxlarge" ? 520 : (size === "xlarge" ? 400 : (isLarge ? 310 : 230));
 
-  // Determine active displayed outfit and pet
+  // Determine active displayed outfit, pet, base platform, and head accessory
+  const BASE_IDS = ["ring", "aura_cyan", "aura_gold", "aura_quantum", "aura_solar", "star", "planet", "fire_base", "none"];
+  const HEAD_ACC_IDS = ["goggles", "antenna", "crown", "none"];
+
   let currentOutfit = outfitId;
   let currentPet = petId;
+  let activeBase = basePlatform;
+  let activeHead = accessory;
+  let activeSuitColor = suitColor;
+  let activeVisorColor = visorColor;
+  let activeDecal = decal;
+
+  // Fallback for legacy state where base was saved in accessory
+  if (activeBase === "none" && BASE_IDS.includes(accessory) && accessory !== "none") {
+    activeBase = accessory;
+  }
+  if (BASE_IDS.includes(activeHead)) {
+    activeHead = "none";
+  }
 
   if (typeof previewItem === "string") {
     if (previewItem.startsWith("pet_")) {
       currentPet = previewItem;
+    } else if (BASE_IDS.includes(previewItem)) {
+      activeBase = previewItem;
+    } else if (HEAD_ACC_IDS.includes(previewItem)) {
+      activeHead = previewItem;
+    } else if (previewItem.startsWith("#")) {
+      if (glassesMap[previewItem]) {
+        activeVisorColor = previewItem;
+        activeHead = "goggles";
+      } else {
+        activeSuitColor = previewItem;
+      }
     } else {
       currentOutfit = previewItem;
     }
   } else if (previewItem && typeof previewItem === "object") {
     if (previewItem.type === "pet") currentPet = previewItem.id;
     else if (previewItem.type === "outfit") currentOutfit = previewItem.id;
+    else if (previewItem.type === "base") activeBase = previewItem.id;
+    else if (previewItem.type === "accessory") activeHead = previewItem.id;
+    else if (previewItem.type === "suit_color") activeSuitColor = previewItem.id;
+    else if (previewItem.type === "visor_color") {
+      activeVisorColor = previewItem.id;
+      activeHead = "goggles";
+    }
+    else if (previewItem.type === "decal") activeDecal = previewItem.id;
     else if (previewItem.id) {
       if (previewItem.id.startsWith("pet_")) currentPet = previewItem.id;
+      else if (BASE_IDS.includes(previewItem.id)) activeBase = previewItem.id;
+      else if (HEAD_ACC_IDS.includes(previewItem.id)) activeHead = previewItem.id;
       else currentOutfit = previewItem.id;
     }
   }
@@ -179,18 +217,18 @@ export default function AvatarShowcase({
 
   let characterImg = outfitImages[currentOutfit];
   if (!characterImg) {
-    const hasCustomDecal = decal && decal !== "none";
+    const hasCustomDecal = activeDecal && activeDecal !== "none";
     if (isMale) {
       if (hasCustomDecal) {
-        characterImg = suitColor === "#2ec4b6" ? LeoSoloSinInsignia : (leoColorMap[suitColor] || LeoSoloSinInsignia);
+        characterImg = activeSuitColor === "#2ec4b6" ? LeoSoloSinInsignia : (leoColorMap[activeSuitColor] || LeoSoloSinInsignia);
       } else {
-        characterImg = suitColor === "#2ec4b6" ? LeoSolo : (leoColorMap[suitColor] || LeoSolo);
+        characterImg = activeSuitColor === "#2ec4b6" ? LeoSolo : (leoColorMap[activeSuitColor] || LeoSolo);
       }
     } else {
       if (hasCustomDecal) {
-        characterImg = suitColor === "#2ec4b6" ? LiaSoloSinInsignia : (liaColorMap[suitColor] || LiaSoloSinInsignia);
+        characterImg = activeSuitColor === "#2ec4b6" ? LiaSoloSinInsignia : (liaColorMap[activeSuitColor] || LiaSoloSinInsignia);
       } else {
-        characterImg = suitColor === "#2ec4b6" ? LiaSolo : (liaColorMap[suitColor] || LiaSolo);
+        characterImg = activeSuitColor === "#2ec4b6" ? LiaSolo : (liaColorMap[activeSuitColor] || LiaSolo);
       }
     }
   }
@@ -282,7 +320,7 @@ export default function AvatarShowcase({
         {/* OVERLAY PLATAFORMAS DE SUELO HOLOGRÁFICAS ÚNICAS CON PERSONALIDAD PROPIA (PERSPECTIVA 3D EJE X) */}
 
         {/* BASE 1: ⭕ Aro Neón Carmesí — Plasma Láser Doble Giro */}
-        {accessory === "ring" && (
+        {activeBase === "ring" && (
           <div style={{
             position: "absolute",
             top: pos.ring.top,
@@ -324,7 +362,7 @@ export default function AvatarShowcase({
         )}
 
         {/* BASE 2: 🌀 Portal Radar Cibernético Cian — Barrido Táctico HUD */}
-        {(accessory === "aura_cyan" || accessory === "star") && (
+        {(activeBase === "aura_cyan" || activeBase === "star") && (
           <div style={{
             position: "absolute",
             top: pos.ring.top,
@@ -373,7 +411,7 @@ export default function AvatarShowcase({
         )}
 
         {/* BASE 3: ⚜️ Cresta Celestial Dorada — Satélites y Constelación */}
-        {accessory === "aura_gold" && (
+        {activeBase === "aura_gold" && (
           <div style={{
             position: "absolute",
             top: pos.ring.top,
@@ -401,7 +439,7 @@ export default function AvatarShowcase({
         )}
 
         {/* BASE 4: 🔮 Matriz Cuántica Violácea — Vórtice Octagonal y Distorsión */}
-        {(accessory === "aura_quantum" || accessory === "planet") && (
+        {(activeBase === "aura_quantum" || activeBase === "planet") && (
           <div style={{
             position: "absolute",
             top: pos.ring.top,
@@ -433,7 +471,7 @@ export default function AvatarShowcase({
         )}
 
         {/* BASE 5: 🔥 Plataforma Sol Estelar — Anillo de Fuego Solar & Llamas Orbitantes */}
-        {(accessory === "aura_solar" || accessory === "fire_base") && (
+        {(activeBase === "aura_solar" || activeBase === "fire_base") && (
           <div style={{
             position: "absolute",
             top: pos.ring.top,
@@ -480,10 +518,10 @@ export default function AvatarShowcase({
 
           return (
             <>
-              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS / CORONAS) — SOLO MOSTRAR GAFAS SI ACCESSORY === GOGGLES */}
-              {accessory === "goggles" && (glassesMap[visorColor] || glassesMap["#a3e2f7"]) && (
+              {/* OVERLAY ACCESORIOS FRONTALES (GAFAS / ANTENAS / CORONAS) — SOLO MOSTRAR GAFAS SI ACTIVEHEAD === GOGGLES */}
+              {activeHead === "goggles" && (glassesMap[activeVisorColor] || glassesMap["#a3e2f7"]) && (
                 <img
-                  src={glassesMap[visorColor] || glassesMap["#a3e2f7"]}
+                  src={glassesMap[activeVisorColor] || glassesMap["#a3e2f7"]}
                   alt="Gafas Cibernéticas"
                   style={{
                     position: "absolute",
@@ -497,7 +535,7 @@ export default function AvatarShowcase({
                   }}
                 />
               )}
-              {accessory === "antenna" && (
+              {activeHead === "antenna" && (
                 <div style={{
                   position: "absolute",
                   top: pos.antenna.top,
@@ -508,7 +546,7 @@ export default function AvatarShowcase({
                   zIndex: 6
                 }}>📡</div>
               )}
-              {accessory === "crown" && (
+              {activeHead === "crown" && (
                 <div style={{
                   position: "absolute",
                   top: pos.crown.top,
@@ -524,19 +562,19 @@ export default function AvatarShowcase({
               {/* OVERLAY INSIGNIAS INDIVIDUALES DE PECHO — SOLO EN SKIN BASE */}
               {isBaseSkin && (
                 <>
-                  {decal === "star" && (
+                  {activeDecal === "star" && (
                     <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, zIndex: 7 }}>⭐</div>
                   )}
-                  {decal === "heart" && (
+                  {activeDecal === "heart" && (
                     <div style={{ position: "absolute", top: pos.decals.heart.top, left: pos.decals.heart.left, transform: "translateX(-50%)", fontSize: pos.decals.heart.fontSize, zIndex: 7 }}>❤️</div>
                   )}
-                  {decal === "planet" && (
+                  {activeDecal === "planet" && (
                     <div style={{ position: "absolute", top: pos.decals.planet.top, left: pos.decals.planet.left, transform: "translateX(-50%)", fontSize: pos.decals.planet.fontSize, zIndex: 7 }}>🪐</div>
                   )}
-                  {decal === "lightning" && (
+                  {activeDecal === "lightning" && (
                     <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ffd166)", zIndex: 7 }}>⚡</div>
                   )}
-                  {decal === "fire" && (
+                  {activeDecal === "fire" && (
                     <div style={{ position: "absolute", top: pos.decals.star.top, left: pos.decals.star.left, transform: "translateX(-50%)", fontSize: pos.decals.star.fontSize, filter: "drop-shadow(0 0 10px #ff6b35)", zIndex: 7 }}>🔥</div>
                   )}
                 </>

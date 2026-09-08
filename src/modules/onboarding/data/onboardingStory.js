@@ -15,6 +15,7 @@ import bgDorms from "../../../assets/cinematicas/bg_toma5_dorms.jpg";
 import bgCabin from "../../../assets/cinematicas/bg_toma6_cabin.jpg";
 import bgMailbox from "../../../assets/cinematicas/bg_toma7_mailbox.jpg";
 import bgConsole from "../../../assets/cinematicas/bg_toma8_console.jpg";
+import bgVallePortales from "../../../assets/cinematicas/bg_toma9_valle_portales.png";
 
 export const SPEAKERS = {
   GENERAL_BRIC: {
@@ -108,6 +109,13 @@ export const INTRO_CUTSCENE_SLIDES = [
   },
   {
     id: 8,
+    bg: bgVallePortales,
+    speaker: SPEAKERS.SPARKY,
+    en: "And behold: the Valley of Portals! A cosmic rift where interdimensional vortexes open each day. Step through to conquer time-attack speed trials, defeat linguistic anomalies, and earn stars and coins for Base ONE!",
+    es: "¡Y contempla: el Valle de Portales! Una falla cósmica donde cada día se abren vórtices interdimensionales del Abismo. ¡Entra en ellos para superar desafíos a contrarreloj, vencer anomalías lingüísticas y ganar estrellas y monedas para la Base ONE!",
+  },
+  {
+    id: 9,
     bg: bgConsole,
     speaker: SPEAKERS.SPARKY,
     en: "All systems green, recruit! Cockpit console initializing... Let me guide you through your flight HUD controls!",

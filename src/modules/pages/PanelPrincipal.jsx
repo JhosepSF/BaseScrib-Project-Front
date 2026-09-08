@@ -392,6 +392,8 @@ export function PanelPrincipal() {
           handleCreateRoom={handleCreateRoom}
           loading={loading}
           rooms={rooms}
+          setRooms={setRooms}
+          token={token}
           handleLogout={handleLogout}
         />
       )}

@@ -14,6 +14,66 @@ function shuffle(array) {
   return arr;
 }
 
+// Curricular Shield Diagnostics for all 14 Days
+const DEFAULT_REPAIR_QUESTIONS = {
+  1: [
+    { id: "r1-1", text: "Diagnóstico: 'I is a recruit on Base ONE.'", options: [{ id: "o1-1", text: "I am a recruit on Base ONE.", is_correct: true }, { id: "o1-2", text: "I be a recruit on Base ONE.", is_correct: false }, { id: "o1-3", text: "I are a recruit on Base ONE.", is_correct: false }] },
+    { id: "r1-2", text: "Diagnóstico: 'We is ready for mission launch.'", options: [{ id: "o1-4", text: "We are ready for mission launch.", is_correct: true }, { id: "o1-5", text: "We am ready for mission launch.", is_correct: false }, { id: "o1-6", text: "We be ready for mission launch.", is_correct: false }] }
+  ],
+  2: [
+    { id: "r2-1", text: "Diagnóstico: 'There is three sensors in the cabin.'", options: [{ id: "o2-1", text: "There are three sensors in the cabin.", is_correct: true }, { id: "o2-2", text: "There has three sensors in the cabin.", is_correct: false }, { id: "o2-3", text: "There be three sensors in the cabin.", is_correct: false }] },
+    { id: "r2-2", text: "Diagnóstico: 'This oxygen tanks is full.'", options: [{ id: "o2-4", text: "These oxygen tanks are full.", is_correct: true }, { id: "o2-5", text: "This oxygen tanks are full.", is_correct: false }, { id: "o2-6", text: "These oxygen tanks is full.", is_correct: false }] }
+  ],
+  3: [
+    { id: "r3-1", text: "Diagnóstico: 'He clean the shield panels every morning.'", options: [{ id: "o3-1", text: "He cleans the shield panels every morning.", is_correct: true }, { id: "o3-2", text: "He cleaning the shield panels every morning.", is_correct: false }, { id: "o3-3", text: "He clean the shield panels every morning.", is_correct: false }] },
+    { id: "r3-2", text: "Diagnóstico: 'The crew do not sleeps during patrol.'", options: [{ id: "o3-4", text: "The crew does not sleep during patrol.", is_correct: true }, { id: "o3-5", text: "The crew do not sleeps during patrol.", is_correct: false }, { id: "o3-6", text: "The crew not sleep during patrol.", is_correct: false }] }
+  ],
+  4: [
+    { id: "r4-1", text: "Diagnóstico: 'Sparky is repair the engine coil right now.'", options: [{ id: "o4-1", text: "Sparky is repairing the engine coil right now.", is_correct: true }, { id: "o4-2", text: "Sparky are repairing the engine coil right now.", is_correct: false }, { id: "o4-3", text: "Sparky repair the engine coil right now.", is_correct: false }] },
+    { id: "r4-2", text: "Diagnóstico: 'They is calibrating the star radar.'", options: [{ id: "o4-4", text: "They are calibrating the star radar.", is_correct: true }, { id: "o4-5", text: "They was calibrating the star radar.", is_correct: false }, { id: "o4-6", text: "They is calibrate the star radar.", is_correct: false }] }
+  ],
+  5: [
+    { id: "r5-1", text: "Diagnóstico: 'Cadets can to enter the reactor without authorization.'", options: [{ id: "o5-1", text: "Cadets cannot enter the reactor without authorization.", is_correct: true }, { id: "o5-2", text: "Cadets must to enter the reactor without authorization.", is_correct: false }, { id: "o5-3", text: "Cadets can to enter the reactor.", is_correct: false }] },
+    { id: "r5-2", text: "Diagnóstico: 'All pilots must wearing space helmets.'", options: [{ id: "o5-4", text: "All pilots must wear space helmets.", is_correct: true }, { id: "o5-5", text: "All pilots must to wear space helmets.", is_correct: false }, { id: "o5-6", text: "All pilots must wearing helmets.", is_correct: false }] }
+  ],
+  6: [
+    { id: "r6-1", text: "Diagnóstico: 'Yesterday the squad discover an asteroid cluster.'", options: [{ id: "o6-1", text: "Yesterday the squad discovered an asteroid cluster.", is_correct: true }, { id: "o6-2", text: "Yesterday the squad discoveried an asteroid cluster.", is_correct: false }, { id: "o6-3", text: "Yesterday the squad was discover an asteroid cluster.", is_correct: false }] },
+    { id: "r6-2", text: "Diagnóstico: 'The captain landed not on the moon.'", options: [{ id: "o6-4", text: "The captain did not land on the moon.", is_correct: true }, { id: "o6-5", text: "The captain landed not on the moon.", is_correct: false }, { id: "o6-6", text: "The captain did not landed on the moon.", is_correct: false }] }
+  ],
+  7: [
+    { id: "r7-1", text: "Diagnóstico: 'We seen a strange alien beacon in sector 4.'", options: [{ id: "o7-1", text: "We saw a strange alien beacon in sector 4.", is_correct: true }, { id: "o7-2", text: "We seed a strange alien beacon in sector 4.", is_correct: false }, { id: "o7-3", text: "We seen a strange beacon.", is_correct: false }] },
+    { id: "r7-2", text: "Diagnóstico: 'Dani sented an emergency dispatch to Base ONE.'", options: [{ id: "o7-4", text: "Dani sent an emergency dispatch to Base ONE.", is_correct: true }, { id: "o7-5", text: "Dani send an emergency dispatch to Base ONE.", is_correct: false }, { id: "o7-6", text: "Dani was sented an emergency dispatch.", is_correct: false }] }
+  ],
+  8: [
+    { id: "r8-1", text: "Diagnóstico: 'Scribtonia is more large than our home planet.'", options: [{ id: "o8-1", text: "Scribtonia is larger than our home planet.", is_correct: true }, { id: "o8-2", text: "Scribtonia is more large than our home planet.", is_correct: false }, { id: "o8-3", text: "Scribtonia is largest than our home planet.", is_correct: false }] },
+    { id: "r8-2", text: "Diagnóstico: 'The ion thruster is more fast than the chemical rocket.'", options: [{ id: "o8-4", text: "The ion thruster is faster than the chemical rocket.", is_correct: true }, { id: "o8-5", text: "The ion thruster is fast than the chemical rocket.", is_correct: false }, { id: "o8-6", text: "The ion thruster is more fast.", is_correct: false }] }
+  ],
+  9: [
+    { id: "r9-1", text: "Diagnóstico: 'This is the most bright star in the galaxy.'", options: [{ id: "o9-1", text: "This is the brightest star in the galaxy.", is_correct: true }, { id: "o9-2", text: "This is the most bright star in the galaxy.", is_correct: false }, { id: "o9-3", text: "This is the brighter star in the galaxy.", is_correct: false }] },
+    { id: "r9-2", text: "Diagnóstico: 'Base ONE is the most powerful base in the quadrant.'", options: [{ id: "o9-4", text: "Base ONE is the most powerful base in the quadrant.", is_correct: true }, { id: "o9-5", text: "Base ONE is the powerfullest base in the quadrant.", is_correct: false }, { id: "o9-6", text: "Base ONE is most powerful base.", is_correct: false }] }
+  ],
+  10: [
+    { id: "r10-1", text: "Diagnóstico: 'Tomorrow we will to navigate through the nebula.'", options: [{ id: "o10-1", text: "Tomorrow we will navigate through the nebula.", is_correct: true }, { id: "o10-2", text: "Tomorrow we will navigating through the nebula.", is_correct: false }, { id: "o10-3", text: "Tomorrow we will to navigate.", is_correct: false }] },
+    { id: "r10-2", text: "Diagnóstico: 'The commander is going dock the pod at 14:00.'", options: [{ id: "o10-4", text: "The commander is going to dock the pod at 14:00.", is_correct: true }, { id: "o10-5", text: "The commander is going dock the pod at 14:00.", is_correct: false }, { id: "o10-6", text: "The commander going to dock the pod.", is_correct: false }] }
+  ],
+  11: [
+    { id: "r11-1", text: "Diagnóstico: 'If the shield drops, the hull breaches.'", options: [{ id: "o11-1", text: "If the shield drops, the hull will breach.", is_correct: true }, { id: "o11-2", text: "If the shield will drop, the hull breaches.", is_correct: false }, { id: "o11-3", text: "If shield drop, hull will breach.", is_correct: false }] },
+    { id: "r11-2", text: "Diagnóstico: 'We will survive if we follows the protocol.'", options: [{ id: "o11-4", text: "We will survive if we follow the protocol.", is_correct: true }, { id: "o11-5", text: "We will survive if we will follow the protocol.", is_correct: false }, { id: "o11-6", text: "We survive if we will follow protocol.", is_correct: false }] }
+  ],
+  12: [
+    { id: "r12-1", text: "Diagnóstico: 'I have visit three alien orbital stations.'", options: [{ id: "o12-1", text: "I have visited three alien orbital stations.", is_correct: true }, { id: "o12-2", text: "I has visited three alien orbital stations.", is_correct: false }, { id: "o12-3", text: "I have visiting three orbital stations.", is_correct: false }] },
+    { id: "r12-2", text: "Diagnóstico: 'The science officer has already completed the scans.'", options: [{ id: "o12-4", text: "The science officer has already completed the scans.", is_correct: true }, { id: "o12-5", text: "The science officer have already completed the scans.", is_correct: false }, { id: "o12-6", text: "The science officer has already complete scans.", is_correct: false }] }
+  ],
+  13: [
+    { id: "r13-1", text: "Diagnóstico: 'The distress beacon was detect by our radar array.'", options: [{ id: "o13-1", text: "The distress beacon was detected by our radar array.", is_correct: true }, { id: "o13-2", text: "The distress beacon was detecting by our radar array.", is_correct: false }, { id: "o13-3", text: "The distress beacon were detected by radar.", is_correct: false }] },
+    { id: "r13-2", text: "Diagnóstico: 'Cosmic samples must be store in containment pods.'", options: [{ id: "o13-4", text: "Cosmic samples must be stored in containment pods.", is_correct: true }, { id: "o13-5", text: "Cosmic samples must be store in containment pods.", is_correct: false }, { id: "o13-6", text: "Cosmic samples must being stored in pods.", is_correct: false }] }
+  ],
+  14: [
+    { id: "r14-1", text: "Diagnóstico: 'We has mastered all communication protocols on Base ONE.'", options: [{ id: "o14-1", text: "We have mastered all communication protocols on Base ONE.", is_correct: true }, { id: "o14-2", text: "We has mastered all communication protocols on Base ONE.", is_correct: false }, { id: "o14-3", text: "We having mastered all protocols.", is_correct: false }] },
+    { id: "r14-2", text: "Diagnóstico: 'The expedition team are ready for deep space exploration.'", options: [{ id: "o14-4", text: "The expedition team is ready for deep space exploration.", is_correct: true }, { id: "o14-5", text: "The expedition team are ready for deep space exploration.", is_correct: false }, { id: "o14-6", text: "The expedition team be ready.", is_correct: false }] }
+  ]
+};
+
 export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [isError, setIsError] = useState(false);
@@ -31,7 +91,10 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
 
-  const questions = activity.questions || [];
+  const dayNum = activity?.dayNumber || activity?.day_num || 1;
+  const questions = (activity?.questions && activity.questions.length > 0)
+    ? activity.questions
+    : (DEFAULT_REPAIR_QUESTIONS[dayNum] || DEFAULT_REPAIR_QUESTIONS[1]);
   const currentQuestion = questions[currentQIndex];
 
   // Helper to extract scrambled words from question text or target correct option

@@ -289,6 +289,9 @@ export function RoomActivityPanel3D({
   completedList,
   selectedDay,
   setSelectedDay,
+  token,
+  onActivityComplete,
+  onUserUpdated,
   onStartGame,
   onToggleViewMode,
   onOpenStore,
@@ -738,6 +741,7 @@ export function RoomActivityPanel3D({
                 suitColor={user?.suit_color || "#2ec4b6"}
                 visorColor={user?.visor_color || "#a3e2f7"}
                 accessory={user?.accessory || "none"}
+                basePlatform={user?.base_platform || "none"}
                 decal={user?.decal || "none"}
                 gender={user?.gender || (user?.selected_outfit?.startsWith("m_") ? "male" : "female")}
                 size="large"
@@ -1244,13 +1248,23 @@ export function RoomActivityPanel3D({
       {activeRunnerDay && (
         <DailyGameRunner
           dayNumber={activeRunnerDay}
-          activities={dayActivities}
+          activities={activities.filter(act => act.day_num === activeRunnerDay)}
           userId={user?.id}
+          token={token}
+          onStageComplete={(stageNum, xp, coins) => {
+            if (onUserUpdated) {
+              onUserUpdated(prev => ({
+                ...prev,
+                xp: (prev?.xp || 0) + xp,
+                coins: (prev?.coins || 0) + coins
+              }));
+            }
+          }}
           onFinishAll={(runnerData) => {
             localStorage.setItem(`basescrib_day_${runnerData.dayNumber}_completed_at`, new Date().toISOString());
             setActiveRunnerDay(null);
             if (onActivityComplete) {
-              onActivityComplete(runnerData.totalXP, runnerData.totalCoins);
+              onActivityComplete(1, runnerData.totalXP, runnerData.totalCoins);
             }
           }}
           onClose={() => setActiveRunnerDay(null)}
@@ -1266,6 +1280,9 @@ RoomActivityPanel3D.propTypes = {
   completedList: PropTypes.object.isRequired,
   selectedDay: PropTypes.number.isRequired,
   setSelectedDay: PropTypes.func.isRequired,
+  token: PropTypes.string,
+  onActivityComplete: PropTypes.func,
+  onUserUpdated: PropTypes.func,
   onStartGame: PropTypes.func.isRequired,
   onToggleViewMode: PropTypes.func.isRequired,
   onOpenStore: PropTypes.func,

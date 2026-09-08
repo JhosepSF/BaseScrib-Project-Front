@@ -31,6 +31,7 @@ export default function TeacherDashboard() {
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [copiedRoomId, setCopiedRoomId] = useState(null);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   // Tab management & search/filter states
   const [activeTab, setActiveTab] = useState("rooms");
@@ -499,16 +500,36 @@ export default function TeacherDashboard() {
                             </p>
                         </div>
 
-                        <button
-                            className={copiedRoomId === room.id ? "btn-copy copied" : "btn-copy"}
-                            onClick={() => {
-                            navigator.clipboard.writeText(`Code: ${room.code}\nKey: ${room.key}`);
-                            setCopiedRoomId(room.id);
-                            setTimeout(() => setCopiedRoomId(null), 2000);
-                            }}
-                        >
-                            {copiedRoomId === room.id ? "Copied!" : "Copy Code & Key"}
-                        </button>
+                        <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>
+                          <button
+                              style={{ flex: 1 }}
+                              className={copiedRoomId === room.id ? "btn-copy copied" : "btn-copy"}
+                              onClick={() => {
+                              navigator.clipboard.writeText(`Code: ${room.code}\nKey: ${room.key}`);
+                              setCopiedRoomId(room.id);
+                              setTimeout(() => setCopiedRoomId(null), 2000);
+                              }}
+                          >
+                              {copiedRoomId === room.id ? "Copied!" : "Copy Code & Key"}
+                          </button>
+                          <button
+                              onClick={() => setRoomToDelete(room)}
+                              style={{
+                                background: "rgba(255, 107, 107, 0.15)",
+                                border: "1px solid #ff6b6b",
+                                color: "#ff6b6b",
+                                borderRadius: "8px",
+                                padding: "8px 12px",
+                                fontSize: "0.85rem",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                              }}
+                              title="Eliminar esta clase"
+                          >
+                              🗑️
+                          </button>
+                        </div>
                         </li>
                     ))}
                     </ul>
@@ -517,6 +538,95 @@ export default function TeacherDashboard() {
                     <strong>No rooms yet</strong>
                     <p>Create your first room to start sharing activities with students.</p>
                     </div>
+                )}
+
+                {/* MODAL DE ADVERTENCIA PARA ELIMINAR CLASE */}
+                {roomToDelete && (
+                  <div className="modal-overlay animate-fadeIn" style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    background: "rgba(3, 7, 18, 0.85)",
+                    backdropFilter: "blur(8px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999
+                  }}>
+                    <div className="modal-card animate-scaleUp" style={{
+                      background: "linear-gradient(135deg, #180a1e, #0b1329)",
+                      border: "2px solid #ff6b6b",
+                      borderRadius: "20px",
+                      padding: "26px",
+                      maxWidth: "480px",
+                      width: "90%",
+                      boxShadow: "0 0 40px rgba(255, 107, 107, 0.4)",
+                      color: "#ffffff",
+                      textAlign: "center"
+                    }}>
+                      <div style={{ fontSize: "3rem", marginBottom: "10px" }}>⚠️</div>
+                      <h2 style={{ color: "#ff6b6b", margin: "0 0 10px 0", fontSize: "1.35rem" }}>
+                        ¿Eliminar la Clase &quot;{roomToDelete.name}&quot;?
+                      </h2>
+                      <p style={{ color: "#e2e8f0", fontSize: "0.95rem", lineHeight: "1.5", marginBottom: "18px" }}>
+                        Esta acción <strong>borrará permanentemente</strong> la sala (Código: <code>{roomToDelete.code}</code>) y los estudiantes perderán el acceso a esta clase. <strong>No se puede deshacer.</strong>
+                      </p>
+                      <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                        <button
+                          onClick={() => setRoomToDelete(null)}
+                          disabled={loading}
+                          style={{
+                            background: "rgba(255, 255, 255, 0.1)",
+                            border: "1px solid rgba(255, 255, 255, 0.2)",
+                            color: "#ffffff",
+                            padding: "10px 22px",
+                            borderRadius: "12px",
+                            fontWeight: "bold",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={async () => {
+                            setLoading(true);
+                            setError("");
+                            try {
+                              const res = await fetch(`${API_BASE}/rooms/${roomToDelete.id}/`, {
+                                method: "DELETE",
+                                headers: { Authorization: `Bearer ${token}` }
+                              });
+                              if (!res.ok) {
+                                const errData = await res.json().catch(() => ({ detail: "Error" }));
+                                throw new Error(errData.detail || "Error al eliminar la clase");
+                              }
+                              setRooms(prev => prev.filter(r => r.id !== roomToDelete.id));
+                              setRoomToDelete(null);
+                            } catch (err) {
+                              setError(err.message);
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                          disabled={loading}
+                          style={{
+                            background: "linear-gradient(135deg, #ff6b6b, #c92a2a)",
+                            border: "none",
+                            color: "#ffffff",
+                            padding: "10px 24px",
+                            borderRadius: "12px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            boxShadow: "0 0 15px rgba(255, 107, 107, 0.5)"
+                          }}
+                        >
+                          {loading ? "Eliminando..." : "Sí, eliminar clase"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </section>
             )}
