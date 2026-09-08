@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
+import { renderAnnotatedText, stripHtmlMarks } from "../utils/textAnnotations";
 
 export function TeacherDailyGrades({ token, rooms = [] }) {
   const [loading, setLoading] = useState(true);
@@ -15,8 +16,13 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
   const [gradingSubmission, setGradingSubmission] = useState(null);
   const [modalScore, setModalScore] = useState(15);
   const [modalFeedback, setModalFeedback] = useState("");
+  const [modalAnnotatedText, setModalAnnotatedText] = useState("");
+  const [modalCorrectedText, setModalCorrectedText] = useState("");
+  const [annotatedStatusMsg, setAnnotatedStatusMsg] = useState("");
   const [submittingGrade, setSubmittingGrade] = useState(false);
   const [gradeSuccessMsg, setGradeSuccessMsg] = useState("");
+
+  const modalAnnotatedRef = useRef(null);
 
   const authToken = token || localStorage.getItem("basescrib_token") || "";
 
@@ -62,7 +68,45 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
     });
     setModalScore(dayData.writing_score ?? 15);
     setModalFeedback(dayData.writing_feedback || "¡Buen trabajo en tu redacción espacial!");
+    setModalAnnotatedText(dayData.annotated_text || dayData.writing_preview || "");
+    setModalCorrectedText(dayData.corrected_text || "");
     setGradeSuccessMsg("");
+    setAnnotatedStatusMsg("");
+  };
+
+  const handleModalMarkError = () => {
+    const textarea = modalAnnotatedRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    if (start === end) {
+      setAnnotatedStatusMsg("ℹ️ Selecciona primero una palabra o frase para marcarla como error.");
+      return;
+    }
+    const currentVal = modalAnnotatedText;
+    const selected = currentVal.substring(start, end);
+    if (selected.includes("<mark") || selected.includes("</mark>")) {
+      setAnnotatedStatusMsg("⚠️ La selección ya contiene etiquetas de error.");
+      return;
+    }
+    const before = currentVal.substring(0, start);
+    const after = currentVal.substring(end);
+    const wrapped = `<mark class="err-mark">${selected}</mark>`;
+    setModalAnnotatedText(before + wrapped + after);
+    setAnnotatedStatusMsg(`🔴 Error marcado: "${selected}"`);
+  };
+
+  const handleModalResetAnnotated = () => {
+    if (!gradingSubmission) return;
+    setModalAnnotatedText(gradingSubmission.text || "");
+    setAnnotatedStatusMsg("🔄 Marcas de error eliminadas. Se restauró el texto original.");
+  };
+
+  const handleModalCopyOriginal = () => {
+    if (!gradingSubmission) return;
+    const clean = stripHtmlMarks(gradingSubmission.text || "");
+    setModalCorrectedText(clean);
+    setAnnotatedStatusMsg("📋 Texto original copiado al editor de corrección.");
   };
 
   const handleSaveGrade = async (e) => {
@@ -81,7 +125,9 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
         body: JSON.stringify({
           reviewed: true,
           score: Math.max(0, Math.min(20, Number(modalScore))),
-          feedback: modalFeedback.trim()
+          feedback: modalFeedback.trim(),
+          annotated_text: modalAnnotatedText.trim(),
+          corrected_text: modalCorrectedText.trim()
         })
       });
 
@@ -91,7 +137,7 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
       }
 
       soundFx.playSuccess();
-      setGradeSuccessMsg("✅ ¡Calificación de Writing asignada con éxito!");
+      setGradeSuccessMsg("✅ ¡Calificación, errores y versión corregida guardados con éxito!");
 
       // Update in-memory state so view updates instantly
       setStudents(prev =>
@@ -111,6 +157,8 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
               writing_score: newWritingScore,
               writing_reviewed: true,
               writing_feedback: modalFeedback.trim(),
+              annotated_text: modalAnnotatedText.trim(),
+              corrected_text: modalCorrectedText.trim(),
               daily_average: newAvg
             };
           });
@@ -564,8 +612,8 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: "rgba(0, 0, 0, 0.8)",
-          backdropFilter: "blur(6px)",
+          background: "rgba(0, 0, 0, 0.85)",
+          backdropFilter: "blur(8px)",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -574,51 +622,172 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
         }}>
           <div style={{
             background: "#0d1b2a",
-            border: "1.5px solid #ffd166",
-            borderRadius: "16px",
+            border: "2px solid #ffd166",
+            borderRadius: "20px",
             width: "100%",
-            maxWidth: "540px",
-            padding: "24px",
-            boxShadow: "0 0 30px rgba(255, 209, 102, 0.3)"
+            maxWidth: "640px",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "24px 28px",
+            boxShadow: "0 0 40px rgba(255, 209, 102, 0.35)",
+            color: "#e6f7ff"
           }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, color: "#ffd166", fontSize: "1.2rem", display: "flex", alignItems: "center", gap: "8px" }}>
-                ✍️ Calificar Writing - Día {gradingSubmission.dayNumber}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "10px" }}>
+              <h3 style={{ margin: 0, color: "#ffd166", fontSize: "1.25rem", display: "flex", alignItems: "center", gap: "8px" }}>
+                ✍️ Evaluación de Writing — Día {gradingSubmission.dayNumber}
               </h3>
               <button
                 onClick={() => setGradingSubmission(null)}
-                style={{ background: "transparent", border: "none", color: "#888", fontSize: "1.2rem", cursor: "pointer" }}
+                style={{ background: "transparent", border: "none", color: "#888", fontSize: "1.3rem", cursor: "pointer" }}
               >
                 ✕
               </button>
             </div>
 
-            <div style={{ marginBottom: "14px", fontSize: "0.85rem", color: "#9be6df" }}>
-              Alumno: <strong style={{ color: "#ffffff" }}>{gradingSubmission.studentName}</strong>
+            <div style={{ marginBottom: "14px", fontSize: "0.88rem", color: "#9be6df" }}>
+              Alumno: <strong style={{ color: "#ffffff", fontSize: "0.95rem" }}>{gradingSubmission.studentName}</strong>
             </div>
 
-            {/* Student's Writing Text */}
+            {/* SECCIÓN 1: HERRAMIENTA PARA REMARCAR ERRORES */}
             <div style={{
-              background: "rgba(0, 0, 0, 0.4)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "10px",
-              padding: "12px",
-              marginBottom: "16px",
-              maxHeight: "150px",
-              overflowY: "auto",
-              fontSize: "0.9rem",
-              color: "#e0e0e0",
-              lineHeight: 1.5,
-              whiteSpace: "pre-wrap"
+              background: "rgba(239, 68, 68, 0.06)",
+              border: "1.5px solid rgba(239, 68, 68, 0.35)",
+              borderRadius: "12px",
+              padding: "12px 14px",
+              marginBottom: "16px"
             }}>
-              {gradingSubmission.text || "(Texto de entrega no disponible)"}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                <span style={{ fontSize: "0.78rem", fontWeight: "900", color: "#ff8080" }}>
+                  🔴 REMARCAR ERRORES EN EL ESCRITO DEL ALUMNO:
+                </span>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <button
+                    type="button"
+                    onClick={handleModalMarkError}
+                    style={{
+                      background: "linear-gradient(135deg, #ef4444, #dc2626)",
+                      border: "none",
+                      color: "#fff",
+                      padding: "4px 10px",
+                      borderRadius: "6px",
+                      fontSize: "0.75rem",
+                      fontWeight: "bold",
+                      cursor: "pointer"
+                    }}
+                    title="Selecciona texto en el cuadro inferior y haz clic para marcar error"
+                  >
+                    🔴 Marcar Selección
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleModalResetAnnotated}
+                    style={{
+                      background: "rgba(255,255,255,0.08)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      color: "#ddd",
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      fontSize: "0.75rem",
+                      cursor: "pointer"
+                    }}
+                  >
+                    🔄 Limpiar
+                  </button>
+                </div>
+              </div>
+
+              <textarea
+                ref={modalAnnotatedRef}
+                rows="3"
+                value={modalAnnotatedText}
+                onChange={(e) => setModalAnnotatedText(e.target.value)}
+                style={{
+                  width: "100%",
+                  background: "rgba(10, 18, 30, 0.9)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  color: "#ffffff",
+                  fontSize: "0.88rem",
+                  lineHeight: 1.5,
+                  resize: "vertical"
+                }}
+                placeholder="Selecciona las palabras erróneas y haz clic en '🔴 Marcar Selección'..."
+              />
+
+              {/* LIVE PREVIEW BOX */}
+              <div style={{
+                marginTop: "8px",
+                background: "rgba(0, 0, 0, 0.35)",
+                border: "1px dashed rgba(255, 255, 255, 0.15)",
+                borderRadius: "8px",
+                padding: "8px 10px",
+                fontSize: "0.84rem",
+                color: "#f1f5f9",
+                lineHeight: 1.5
+              }}>
+                <div style={{ fontSize: "0.7rem", color: "#9be6df", fontWeight: "bold", marginBottom: "4px" }}>
+                  👀 Vista previa del alumno con errores remarcados:
+                </div>
+                <div>{renderAnnotatedText(modalAnnotatedText || "(Sin texto)")}</div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 2: VERSIÓN CORRECTA DEL TEXTO */}
+            <div style={{
+              background: "rgba(16, 185, 129, 0.06)",
+              border: "1.5px solid rgba(16, 185, 129, 0.35)",
+              borderRadius: "12px",
+              padding: "12px 14px",
+              marginBottom: "16px"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "8px" }}>
+                <span style={{ fontSize: "0.78rem", fontWeight: "900", color: "#34d399" }}>
+                  🟢 VERSIÓN CORRECTA SUGERIDA (MODELO PEDAGÓGICO):
+                </span>
+                <button
+                  type="button"
+                  onClick={handleModalCopyOriginal}
+                  style={{
+                    background: "rgba(16, 185, 129, 0.2)",
+                    border: "1px solid #10b981",
+                    color: "#34d399",
+                    padding: "4px 10px",
+                    borderRadius: "6px",
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                  title="Copia el texto del alumno para corregirlo más rápido"
+                >
+                  📋 Copiar texto del alumno
+                </button>
+              </div>
+              <textarea
+                rows="3"
+                value={modalCorrectedText}
+                onChange={(e) => setModalCorrectedText(e.target.value)}
+                placeholder="Escribe aquí el texto del alumno pero ya en su forma correcta en inglés..."
+                style={{
+                  width: "100%",
+                  background: "rgba(6, 78, 59, 0.15)",
+                  border: "1px solid #10b981",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  color: "#a7f3d0",
+                  fontSize: "0.88rem",
+                  lineHeight: 1.5,
+                  resize: "vertical"
+                }}
+              />
             </div>
 
             {/* Grading Form */}
             <form onSubmit={handleSaveGrade}>
-              <div style={{ marginBottom: "16px" }}>
+              {/* NOTA VIGESIMAL (0 A 20) */}
+              <div style={{ marginBottom: "14px" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", color: "#ffd166", marginBottom: "6px", fontWeight: "bold" }}>
-                  Calificación Vigesimal (Escala 0 a 20):
+                  ⭐ Calificación Vigesimal (Escala 0 a 20):
                 </label>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <input
@@ -652,15 +821,16 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
                 </div>
               </div>
 
-              <div style={{ marginBottom: "20px" }}>
+              {/* OBSERVACIONES */}
+              <div style={{ marginBottom: "16px" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", color: "#9be6df", marginBottom: "6px", fontWeight: "bold" }}>
-                  Retroalimentación Pedagógica (Feedback):
+                  💬 Retroalimentación Pedagógica (Feedback):
                 </label>
                 <textarea
-                  rows="3"
+                  rows="2"
                   value={modalFeedback}
                   onChange={(e) => setModalFeedback(e.target.value)}
-                  placeholder="Escribe comentarios formativos sobre la gramática, vocabulario y coherencia..."
+                  placeholder="Escribe comentarios formativos sobre gramática, vocabulario y ortografía..."
                   style={{
                     width: "100%",
                     background: "#14213d",
@@ -673,6 +843,12 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
                   }}
                 />
               </div>
+
+              {annotatedStatusMsg && (
+                <div style={{ color: "#ffd166", fontSize: "0.8rem", marginBottom: "10px", fontWeight: "bold" }}>
+                  {annotatedStatusMsg}
+                </div>
+              )}
 
               {gradeSuccessMsg && (
                 <div style={{ color: "#00ff87", fontSize: "0.9rem", fontWeight: "bold", textAlign: "center", marginBottom: "14px" }}>
@@ -709,7 +885,7 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
                     boxShadow: "0 0 15px rgba(255, 209, 102, 0.3)"
                   }}
                 >
-                  {submittingGrade ? "Registrando..." : "💾 Guardar Calificación"}
+                  {submittingGrade ? "Registrando..." : "💾 Guardar Calificación (0-20)"}
                 </button>
               </div>
             </form>
