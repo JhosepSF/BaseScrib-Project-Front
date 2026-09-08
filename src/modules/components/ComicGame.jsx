@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
@@ -91,7 +91,13 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const missionId = activity?.mission || (dayNum + 6);
   const currentQuestion = questions[currentQIndex];
 
+  const lastQRef = useRef(null);
+
   useEffect(() => {
+    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (lastQRef.current === qKey && shuffledOptions.length > 0) return;
+    lastQRef.current = qKey;
+
     setSelectedOptionId(null);
     setIsError(false);
     setShowSolution(false);
@@ -102,7 +108,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
     } else {
       setShuffledOptions([]);
     }
-  }, [currentQIndex, currentQuestion]);
+  }, [currentQIndex, dayNum, currentQuestion?.id, currentQuestion?.text]);
 
   const handleOptionClick = (option) => {
     if (showSolution) return;

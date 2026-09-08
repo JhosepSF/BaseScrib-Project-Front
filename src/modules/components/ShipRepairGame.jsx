@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
@@ -97,8 +97,14 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
     : (DEFAULT_REPAIR_QUESTIONS[dayNum] || DEFAULT_REPAIR_QUESTIONS[1]);
   const currentQuestion = questions[currentQIndex];
 
+  const lastQuestionKeyRef = useRef(null);
+
   // Helper to extract scrambled words from question text or target correct option
   useEffect(() => {
+    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (lastQuestionKeyRef.current === qKey && availableWords.length > 0) return;
+    lastQuestionKeyRef.current = qKey;
+
     setIsError(false);
     setIsSuccess(false);
     setShowSolution(false);
@@ -136,7 +142,7 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
     } else {
       setAvailableWords([]);
     }
-  }, [currentQIndex, activity, currentQuestion]);
+  }, [currentQIndex, dayNum, currentQuestion?.id, currentQuestion?.text]);
 
   // Click word pill in bank to add to sentence
   const handleAddWord = (pill) => {

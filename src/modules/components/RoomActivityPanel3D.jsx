@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import AvatarShowcase from "./AvatarShowcase";
 import { soundFx } from "../utils/soundEffects";
@@ -416,13 +416,14 @@ export function RoomActivityPanel3D({
     changeRobotPhrase(true);
   };
 
-  // 1. Phrase Rotation Timer (Every 12 seconds - SILENT)
+  // 1. Phrase Rotation Timer (Every 12 seconds - SILENT, paused while game runner is open)
   useEffect(() => {
+    if (activeRunnerDay) return;
     const intervalId = setInterval(() => {
       changeRobotPhrase(false);
     }, 12000);
     return () => clearInterval(intervalId);
-  }, [sparkyPhrase]);
+  }, [sparkyPhrase, activeRunnerDay]);
 
   // 2. Typewriter Effect + Frame Switching Animation
   useEffect(() => {
@@ -460,6 +461,11 @@ export function RoomActivityPanel3D({
 
 
 
+
+  const runnerActivities = useMemo(() => {
+    if (!activeRunnerDay || !activities) return [];
+    return activities.filter(act => act.day_num === activeRunnerDay);
+  }, [activities, activeRunnerDay]);
 
   return (
     <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "#020108", overflow: "hidden", zIndex: 100 }}>
@@ -1248,7 +1254,7 @@ export function RoomActivityPanel3D({
       {activeRunnerDay && (
         <DailyGameRunner
           dayNumber={activeRunnerDay}
-          activities={activities.filter(act => act.day_num === activeRunnerDay)}
+          activities={runnerActivities}
           userId={user?.id}
           token={token}
           onStageComplete={(stageNum, xp, coins) => {

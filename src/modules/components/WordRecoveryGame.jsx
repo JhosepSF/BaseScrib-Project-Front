@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import "../../styles/Panel.css";
@@ -26,8 +26,13 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
   const questions = activity.questions || [];
   const currentQuestion = questions[currentQIndex];
+  const lastQRef = useRef(null);
 
   useEffect(() => {
+    const qKey = `${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (lastQRef.current === qKey && shuffledOptions.length > 0) return;
+    lastQRef.current = qKey;
+
     setSelectedOptionId(null);
     setFilledWords([]);
     setIsError(false);
@@ -39,7 +44,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     } else {
       setShuffledOptions([]);
     }
-  }, [currentQIndex, currentQuestion]);
+  }, [currentQIndex, currentQuestion?.id, currentQuestion?.text]);
 
   const handleOptionSelect = (option) => {
     if (isSuccess || showSolution) return;

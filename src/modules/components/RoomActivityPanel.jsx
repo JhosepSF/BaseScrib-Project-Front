@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
@@ -321,13 +321,15 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       "Mantén tu racha activa, recluta."
     ];
 
+    if (activeRunnerDay) return;
+
     const intervalId = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * phrases.length);
       setSparkyPhrase(phrases[randomIndex]);
     }, 8000); // Change phrase every 8 seconds
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [activeRunnerDay]);
 
   // Fetch current user and activities
   useEffect(() => {
@@ -448,6 +450,11 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     }
   };
 
+
+  const runnerActivities = useMemo(() => {
+    if (!activeRunnerDay || !activities) return [];
+    return activities.filter(act => act.day_num === activeRunnerDay);
+  }, [activities, activeRunnerDay]);
 
   if (loading) {
     return (
@@ -920,7 +927,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       {activeRunnerDay && (
         <DailyGameRunner
           dayNumber={activeRunnerDay}
-          activities={activities.filter(act => act.day_num === activeRunnerDay)}
+          activities={runnerActivities}
           userId={user?.id}
           token={token}
           onStageComplete={(stageNum, xp, coins) => {

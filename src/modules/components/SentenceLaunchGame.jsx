@@ -439,6 +439,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const [evalResults, setEvalResults] = useState({}); // { leftIdx: { userRightIdx, isCorrect, correctRightIdx } }
 
   const containerRef = useRef(null);
+  const lastBuiltQIndexRef = useRef(-1);
 
   // Determine rounds/questions
   const questions = (activity?.questions && activity.questions.length > 0) ? activity.questions : [1, 2];
@@ -480,7 +481,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   // Fetch expanded vocabulary from backend database API for the day
   useEffect(() => {
     let isMounted = true;
-    const dayNum = activity?.dayNumber || activity?.day || 1;
+    const dayNum = activity?.dayNumber || activity?.day || activity?.day_num || 1;
     fetch(`/api/daily-vocabulary/?day=${dayNum}`)
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
@@ -495,11 +496,17 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     return () => {
       isMounted = false;
     };
-  }, [activity?.dayNumber, activity?.day]);
+  }, [activity?.dayNumber, activity?.day, activity?.day_num]);
 
   // Build English <-> Spanish vocabulary wire pairs for current round (100% randomized per student/attempt)
   useEffect(() => {
-    const dayNum = activity?.dayNumber || activity?.day || 1;
+    // CRITICAL: Prevent re-running and wiping connections when parent re-renders!
+    if (lastBuiltQIndexRef.current === currentQIndex && leftNodes.length > 0) {
+      return;
+    }
+    lastBuiltQIndexRef.current = currentQIndex;
+
+    const dayNum = activity?.dayNumber || activity?.day || activity?.day_num || 1;
     const fullPool = fetchedVocab.length > 0 ? fetchedVocab : (VOCAB_BY_DAY[dayNum] || VOCAB_BY_DAY[1]);
 
     // Exclude words already used in prior rounds of this session to ensure variety
@@ -531,7 +538,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
     setIsSuccess(false);
     setShowSolution(false);
     setEvalResults({});
-  }, [currentQIndex, activity, fetchedVocab]);
+  }, [currentQIndex, activity?.dayNumber, activity?.day, activity?.day_num]);
 
   // Update port coordinates on render / window resize
   useEffect(() => {

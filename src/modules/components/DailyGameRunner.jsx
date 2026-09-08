@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { SentenceLaunchGame } from "./SentenceLaunchGame";
 import { ShipRepairGame } from "./ShipRepairGame";
@@ -200,7 +200,9 @@ export function DailyGameRunner({
     setStageIndex(prev => Math.min(4, prev + 1));
   };
 
-  const currentActivity = findActivityForStage(currentStage.type, stageIndex);
+  const currentActivity = useMemo(() => {
+    return findActivityForStage(currentStage.type, stageIndex);
+  }, [currentStage.type, stageIndex, activities]);
   const StageComponent = currentStage.component;
 
   // Auto-calculated score for overlay
