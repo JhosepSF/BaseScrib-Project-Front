@@ -131,7 +131,7 @@ export function TeacherWritingInbox({ token }) {
                 onClick={() => handleSelectSubmission(sub)}
               >
                 <div className="sub-card-top">
-                  <span className="sub-student-name">👤 Recluta #{sub.student}</span>
+                  <span className="sub-student-name">👤 {sub.student_username || `Recluta #${sub.student}`}</span>
                   <span className={`sub-status-badge ${sub.reviewed ? "badge-green" : "badge-orange"}`}>
                     {sub.reviewed ? `⭐ ${sub.score}/20` : "Pendiente"}
                   </span>
@@ -152,7 +152,7 @@ export function TeacherWritingInbox({ token }) {
           {selectedSubmission ? (
             <div className="detail-card-inner">
               <div className="detail-header">
-                <h3>📜 Informe Enviado por Recluta #{selectedSubmission.student}</h3>
+                <h3>📜 Informe Enviado por {selectedSubmission.student_username || `Recluta #${selectedSubmission.student}`}</h3>
                 <span className="detail-date">
                   Enviado el {new Date(selectedSubmission.submitted_at).toLocaleString()}
                 </span>

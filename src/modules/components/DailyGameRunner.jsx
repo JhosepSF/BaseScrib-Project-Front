@@ -147,6 +147,10 @@ export function DailyGameRunner({
       onStageComplete(stageNumber, xp, coins, mistakes);
     }
 
+    // Calculate final auto-graded score (0 to 20)
+    const cumulativeMistakes = newMistakes;
+    const calculatedScore = Math.max(0, Number((20 - cumulativeMistakes * 0.75).toFixed(1)));
+
     // 3. Immediately persist to backend API
     const authToken = propToken || localStorage.getItem("basescrib_token") || localStorage.getItem("token") || "";
     if (authToken) {
@@ -161,17 +165,15 @@ export function DailyGameRunner({
           stage: stageNumber,
           xp,
           coins,
-          mistakes
+          mistakes,
+          game_score: calculatedScore
         })
       }).catch(err => {
         console.error("Error saving stage progress to backend:", err);
       });
     }
 
-    if (isLastAutoStage) {
-      // Calculate final auto-graded score (0 to 20)
-      const cumulativeMistakes = newMistakes;
-      const calculatedScore = Math.max(0, Number((20 - cumulativeMistakes * 0.75).toFixed(1)));
+    if (isLastAutoStage || isFinalStage) {
       setCompletedAutoScore(calculatedScore);
     }
 

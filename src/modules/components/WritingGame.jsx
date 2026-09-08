@@ -58,6 +58,7 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
         body: JSON.stringify({
           student: userId || undefined,
           mission: missionId,
+          day_number: dayNum,
           text: text.trim(),
           reviewed: false
         })

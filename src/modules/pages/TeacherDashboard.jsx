@@ -5,6 +5,7 @@ import { LoginForm } from "../components/LoginForm";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
 import DatabaseManagementModal from "../components/DatabaseManagementModal";
+import { TeacherDailyGrades } from "../components/TeacherDailyGrades";
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function TeacherDashboard() {
   const [newRoomName, setNewRoomName] = useState("");
   const [copiedRoomId, setCopiedRoomId] = useState(null);
   const [roomToDelete, setRoomToDelete] = useState(null);
+  const [expandedRoomId, setExpandedRoomId] = useState(null);
 
   // Tab management & search/filter states
   const [activeTab, setActiveTab] = useState("rooms");
@@ -398,7 +400,35 @@ export default function TeacherDashboard() {
                   </span>
                 )}
               </button>
+              <button 
+                onClick={() => { soundFx.playClick(); setActiveTab("daily_grades"); }} 
+                style={{ 
+                  background: activeTab === "daily_grades" ? "linear-gradient(135deg, #ff70a6, #ff9770)" : "transparent",
+                  color: activeTab === "daily_grades" ? "#1a0010" : "#ffb3c6",
+                  border: activeTab === "daily_grades" ? "none" : "1px solid rgba(255, 112, 166, 0.4)",
+                  padding: "10px 20px",
+                  borderRadius: 8,
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                📋 2 Notas Diarias (Días 1 - 14)
+              </button>
             </div>
+
+            {/* TAB: 2 DAILY GRADES (DÍAS 1 - 14) */}
+            {activeTab === "daily_grades" && (
+              <section className="teacher-panel panel-large animate-fadeIn">
+                <div className="panel-title-row">
+                  <div>
+                    <h2>Registro Pedagógico: 2 Notas por Día (Días 1 - 14)</h2>
+                    <p>Supervisa las 2 calificaciones oficiales de cada jornada: Nota 1 (Juegos /20) y Nota 2 (Writing /20).</p>
+                  </div>
+                </div>
+                <TeacherDailyGrades token={token} rooms={rooms || []} />
+              </section>
+            )}
 
             {/* TAB 1: ROOMS */}
             {activeTab === "rooms" && (
@@ -530,6 +560,111 @@ export default function TeacherDashboard() {
                               🗑️
                           </button>
                         </div>
+
+                        {/* BOTONES DE GESTIÓN DE ALUMNOS Y CALIFICACIONES */}
+                        <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                          <button
+                            onClick={() => setExpandedRoomId(expandedRoomId === room.id ? null : room.id)}
+                            style={{
+                              flex: 1,
+                              padding: "8px 10px",
+                              background: expandedRoomId === room.id ? "rgba(46, 196, 182, 0.25)" : "rgba(255, 255, 255, 0.05)",
+                              border: expandedRoomId === room.id ? "1.5px solid #2ec4b6" : "1px solid rgba(184, 255, 249, 0.2)",
+                              color: "#b8fff9",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: "bold",
+                              cursor: "pointer",
+                              transition: "all 0.2s ease"
+                            }}
+                          >
+                            {expandedRoomId === room.id ? "🔼 Ocultar Alumnos" : `👥 Ver Alumnos (${room.students?.length || 0})`}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedRoomFilter(room.id);
+                              setActiveTab("metrics");
+                            }}
+                            style={{
+                              padding: "8px 12px",
+                              background: "rgba(255, 209, 102, 0.15)",
+                              border: "1px solid #ffd166",
+                              color: "#ffd166",
+                              borderRadius: "8px",
+                              fontSize: "0.82rem",
+                              fontWeight: "bold",
+                              cursor: "pointer"
+                            }}
+                            title="Ver calificaciones y analíticas de esta sala"
+                          >
+                            📊 Calificaciones
+                          </button>
+                        </div>
+
+                        {/* LISTA DESPLEGABLE DE ALUMNOS DE LA SALA */}
+                        {expandedRoomId === room.id && (
+                          <div style={{
+                            marginTop: "10px",
+                            background: "rgba(0, 0, 0, 0.4)",
+                            borderRadius: "10px",
+                            padding: "10px",
+                            border: "1px solid rgba(46, 196, 182, 0.3)"
+                          }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                              <span style={{ fontSize: "0.82rem", fontWeight: "bold", color: "#2ec4b6" }}>
+                                📋 Alumnos Inscritos:
+                              </span>
+                              <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                                {room.students_detail?.length || room.students?.length || 0} alumno(s)
+                              </span>
+                            </div>
+
+                            {room.students_detail && room.students_detail.length > 0 ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "180px", overflowY: "auto" }}>
+                                {room.students_detail.map(st => {
+                                  const scoreInfo = scores?.find(s => s.id === st.id);
+                                  return (
+                                    <div key={st.id} style={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      fontSize: "0.8rem",
+                                      background: "rgba(255, 255, 255, 0.04)",
+                                      padding: "6px 10px",
+                                      borderRadius: "6px",
+                                      border: "1px solid rgba(255, 255, 255, 0.06)"
+                                    }}>
+                                      <div>
+                                        <strong style={{ color: "#f8fafc" }}>👤 {st.username}</strong>
+                                        {st.grade && (
+                                          <span style={{ fontSize: "0.72rem", color: "#94a3b8", marginLeft: "6px" }}>
+                                            ({st.grade}° {st.section})
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                        <span style={{
+                                          color: scoreInfo?.writing_avg ? "#ffd166" : "#94a3b8",
+                                          fontSize: "0.75rem",
+                                          fontWeight: "bold"
+                                        }}>
+                                          📝 {scoreInfo?.writing_avg ? `${scoreInfo.writing_avg}/20` : "Sin nota"}
+                                        </span>
+                                        <span style={{ color: "#7ee7c6", fontSize: "0.75rem", fontWeight: "bold" }}>
+                                          ⚡ {st.xp || 0} XP
+                                        </span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <p style={{ margin: 0, fontSize: "0.78rem", color: "#94a3b8", textAlign: "center", padding: "8px" }}>
+                                Aún no se han unido alumnos a esta clase. Comparte el código <code>{room.code}</code>.
+                              </p>
+                            )}
+                          </div>
+                        )}
                         </li>
                     ))}
                     </ul>
