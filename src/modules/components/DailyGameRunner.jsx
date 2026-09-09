@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import { SentenceLaunchGame } from "./SentenceLaunchGame";
 import { ShipRepairGame } from "./ShipRepairGame";
@@ -15,6 +15,56 @@ const STAGES = [
   { id: 4, type: "listening", title: "Etapa 4: Escucha y Frecuencias", icon: "🛰️", component: WordRecoveryGame, desc: "Recuperación de Frecuencia" },
   { id: 5, type: "writing", title: "Etapa 5: Informe Final al Profesor", icon: "✉️", component: WritingGame, desc: "Redacción y Envío al Buzón" },
 ];
+
+class StageErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("Error capturado en etapa del juego:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          textAlign: "center",
+          padding: "40px 20px",
+          background: "rgba(10, 20, 35, 0.9)",
+          border: "2px solid #ef4444",
+          borderRadius: "16px",
+          maxWidth: "500px",
+          margin: "auto",
+          color: "#ffd166"
+        }}>
+          <span style={{ fontSize: "2.5rem" }}>⚠️</span>
+          <h3 style={{ margin: "12px 0 6px 0", color: "#ffd166" }}>Interferencia Detectada en la Etapa</h3>
+          <p style={{ color: "#e6f7ff", fontSize: "0.9rem", marginBottom: "16px" }}>
+            {this.state.error?.message || "Ocurrió una anomalía al procesar los datos de esta misión."}
+          </p>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{
+              padding: "10px 20px",
+              background: "linear-gradient(135deg, #2ec4b6, #208b81)",
+              border: "none",
+              borderRadius: "10px",
+              color: "#fff",
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            🔄 Reintentar Etapa
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export function DailyGameRunner({
   dayNumber,
@@ -40,10 +90,19 @@ export function DailyGameRunner({
   // Helper to match activity to current stage type or fallback to position
   const findActivityForStage = (stageType, index) => {
     if (!activities || activities.length === 0) return null;
-    const match = activities.find(a => 
-      (a.title && a.title.toLowerCase().includes(stageType)) ||
-      (a.description && a.description.toLowerCase().includes(stageType))
-    );
+    const stageKeywords = {
+      grammar: ["grammar", "gramática", "sentence", "oración"],
+      vocabulary: ["vocabulary", "vocabulario", "repair", "reparación", "mantenimiento", "maintenance"],
+      reading: ["reading", "lectura", "comic", "cómic", "bitácora"],
+      listening: ["listening", "escucha", "recovery", "recuperación", "frecuencia"],
+      writing: ["writing", "redacción", "informe", "personal log", "log"]
+    };
+    const keywords = stageKeywords[stageType] || [stageType];
+    const match = activities.find(a => {
+      const t = (a.title || "").toLowerCase();
+      const d = (a.description || "").toLowerCase();
+      return keywords.some(k => t.includes(k) || d.includes(k));
+    });
     return match || activities[index] || activities[0];
   };
 
@@ -272,13 +331,15 @@ export function DailyGameRunner({
       {/* Main Game Stage Area */}
       <div className="daily-runner-content">
         {!showTransition ? (
-          <StageComponent
-            activity={currentActivity ? { ...currentActivity, dayNumber } : { dayNumber, title: currentStage.title }}
-            userId={userId}
-            hideHeader={true}
-            onComplete={handleStageComplete}
-            onClose={onClose}
-          />
+          <StageErrorBoundary key={`stage-boundary-${stageIndex}-${dayNumber}`}>
+            <StageComponent
+              activity={currentActivity ? { ...currentActivity, dayNumber } : { dayNumber, title: currentStage.title }}
+              userId={userId}
+              hideHeader={true}
+              onComplete={handleStageComplete}
+              onClose={onClose}
+            />
+          </StageErrorBoundary>
         ) : (
           /* Transition Overlay between Stages */
           <div className="runner-transition-modal">

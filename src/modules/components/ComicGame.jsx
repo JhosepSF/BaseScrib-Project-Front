@@ -74,6 +74,208 @@ const DEFAULT_COMIC_QUESTIONS = {
   ]
 };
 
+// Curricular Comic Bitácora Panels for all 14 Days
+const DEFAULT_COMIC_PANELS = {
+  1: [
+    {
+      title: "Panel 1: Arribo a Base ONE",
+      text: "Nuestra nave espacial acaba de acoplarse con éxito a la estación Base ONE.",
+      english: "Our spaceship has just docked successfully at Base ONE station.",
+      illustration: "🚀🛰️"
+    },
+    {
+      title: "Panel 2: Asistente Sparky Bot",
+      text: "¡Saludos recluta! Soy Sparky Bot, tu asistente de vuelo con inteligencia artificial.",
+      english: "Greetings recruit! I am Sparky Bot, your artificial intelligence flight assistant.",
+      illustration: "🤖⚡"
+    }
+  ],
+  2: [
+    {
+      title: "Panel 1: Dormitorios de la Base",
+      text: "Después de un largo viaje, la tripulación descansa en los dormitorios de la base.",
+      english: "After a long journey, the crew rests in the base dormitories.",
+      illustration: "🛏️💤"
+    },
+    {
+      title: "Panel 2: Traje y Casco Espacial",
+      text: "El traje espacial presurizado y el casco protegen al explorador en el vacío cósmico.",
+      english: "The pressurized spacesuit and helmet protect the explorer in the cosmic vacuum.",
+      illustration: "🧑‍🚀🛡️"
+    }
+  ],
+  3: [
+    {
+      title: "Panel 1: Reunión y Desayuno",
+      text: "Iniciamos el turno matutino con una reunión informativa y desayuno energético.",
+      english: "We begin the morning shift with a briefing meeting and energetic breakfast.",
+      illustration: "🍳📋"
+    },
+    {
+      title: "Panel 2: Reporte de Fin de Turno",
+      text: "Todos los reclutas deben transmitir su informe oficial al finalizar su turno diario.",
+      english: "All recruits must transmit their official report at the end of their daily shift.",
+      illustration: "📊💻"
+    }
+  ],
+  4: [
+    {
+      title: "Panel 1: Calibración del Radar",
+      text: "Dani está supervisando atentamente la calibración del radar estelar.",
+      english: "Dani is attentively supervising the calibration of the stellar radar.",
+      illustration: "📡🔍"
+    },
+    {
+      title: "Panel 2: Bobina de Sparky Bot",
+      text: "Mientras tanto, Sparky Bot está reparando la bobina del motor principal.",
+      english: "Meanwhile, Sparky Bot is repairing the main engine coil.",
+      illustration: "🔧🤖"
+    }
+  ],
+  5: [
+    {
+      title: "Panel 1: Zonas de Descompresión",
+      text: "Es una regla de seguridad obligatoria llevar casco en las zonas de descompresión.",
+      english: "It is a mandatory safety rule to wear a helmet in decompression zones.",
+      illustration: "⛑️⚠️"
+    },
+    {
+      title: "Panel 2: Núcleo del Reactor",
+      text: "Solo los oficiales autorizados tienen permiso para ingresar al núcleo del reactor.",
+      english: "Only authorized officers have permission to enter the reactor core.",
+      illustration: "⚛️🔐"
+    }
+  ],
+  6: [
+    {
+      title: "Panel 1: Asteroides Luminosos",
+      text: "En nuestra bitácora pasada descubrimos un deslumbrante campo de asteroides luminosos.",
+      english: "In our past log we discovered a dazzling luminous asteroid field.",
+      illustration: "☄️✨"
+    },
+    {
+      title: "Panel 2: Aterrizaje Exitoso",
+      text: "El equipo confirmó que la sonda de exploración aterrizó con total éxito en la roca.",
+      english: "The team confirmed that the exploration probe landed successfully on the rock.",
+      illustration: "🛸🪐"
+    }
+  ],
+  7: [
+    {
+      title: "Panel 1: Señal del Sector 4",
+      text: "Registramos una misteriosa señal de socorro proveniente del Sector 4 de Scribtonia.",
+      english: "We recorded a mysterious distress signal coming from Sector 4 of Scribtonia.",
+      illustration: "📻🚨"
+    },
+    {
+      title: "Panel 2: Reporte al General Bric",
+      text: "Inmediatamente enviamos un informe detallado de la anomalía al General Bric.",
+      english: "We immediately sent a detailed report of the anomaly to General Bric.",
+      illustration: "🎖️📨"
+    }
+  ],
+  8: [
+    {
+      title: "Panel 1: Motor Iónico vs Químico",
+      text: "El nuevo motor de iones es notablemente más rápido y eficiente que el cohete químico.",
+      english: "The new ion engine is remarkably faster and more efficient than chemical rockets.",
+      illustration: "🚀⚡"
+    },
+    {
+      title: "Panel 2: Atmósfera de Scribtonia",
+      text: "Los sensores revelan que el planeta Scribtonia posee una atmósfera más densa.",
+      english: "Sensors reveal that planet Scribtonia possesses a much denser atmosphere.",
+      illustration: "🪐💨"
+    }
+  ],
+  9: [
+    {
+      title: "Panel 1: La Base ONE",
+      text: "La Base ONE es reconocida como la instalación más avanzada y segura de toda la flota.",
+      english: "Base ONE is recognized as the most advanced and secure facility in the fleet.",
+      illustration: "🏢🌌"
+    },
+    {
+      title: "Panel 2: Estrella Nova Scrib",
+      text: "En la noche cósmica, Nova Scrib brilla como la estrella más brillante de la galaxia.",
+      english: "In the cosmic night, Nova Scrib shines as the brightest star in the galaxy.",
+      illustration: "⭐🌟"
+    }
+  ],
+  10: [
+    {
+      title: "Panel 1: Hacia la Nebulosa",
+      text: "El comandante anunció que planea navegar a través de la nebulosa interestelar mañana.",
+      english: "The commander announced he plans to navigate through the interstellar nebula tomorrow.",
+      illustration: "🌌🧭"
+    },
+    {
+      title: "Panel 2: Acoplamiento a las 14:00",
+      text: "El acoplamiento del módulo logístico está programado exactamente a las 14:00 horas.",
+      english: "Docking of the logistics module is scheduled at exactly 14:00 hours.",
+      illustration: "🕑🛰️"
+    }
+  ],
+  11: [
+    {
+      title: "Panel 1: Falla de Escudos",
+      text: "Si los escudos de plasma fallan bajo fuego solar, el casco sufrirá una brecha grave.",
+      english: "If plasma shields fail under solar fire, the hull will suffer a severe breach.",
+      illustration: "🛡️💥"
+    },
+    {
+      title: "Panel 2: Protocolo Estricto",
+      text: "El escuadrón asegurará su supervivencia siguiendo el protocolo al pie de la letra.",
+      english: "The squadron will ensure its survival by following the protocol strictly.",
+      illustration: "📜✔️"
+    }
+  ],
+  12: [
+    {
+      title: "Panel 1: Tres Estaciones Alienígenas",
+      text: "Hasta la fecha, nuestra tripulación ya ha visitado tres estaciones alienígenas.",
+      english: "To date, our crew has already visited three alien stations.",
+      illustration: "👽🛸"
+    },
+    {
+      title: "Panel 2: Análisis Completados",
+      text: "El oficial científico confirmó que ya completó todos los escaneos planetarios.",
+      english: "The science officer confirmed he has already completed all planetary scans.",
+      illustration: "🔬📑"
+    }
+  ],
+  13: [
+    {
+      title: "Panel 1: Sensores de Radar",
+      text: "La extraña señal en la anomalía fue captada por los sensores de radar de la base.",
+      english: "The strange signal in the anomaly was captured by the base's radar sensors.",
+      illustration: "📡⚡"
+    },
+    {
+      title: "Panel 2: Cápsulas de Biocontención",
+      text: "Las muestras biológicas cósmicas deben almacenarse en cápsulas de biocontención.",
+      english: "The cosmic biological samples must be stored in biocontainment capsules.",
+      illustration: "🧪🔒"
+    }
+  ],
+  14: [
+    {
+      title: "Panel 1: Graduación de Base ONE",
+      text: "¡Hoy celebramos con orgullo completar la formación lingüística y de vuelo estelar!",
+      english: "Today we proudly celebrate completing our linguistic and star flight training!",
+      illustration: "🎓🏆"
+    },
+    {
+      title: "Panel 2: Expedición al Espacio Profundo",
+      text: "Nuestro escuadrón está plenamente preparado para la exploración del espacio profundo.",
+      english: "Our squadron is fully prepared for deep space exploration.",
+      illustration: "🚀✨"
+    }
+  ]
+};
+
+const panelsMap = DEFAULT_COMIC_PANELS;
+
 export function ComicGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [viewMode, setViewMode] = useState("reading"); // "reading" | "quiz"
@@ -84,7 +286,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const [mistakes, setMistakes] = useState(0);
   const [showStatusText, setShowStatusText] = useState("SISTEMA OK");
 
-  const dayNum = activity?.dayNumber || activity?.day_num || 1;
+  const dayNum = activity?.dayNumber || activity?.day_num || activity?.day || 1;
   const questions = (activity?.questions && activity.questions.length > 0)
     ? activity.questions
     : (DEFAULT_COMIC_QUESTIONS[dayNum] || DEFAULT_COMIC_QUESTIONS[1]);
@@ -167,7 +369,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
               Etapa 3: Bitácora y Lectura de Cómic
             </span>
-            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity.title}</h2>
+            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity?.title || "Lectura de Cómic"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
             Cerrar X
@@ -191,7 +393,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
               marginBottom: 16 
             }}
           >
-            {(panelsMap[activity.day_num || activity.mission || 1] || panelsMap[1]).map((panel, idx) => (
+            {(DEFAULT_COMIC_PANELS[dayNum] || DEFAULT_COMIC_PANELS[1]).map((panel, idx) => (
               <div 
                 key={idx} 
                 className="comic-card" 
