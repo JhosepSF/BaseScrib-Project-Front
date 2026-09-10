@@ -369,7 +369,7 @@
   display: flex;
   gap: 6px;
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding: 6px 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(46, 196, 182, 0.2) transparent;
 }
@@ -395,18 +395,20 @@
   white-space: nowrap;
   transition: all 0.25s ease;
   font-family: inherit;
+  flex-shrink: 0;
 }
 
 .mission-console__day-tab:hover {
   background: rgba(46, 196, 182, 0.15);
   border-color: rgba(184, 255, 249, 0.4);
+  transform: translateY(-1px);
 }
 
 .mission-console__day-tab--active {
   background: rgba(46, 196, 182, 0.25);
   border: 2px solid #b8fff9;
   color: #b8fff9;
-  box-shadow: 0 0 14px rgba(184, 255, 249, 0.25);
+  box-shadow: 0 0 14px rgba(184, 255, 249, 0.3);
 }
 
 .mission-console__slots {
