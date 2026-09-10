@@ -269,25 +269,19 @@ export function DailyGameRunner({
 
   return (
     <div className="daily-runner-overlay">
+      {/* Floating Save Toast Notification — Positioned floating overlay so zero layout shift occurs */}
+      {resumedNotice && (
+        <div className="runner-floating-toast animate-fadeIn">
+          💾 Progreso Guardado Recuperado
+        </div>
+      )}
+
       {/* Top Banner Progress Bar */}
       <div className="daily-runner-hud">
         <div className="runner-hud-left">
           <div className="runner-hud-meta">
             <span className="runner-day-badge">🚀 DÍA {dayNumber}</span>
             <span className="runner-step-counter">ETAPA {stageIndex + 1} / 5</span>
-            {resumedNotice && (
-              <span className="runner-resumed-pill animate-fadeIn" style={{
-                background: "rgba(0, 255, 135, 0.2)",
-                color: "#00ff87",
-                border: "1px solid #00ff87",
-                borderRadius: "10px",
-                fontSize: "0.68rem",
-                fontWeight: 800,
-                padding: "2px 8px"
-              }}>
-                💾 Progreso Guardado Recuperado
-              </span>
-            )}
           </div>
           <h3 className="runner-stage-name">
             {completedStages.includes(currentStage.id) ? "✅ " : currentStage.icon + " "}
