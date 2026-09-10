@@ -9,11 +9,12 @@ import { StudentPanel } from "../components/StudentPanel";
 import { RoomCreated } from "../components/RoomCreated";
 import { RoomView } from "../components/RoomView";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, setTokens, clearTokens, getAccessToken, refreshAccessToken } from "../utils/apiClient";
 
 export function PanelPrincipal() {
   const navigate = useNavigate();
   const [step, setStep] = useState("home");
-  const [token, setToken] = useState(localStorage.getItem("basescrib_token") || "");
+  const [token, setToken] = useState(getAccessToken());
   const [user, setUser] = useState(null);
   const [rooms, setRooms] = useState([]);
   const [joinedRoom, setJoinedRoom] = useState(null);
@@ -50,14 +51,12 @@ export function PanelPrincipal() {
     setJoinKey("");
     setError("");
     setStep("home");
-    localStorage.removeItem("basescrib_token");
+    clearTokens();
   };
 
-  const fetchMyRooms = useCallback(async (accessToken) => {
+  const fetchMyRooms = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/rooms/my_rooms/`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const res = await fetchWithAuth(`${API_BASE}/rooms/my_rooms/`);
       if (!res.ok) return [];
       const data = await res.json();
       setRooms(data);
@@ -68,17 +67,15 @@ export function PanelPrincipal() {
     }
   }, []);
 
-  const fetchUser = useCallback(async (accessToken) => {
+  const fetchUser = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/users/me/`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const res = await fetchWithAuth(`${API_BASE}/users/me/`);
       if (!res.ok) {
         throw new Error("Token inválido");
       }
       const data = await res.json();
       setUser(data);
-      const roomsData = await fetchMyRooms(accessToken);
+      const roomsData = await fetchMyRooms();
       if (data.role === "teacher") {
         setStep("teacher");
       } else if (roomsData.length > 0) {
@@ -94,7 +91,24 @@ export function PanelPrincipal() {
 
   useEffect(() => {
     if (!token) return;
-    fetchUser(token);
+    fetchUser();
+    
+    // Background heartbeat to refresh token pre-emptively every 10 minutes
+    const interval = setInterval(() => {
+      refreshAccessToken().then(newToken => {
+        if (newToken) setToken(newToken);
+      }).catch(err => {
+        console.warn("Background token refresh skipped:", err);
+      });
+    }, 10 * 60 * 1000);
+
+    const handleUnauthorized = () => resetState();
+    window.addEventListener("basescrib:unauthorized", handleUnauthorized);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("basescrib:unauthorized", handleUnauthorized);
+    };
   }, [token, fetchUser]);
 
   const loginUser = async (username, password) => {
@@ -111,6 +125,10 @@ export function PanelPrincipal() {
 
     const data = await res.json();
     const accessToken = data.access;
+    const refreshToken = data.refresh;
+    
+    // Save both access and refresh tokens
+    setTokens(accessToken, refreshToken);
     
     // Play hyperspace warp speed jump animation
     setWarpText("⚡ VIAJANDO A LOS DORMITORIOS DE LA BASE... ⚡");
@@ -118,7 +136,6 @@ export function PanelPrincipal() {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     
     setToken(accessToken);
-    localStorage.setItem("basescrib_token", accessToken);
     setWarpTransition(false);
   };
 

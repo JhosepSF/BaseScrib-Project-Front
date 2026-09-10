@@ -6,10 +6,11 @@ import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
 import DatabaseManagementModal from "../components/DatabaseManagementModal";
 import { TeacherDailyGrades } from "../components/TeacherDailyGrades";
+import { fetchWithAuth, setTokens, getAccessToken } from "../utils/apiClient";
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(localStorage.getItem("basescrib_token") || "");
+  const [token, setToken] = useState(getAccessToken());
   const [scores, setScores] = useState(null);
   const [engagement, setEngagement] = useState(null);
   const [submissions, setSubmissions] = useState(null);
@@ -108,8 +109,9 @@ export default function TeacherDashboard() {
 
     const data = await res.json();
     const accessToken = data.access;
+    const refreshToken = data.refresh;
+    setTokens(accessToken, refreshToken);
     setToken(accessToken);
-    localStorage.setItem("basescrib_token", accessToken);
   };
 
   useEffect(() => {
@@ -118,10 +120,9 @@ export default function TeacherDashboard() {
     const fetchMetrics = async () => {
       setLoading(true);
       try {
-        const headers = { Authorization: `Bearer ${token}` };
         const [sRes, eRes] = await Promise.all([
-          fetch(`${API_BASE}/teacher-profiles/student_scores/`, { headers }),
-          fetch(`${API_BASE}/teacher-profiles/engagement/`, { headers }),
+          fetchWithAuth(`${API_BASE}/teacher-profiles/student_scores/`),
+          fetchWithAuth(`${API_BASE}/teacher-profiles/engagement/`),
         ]);
 
         if (!sRes.ok) throw new Error('Error fetching scores');
@@ -146,8 +147,7 @@ export default function TeacherDashboard() {
     if (!token) return;
     const fetchRooms = async () => {
       try {
-        const headers = { Authorization: `Bearer ${token}` };
-        const rRes = await fetch(`${API_BASE}/rooms/my_rooms/`, { headers });
+        const rRes = await fetchWithAuth(`${API_BASE}/rooms/my_rooms/`);
         if (!rRes.ok) throw new Error('Error fetching rooms');
         const rData = await rRes.json();
         setRooms(rData);
@@ -165,8 +165,7 @@ export default function TeacherDashboard() {
     const fetchSubmissions = async () => {
       setLoading(true);
       try {
-        const headers = { Authorization: `Bearer ${token}` };
-        const oRes = await fetch(`${API_BASE}/teacher-profiles/oral_reviews/?page=${page}&page_size=${pageSize}`, { headers });
+        const oRes = await fetchWithAuth(`${API_BASE}/teacher-profiles/oral_reviews/?page=${page}&page_size=${pageSize}`);
         if (!oRes.ok) throw new Error('Error fetching submissions');
         const oData = await oRes.json();
         setSubmissions(oData.submissions || []);

@@ -5,6 +5,7 @@ import { soundFx } from "../utils/soundEffects";
 import AvatarFrame from "./AvatarFrame";
 import { WritingFeedbackModal } from "./WritingFeedbackModal";
 import { API_BASE } from "../../config";
+import { fetchWithAuth } from "../utils/apiClient";
 
 /**
  * RecluteHUD — Floating HUD bar with avatar identity, stats, notifications, and navigation.
@@ -15,14 +16,9 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [selectedNotif, setSelectedNotif] = useState(null);
 
-  const token = localStorage.getItem("basescrib_token");
-
   const fetchNotifications = useCallback(async () => {
-    if (!token) return;
     try {
-      const res = await fetch(`${API_BASE}/notifications/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetchWithAuth(`${API_BASE}/notifications/`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {

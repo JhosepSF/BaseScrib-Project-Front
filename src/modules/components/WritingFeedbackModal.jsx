@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { renderAnnotatedText } from "../utils/textAnnotations";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
+import { fetchWithAuth } from "../utils/apiClient";
 import "../../styles/WritingFeedbackModal.css";
 
 export function WritingFeedbackModal({ notification, onClose }) {
@@ -47,14 +48,12 @@ export function WritingFeedbackModal({ notification, onClose }) {
     setErrorMsg("");
 
     try {
-      const token = localStorage.getItem("basescrib_token") || "";
       const day = notification.day_number || 1;
 
-      const res = await fetch(`${API_BASE}/writing-submissions/`, {
+      const res = await fetchWithAuth(`${API_BASE}/writing-submissions/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           day_number: day,

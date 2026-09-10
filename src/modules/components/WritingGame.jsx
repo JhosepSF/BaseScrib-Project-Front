@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
+import { fetchWithAuth } from "../utils/apiClient";
 import "../../styles/Panel.css";
 
 const DEFAULT_WRITING_PROMPTS = {
@@ -36,13 +37,8 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
 
   // Cargar envío previo del estudiante para este día (si existe) para permitir reenvío/mejora
   useEffect(() => {
-    const token = localStorage.getItem("basescrib_token") || "";
-    if (!token) return;
-
     let isMounted = true;
-    fetch(`${API_BASE}/writing-submissions/`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    fetchWithAuth(`${API_BASE}/writing-submissions/`)
       .then(res => (res.ok ? res.json() : []))
       .then(data => {
         if (!isMounted || !Array.isArray(data)) return;
@@ -77,14 +73,12 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
     setError("");
 
     try {
-      const token = localStorage.getItem("basescrib_token") || "";
       const missionId = activity?.mission || activity?.mission_id || dayNum;
 
-      const res = await fetch(`${API_BASE}/writing-submissions/`, {
+      const res = await fetchWithAuth(`${API_BASE}/writing-submissions/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           student: userId || undefined,

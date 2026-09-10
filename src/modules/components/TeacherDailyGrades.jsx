@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
 import { soundFx } from "../utils/soundEffects";
 import { renderAnnotatedText, stripHtmlMarks } from "../utils/textAnnotations";
+import { fetchWithAuth } from "../utils/apiClient";
 
 export function TeacherDailyGrades({ token, rooms = [] }) {
   const [loading, setLoading] = useState(true);
@@ -24,8 +25,6 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
 
   const modalAnnotatedRef = useRef(null);
 
-  const authToken = token || localStorage.getItem("basescrib_token") || "";
-
   const fetchDailyGrades = async () => {
     setLoading(true);
     setError("");
@@ -34,9 +33,7 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
       if (selectedRoomId) {
         url += `?room_id=${selectedRoomId}`;
       }
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${authToken}` }
-      });
+      const res = await fetchWithAuth(url);
       if (!res.ok) {
         throw new Error("No se pudieron cargar las calificaciones diarias");
       }
@@ -116,11 +113,10 @@ export function TeacherDailyGrades({ token, rooms = [] }) {
     setSubmittingGrade(true);
     setGradeSuccessMsg("");
     try {
-      const res = await fetch(`${API_BASE}/writing-submissions/${gradingSubmission.id}/mark_reviewed/`, {
+      const res = await fetchWithAuth(`${API_BASE}/writing-submissions/${gradingSubmission.id}/mark_reviewed/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           reviewed: true,
