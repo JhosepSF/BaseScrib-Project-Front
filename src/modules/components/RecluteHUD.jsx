@@ -26,9 +26,10 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
+          const sorted = [...data].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
           const uniqueNotifs = [];
           const seenKeys = new Set();
-          for (const item of data) {
+          for (const item of sorted) {
             const key = item.day_number ? `day_${item.day_number}` : `id_${item.id}`;
             if (!seenKeys.has(key)) {
               seenKeys.add(key);
