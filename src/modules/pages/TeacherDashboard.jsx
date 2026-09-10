@@ -41,6 +41,28 @@ export default function TeacherDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDbModal, setShowDbModal] = useState(false);
 
+  const handleUpdateRoomDays = async (roomId, newDays) => {
+    soundFx.playClick();
+    try {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      };
+      const res = await fetch(`${API_BASE}/rooms/${roomId}/update_unlocked_days/`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ unlocked_days: newDays })
+      });
+      if (!res.ok) throw new Error("Error al actualizar días desbloqueados");
+      const data = await res.json();
+      setRooms(prev => (prev || []).map(r => r.id === roomId ? { ...r, unlocked_days: data.unlocked_days } : r));
+      soundFx.playSuccess();
+    } catch (err) {
+      console.error("Could not update unlocked days:", err);
+      soundFx.playError();
+    }
+  };
+
   // Filtered lists logic
   const filteredScores = (scores || []).filter(s => {
     // 1. Filter by Search Query
@@ -528,6 +550,95 @@ export default function TeacherDashboard() {
                             <span>Students</span>
                             <strong>{room.students?.length || 0}</strong>
                             </p>
+                        </div>
+
+                        {/* SECCIÓN DE GESTIÓN DE DÍAS DESBLOQUEADOS */}
+                        <div className="room-unlocked-days-section" style={{
+                          marginTop: "10px",
+                          padding: "10px 12px",
+                          background: "rgba(10, 25, 45, 0.75)",
+                          border: "1px solid rgba(46, 196, 182, 0.35)",
+                          borderRadius: "12px"
+                        }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", flexWrap: "wrap", gap: "4px" }}>
+                            <span style={{ fontSize: "0.8rem", fontWeight: "bold", color: "#ffd166" }}>
+                              🔓 Días Habilitados ({room.unlocked_days?.length || 1}/14):
+                            </span>
+                            <div style={{ display: "flex", gap: "6px" }}>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateRoomDays(room.id, Array.from({ length: 14 }, (_, i) => i + 1))}
+                                style={{
+                                  background: "rgba(46, 196, 182, 0.15)",
+                                  border: "1px solid #2ec4b6",
+                                  color: "#2ec4b6",
+                                  fontSize: "0.68rem",
+                                  fontWeight: "bold",
+                                  padding: "2px 7px",
+                                  borderRadius: "6px",
+                                  cursor: "pointer"
+                                }}
+                                title="Desbloquear todos los 14 días para este salón"
+                              >
+                                Todos (1-14)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateRoomDays(room.id, [1])}
+                                style={{
+                                  background: "rgba(255, 255, 255, 0.08)",
+                                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                                  color: "#aaa",
+                                  fontSize: "0.68rem",
+                                  fontWeight: "bold",
+                                  padding: "2px 7px",
+                                  borderRadius: "6px",
+                                  cursor: "pointer"
+                                }}
+                                title="Dejar únicamente el Día 1 desbloqueado"
+                              >
+                                Solo Día 1
+                              </button>
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                            {Array.from({ length: 14 }, (_, i) => i + 1).map((d) => {
+                              const currentDays = room.unlocked_days || [1];
+                              const isUnlocked = currentDays.includes(d);
+                              return (
+                                <button
+                                  key={`day-toggle-${room.id}-${d}`}
+                                  type="button"
+                                  onClick={() => {
+                                    let nextDays;
+                                    if (isUnlocked) {
+                                      if (d === 1) return;
+                                      nextDays = currentDays.filter(day => day !== d);
+                                    } else {
+                                      nextDays = [...currentDays, d].sort((a, b) => a - b);
+                                    }
+                                    handleUpdateRoomDays(room.id, nextDays);
+                                  }}
+                                  title={d === 1 ? "Día 1 activo por defecto" : (isUnlocked ? `Día ${d} desbloqueado (Clic para bloquear)` : `Día ${d} bloqueado (Clic para habilitar)`)}
+                                  style={{
+                                    padding: "3px 7px",
+                                    borderRadius: "8px",
+                                    fontSize: "0.72rem",
+                                    fontWeight: "800",
+                                    cursor: d === 1 ? "default" : "pointer",
+                                    border: isUnlocked ? "1.5px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
+                                    background: isUnlocked ? "linear-gradient(135deg, rgba(46, 196, 182, 0.3), rgba(58, 134, 255, 0.25))" : "rgba(255, 255, 255, 0.03)",
+                                    color: isUnlocked ? "#b8fff9" : "#666",
+                                    boxShadow: isUnlocked ? "0 0 8px rgba(46, 196, 182, 0.25)" : "none",
+                                    transition: "all 0.15s ease"
+                                  }}
+                                >
+                                  {isUnlocked ? `✓ D${d}` : `🔒 D${d}`}
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
 
                         <div style={{ display: "flex", gap: "8px", marginTop: "10px" }}>

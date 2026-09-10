@@ -285,6 +285,7 @@ const ROOM_ZONES = [
 
 export function RoomActivityPanel3D({
   user,
+  joinedRoom,
   activities,
   completedList,
   selectedDay,
@@ -312,29 +313,15 @@ export function RoomActivityPanel3D({
   const getDayLockStatus = (dayNum) => {
     if (dayNum === 1) return { isUnlocked: true };
 
-    const prevDayCompletedAt = localStorage.getItem(`basescrib_day_${dayNum - 1}_completed_at`);
-    if (!prevDayCompletedAt) {
-      return { isUnlocked: false, reason: `Debes completar la misión del Día ${dayNum - 1} primero.` };
+    const unlockedDays = joinedRoom?.unlocked_days || [1];
+    if (unlockedDays.includes(dayNum)) {
+      return { isUnlocked: true };
     }
 
-    const completedTime = new Date(prevDayCompletedAt).getTime();
-    const now = Date.now();
-    const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
-    const timeDiff = now - completedTime;
-
-    if (timeDiff < cooldownMs) {
-      const remainingMs = cooldownMs - timeDiff;
-      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-      return {
-        isUnlocked: false,
-        reason: `🔒 Cooldown Diario: Disponible en ${hours}h ${mins}m`,
-        remainingHours: hours,
-        remainingMins: mins
-      };
-    }
-
-    return { isUnlocked: true };
+    return {
+      isUnlocked: false,
+      reason: `El docente aún no ha desbloqueado la misión del Día ${dayNum} para este salón.`
+    };
   };
 
   // COFRE ANIMATION STATES

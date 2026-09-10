@@ -280,29 +280,15 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   const getDayLockStatus = (dayNum) => {
     if (dayNum === 1) return { isUnlocked: true };
 
-    const prevDayCompletedAt = localStorage.getItem(`basescrib_day_${dayNum - 1}_completed_at`);
-    if (!prevDayCompletedAt) {
-      return { isUnlocked: false, reason: `Debes completar la misión del Día ${dayNum - 1} primero.` };
+    const unlockedDays = joinedRoom?.unlocked_days || [1];
+    if (unlockedDays.includes(dayNum)) {
+      return { isUnlocked: true };
     }
 
-    const completedTime = new Date(prevDayCompletedAt).getTime();
-    const now = Date.now();
-    const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
-    const timeDiff = now - completedTime;
-
-    if (timeDiff < cooldownMs) {
-      const remainingMs = cooldownMs - timeDiff;
-      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-      return {
-        isUnlocked: false,
-        reason: `🔒 Cooldown Diario: Disponible en ${hours}h ${mins}m`,
-        remainingHours: hours,
-        remainingMins: mins
-      };
-    }
-
-    return { isUnlocked: true };
+    return {
+      isUnlocked: false,
+      reason: `El docente aún no ha desbloqueado la misión del Día ${dayNum} para este salón.`
+    };
   };
 
   const navigate = useNavigate();
@@ -590,6 +576,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       <>
         <RoomActivityPanel3D
           user={user}
+          joinedRoom={joinedRoom}
           activities={activities}
           completedList={completedList}
           selectedDay={selectedDay}
@@ -739,15 +726,19 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
           {/* CENTRAL CONSOLE: MISSION TABS AND SLOTS */}
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 15 }}>
             <div className="mission-console__day-tabs">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((dayNum) => (
-                <button
-                  key={dayNum}
-                  onClick={() => { soundFx.playClick(); setSelectedDay(dayNum); }}
-                  className={`mission-console__day-tab ${selectedDay === dayNum ? "mission-console__day-tab--active" : ""}`}
-                >
-                  🚀 Día {dayNum}
-                </button>
-              ))}
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((dayNum) => {
+                const isUnlocked = getDayLockStatus(dayNum).isUnlocked;
+                return (
+                  <button
+                    key={dayNum}
+                    onClick={() => { soundFx.playClick(); setSelectedDay(dayNum); }}
+                    className={`mission-console__day-tab ${selectedDay === dayNum ? "mission-console__day-tab--active" : ""}`}
+                    style={{ opacity: isUnlocked ? 1 : 0.65 }}
+                  >
+                    {isUnlocked ? `🚀 Día ${dayNum}` : `🔒 Día ${dayNum}`}
+                  </button>
+                );
+              })}
             </div>
 
             {(() => {
