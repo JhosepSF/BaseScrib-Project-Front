@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import TeacherDashboard from "./modules/pages/TeacherDashboard";
 import AvatarCustomizer from "./modules/pages/AvatarCustomizer";
+import { preloadKeyAssets } from "./modules/utils/assetPreloader";
 
 function App() {
+  useEffect(() => {
+    preloadKeyAssets();
+  }, []);
+
   return (
     <BrowserRouter>
       <div>

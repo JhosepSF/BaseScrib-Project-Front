@@ -86,6 +86,7 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const [availableWords, setAvailableWords] = useState([]);
   const [assembledWords, setAssembledWords] = useState([]);
   const [targetSentence, setTargetSentence] = useState("");
+  const [scrambledSentence, setScrambledSentence] = useState("");
 
   // Shuffled Multiple Choice Fallback Options
   const [shuffledOptions, setShuffledOptions] = useState([]);
@@ -136,11 +137,25 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
     }
 
     if (wordsToScramble.length > 1) {
+      // Ensure words are scrambled and NOT in original order (derangement)
+      let scrambledTokens = shuffle([...wordsToScramble]);
+      let attempts = 0;
+      while (
+        attempts < 30 &&
+        scrambledTokens.length > 1 &&
+        scrambledTokens.every((t, i) => t.toLowerCase() === wordsToScramble[i].toLowerCase())
+      ) {
+        scrambledTokens = shuffle([...wordsToScramble]);
+        attempts++;
+      }
+      setScrambledSentence(scrambledTokens.join("  /  "));
+
       // Create word pills with unique IDs for bank
-      const pills = wordsToScramble.map((word, idx) => ({ id: `${idx}-${word}`, word }));
+      const pills = wordsToScramble.map((word, idx) => ({ id: `${idx}-${word}-${Math.random()}`, word }));
       setAvailableWords(shuffle(pills));
     } else {
       setAvailableWords([]);
+      setScrambledSentence("");
     }
   }, [currentQIndex, dayNum, currentQuestion?.id, currentQuestion?.text]);
 
@@ -242,19 +257,29 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const isSentenceMode = availableWords.length > 0 || assembledWords.length > 0;
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 720, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
+    <div 
+      className="glass-console auth-card panel-large animate-fadeIn" 
+      style={{ 
+        maxWidth: 720, 
+        width: "100%", 
+        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
+        position: "relative", 
+        margin: "0 auto",
+        boxSizing: "border-box" 
+      }}
+    >
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 8 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ff6b6b", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#ff6b6b", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
               Etapa 2: Vocabulario y Construcción de Oraciones
             </span>
-            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.35rem" }}>{activity?.title || "Reparación de Módulos"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Reparación de Módulos"}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Cerrar X
           </button>
         </div>
@@ -262,12 +287,12 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
 
       {currentQuestion ? (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
             <span>Sección de Escudos: {currentQIndex + 1} de {questions.length}</span>
             <span>Estabilidad de Escudo: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
-          <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
+          <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>
             ⚡ Instructions / Instrucciones: {isSentenceMode ? "Selecciona y ordena las palabras clave para construir la oración gramatical correcta." : "Selecciona el nodo con el diagnóstico de corrección gramatical adecuado."}
           </h3>
 
@@ -286,28 +311,28 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
                   ? "2px solid #2ec4b6" 
                   : "2px solid rgba(255, 107, 107, 0.3)", 
               borderRadius: 14, 
-              padding: "12px 16px", 
-              minHeight: 100, 
+              padding: "clamp(6px, 1.2vh, 12px) clamp(10px, 1.8vw, 16px)", 
+              minHeight: "clamp(65px, 10vh, 95px)", 
               display: "flex", 
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              position: "relative", 
               overflow: "hidden"
             }}
           >
-            <div style={{ position: "absolute", top: 6, right: 10, color: showSolution ? "#ef4444" : isSuccess ? "#2ec4b6" : "#ff6b6b", fontWeight: "bold", fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "1px" }}>
+            <div style={{ position: "absolute", top: 4, right: 8, color: showSolution ? "#ef4444" : isSuccess ? "#2ec4b6" : "#ff6b6b", fontWeight: "bold", fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "1px" }}>
               {showSolution ? "💥 ANOMALÍA REGISTRADA (-0.75 PTS)" : isSuccess ? "✓ SHIELD STABLE" : "⚠️ SHIELD ANOMALY DETECTED"}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
               <img 
                 src={ReclutaPrincipal} 
                 alt="Operador de Escudo" 
                 className="floating-crewmate"
                 style={{ 
-                  width: "85px", 
-                  height: "85px", 
+                  width: "clamp(48px, 8vh, 75px)", 
+                  height: "clamp(48px, 8vh, 75px)", 
                   filter: isSuccess 
                     ? "hue-rotate(85deg) saturate(1.6) drop-shadow(0 0 10px #2ec4b6)" 
                     : showSolution 
@@ -319,8 +344,18 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
               />
             </div>
 
-            <div style={{ fontSize: "1.1rem", color: isSuccess ? "#2ec4b6" : showSolution ? "#ff8787" : "#ff8787", fontWeight: "bold", letterSpacing: 0.5 }}>
-              "{getIncorrectSentence(currentQuestion.text)}"
+            <div style={{ fontSize: "clamp(0.92rem, 1.8vh, 1.15rem)", color: isSuccess ? "#2ec4b6" : showSolution ? "#ff8787" : "#ffd166", fontWeight: "bold", letterSpacing: 0.5, lineHeight: 1.3, textAlign: "center", padding: "2px 6px" }}>
+              {isSentenceMode ? (
+                isSuccess ? (
+                  <span>✓ {targetSentence}</span>
+                ) : showSolution ? (
+                  <span>🎯 Solución: {targetSentence}</span>
+                ) : (
+                  <span>🔀 {scrambledSentence || targetSentence}</span>
+                )
+              ) : (
+                `"${getIncorrectSentence(currentQuestion.text)}"`
+              )}
             </div>
           </div>
 

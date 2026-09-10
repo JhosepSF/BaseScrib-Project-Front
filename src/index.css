@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Universal responsive viewport standards */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Global sleek cyber scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 196, 182, 0.4) rgba(8, 18, 32, 0.4);
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(8, 18, 32, 0.4);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(46, 196, 182, 0.4);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(46, 196, 182, 0.75);
+}
+
+/* Media elements max-width safeguard */
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
+/* Touch screen interaction & mobile optimization defaults */
+button, input, textarea, select, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile safe area & dynamic viewport resets */
+@supports (padding: env(safe-area-inset-top)) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Mobile touch targets safeguard */
+@media (max-width: 600px) {
+  button, [role="button"] {
+    min-height: 38px;
+  }
+}
+

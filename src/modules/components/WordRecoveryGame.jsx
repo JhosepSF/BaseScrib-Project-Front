@@ -217,19 +217,29 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
   };
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 740, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
+    <div 
+      className="glass-console auth-card panel-large animate-fadeIn" 
+      style={{ 
+        maxWidth: 740, 
+        width: "100%", 
+        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
+        position: "relative", 
+        margin: "0 auto",
+        boxSizing: "border-box" 
+      }}
+    >
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
               Etapa 4: Escucha y Frecuencia (Celdas de Energía)
             </span>
-            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.35rem" }}>{activity?.title || "Recuperación de Frecuencia"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Recuperación de Frecuencia"}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Cerrar X
           </button>
         </div>
@@ -237,12 +247,12 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
       {currentQuestion ? (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
             <span>Celda de Energía: {currentQIndex + 1} de {questions.length}</span>
             <span>Estabilidad de Combustión: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
-          <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
+          <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>
             Instrucciones: Selecciona la combinación de celdas de combustible correcta para estabilizar el reactor.
           </h3>
 
@@ -253,19 +263,19 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               position: "relative",
               overflow: "hidden",
               transition: "all 0.3s ease",
-              padding: "14px 18px",
+              padding: "clamp(6px, 1.2vh, 12px) clamp(10px, 1.8vw, 16px)",
               border: showSolution ? "2px solid #ef4444" : isSuccess ? "2px solid #2ec4b6" : "1.5px solid rgba(255, 209, 102, 0.3)",
               background: showSolution ? "rgba(239, 68, 68, 0.08)" : isSuccess ? "rgba(46, 196, 182, 0.08)" : "rgba(0, 0, 0, 0.4)"
             }}
           >
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}>
               <img 
                 src={ReclutaPrincipal} 
                 alt="Operador de Combustible" 
                 className="floating-crewmate"
                 style={{ 
-                  width: "90px", 
-                  height: "90px", 
+                  width: "clamp(48px, 8vh, 75px)", 
+                  height: "clamp(48px, 8vh, 75px)", 
                   filter: isSuccess 
                     ? "hue-rotate(85deg) saturate(1.6) drop-shadow(0 0 8px #2ec4b6)" 
                     : showSolution 
@@ -366,18 +376,19 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
           {!showSolution ? (
             /* Action buttons */
-            <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
+            <div style={{ marginTop: "clamp(8px, 1.5vh, 14px)", display: "flex", justifyContent: "center" }}>
               <button 
                 className="btn-create" 
                 style={{ 
                   width: "100%", 
                   maxWidth: 320, 
-                  padding: "12px 24px",
+                  padding: "clamp(8px, 1.5vh, 12px) 20px",
                   background: "linear-gradient(135deg, #ffd166, #ffb84d)",
                   color: "#1a1a00",
-                  fontSize: "1rem",
+                  fontSize: "clamp(0.85rem, 1.7vh, 1rem)",
                   fontWeight: "900",
                   margin: 0,
+                  borderRadius: 12,
                   boxShadow: "0 0 15px rgba(255, 209, 102, 0.25)"
                 }} 
                 disabled={!selectedOptionId || isSuccess}
@@ -393,21 +404,21 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
                 background: "rgba(239, 68, 68, 0.12)", 
                 border: "1.5px solid #ef4444", 
                 borderRadius: "14px", 
-                padding: "14px 18px", 
-                marginTop: "14px", 
+                padding: "clamp(10px, 2vh, 16px)", 
+                marginTop: "clamp(8px, 1.5vh, 14px)", 
                 textAlign: "center" 
               }} 
               className="animate-fadeIn"
             >
-              <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.05rem", marginBottom: "6px" }}>
+              <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "clamp(0.95rem, 1.8vh, 1.05rem)", marginBottom: "4px" }}>
                 💥 ¡CELDA DE ENERGÍA INCOMPATIBLE! (-0.75 pts)
               </div>
 
-              <div style={{ background: "rgba(0,0,0,0.4)", padding: "10px 14px", borderRadius: 10, textAlign: "left", marginBottom: 12, border: "1px solid rgba(255,255,255,0.1)" }}>
-                <div style={{ color: "#fca5a5", fontSize: "0.88rem", marginBottom: 4 }}>
+              <div style={{ background: "rgba(0,0,0,0.4)", padding: "8px 12px", borderRadius: 10, textAlign: "left", marginBottom: 10, border: "1px solid rgba(255,255,255,0.1)" }}>
+                <div style={{ color: "#fca5a5", fontSize: "clamp(0.8rem, 1.5vh, 0.88rem)", marginBottom: 3 }}>
                   ❌ <strong>Tu combinación elegida:</strong> {selectedUserOption?.text || "Incompleta"}
                 </div>
-                <div style={{ color: "#2ec4b6", fontSize: "0.92rem", fontWeight: "bold" }}>
+                <div style={{ color: "#2ec4b6", fontSize: "clamp(0.85rem, 1.6vh, 0.92rem)", fontWeight: "bold" }}>
                   ✔️ <strong>Combinación Correcta del Reactor:</strong> {correctOption?.text}
                 </div>
               </div>
@@ -415,13 +426,13 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               <button
                 onClick={handleNextAfterError}
                 style={{
-                  padding: "12px 28px",
+                  padding: "clamp(8px, 1.6vh, 12px) clamp(16px, 3vw, 28px)",
                   background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
                   border: "none",
                   borderRadius: "12px",
                   color: "#0d1b2a",
                   fontWeight: "900",
-                  fontSize: "0.98rem",
+                  fontSize: "clamp(0.85rem, 1.7vh, 0.98rem)",
                   cursor: "pointer",
                   boxShadow: "0 0 20px rgba(255, 209, 102, 0.5)",
                   transition: "all 0.2s ease"

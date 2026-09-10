@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ValleDePortalesBg from "../../assets/amongus/valle de portales.png";
+import ValleDePortalesBg from "../../assets/amongus/valle de portales.jpg";
 import { soundFx } from "../utils/soundEffects";
 import AbyssModal from "./AbyssModal";
 

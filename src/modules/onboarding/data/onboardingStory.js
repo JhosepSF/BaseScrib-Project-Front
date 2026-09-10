@@ -15,7 +15,7 @@ import bgDorms from "../../../assets/cinematicas/bg_toma5_dorms.jpg";
 import bgCabin from "../../../assets/cinematicas/bg_toma6_cabin.jpg";
 import bgMailbox from "../../../assets/cinematicas/bg_toma7_mailbox.jpg";
 import bgConsole from "../../../assets/cinematicas/bg_toma8_console.jpg";
-import bgVallePortales from "../../../assets/cinematicas/bg_toma9_valle_portales.png";
+import bgVallePortales from "../../../assets/cinematicas/bg_toma9_valle_portales.jpg";
 
 export const SPEAKERS = {
   GENERAL_BRIC: {

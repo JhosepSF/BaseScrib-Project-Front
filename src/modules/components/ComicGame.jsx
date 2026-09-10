@@ -18,7 +18,11 @@ function shuffle(array) {
 const DEFAULT_COMIC_QUESTIONS = {
   1: [
     { id: "cq1-1", text: "¿Cuál es la estación espacial a la que arriba el recluta?", options: [{ id: "co1-1", text: "Base ONE", is_correct: true }, { id: "co1-2", text: "Estación Cero", is_correct: false }, { id: "co1-3", text: "Nave Impostora", is_correct: false }] },
-    { id: "cq1-2", text: "¿Quién es el asistente de vuelo con inteligencia artificial?", options: [{ id: "co1-4", text: "Sparky Bot", is_correct: true }, { id: "co1-5", text: "Capitán Bric", is_correct: false }, { id: "co1-6", text: "Recluta Leo", is_correct: false }] }
+    { id: "cq1-2", text: "¿Quién es el asistente de vuelo con inteligencia artificial?", options: [{ id: "co1-4", text: "Sparky Bot", is_correct: true }, { id: "co1-5", text: "Capitán Bric", is_correct: false }, { id: "co1-6", text: "Recluta Leo", is_correct: false }] },
+    { id: "cq1-3", text: "¿Cuál es el nombre del nuevo recluta de la tripulación?", options: [{ id: "co1-7", text: "Leo", is_correct: true }, { id: "co1-8", text: "Tom", is_correct: false }, { id: "co1-9", text: "Emma", is_correct: false }] },
+    { id: "cq1-4", text: "¿De qué país es originario el recluta Leo?", options: [{ id: "co1-10", text: "Perú", is_correct: true }, { id: "co1-11", text: "Brasil", is_correct: false }, { id: "co1-12", text: "México", is_correct: false }] },
+    { id: "cq1-5", text: "¿Qué le gusta al recluta Leo?", options: [{ id: "co1-13", text: "Los robots y la ciencia", is_correct: true }, { id: "co1-14", text: "Fútbol y música", is_correct: false }, { id: "co1-15", text: "Manuales de vuelo", is_correct: false }] },
+    { id: "cq1-6", text: "¿Qué habilidad técnica posee el recluta Leo?", options: [{ id: "co1-16", text: "Reparar naves espaciales", is_correct: true }, { id: "co1-17", text: "Volar la nave sola", is_correct: false }, { id: "co1-18", text: "Cocinar comida espacial", is_correct: false }] }
   ],
   2: [
     { id: "cq2-1", text: "¿Dónde descansan los miembros de la tripulación?", options: [{ id: "co2-1", text: "En los dormitorios de la base", is_correct: true }, { id: "co2-2", text: "En la esclusa de aire", is_correct: false }, { id: "co2-3", text: "Fuera de la órbita", is_correct: false }] },
@@ -88,6 +92,18 @@ const DEFAULT_COMIC_PANELS = {
       text: "¡Saludos recluta! Soy Sparky Bot, tu asistente de vuelo con inteligencia artificial.",
       english: "Greetings recruit! I am Sparky Bot, your artificial intelligence flight assistant.",
       illustration: "🤖⚡"
+    },
+    {
+      title: "Panel 3: Recluta Leo",
+      text: "El nuevo miembro de la tripulación es el recluta Leo. Él tiene 13 años, es de Perú y le fascinan los robots y la ciencia.",
+      english: "The new crew member is recruit Leo. He is 13 years old, from Peru, and loves robots and science.",
+      illustration: "🧑‍🚀🇵🇪"
+    },
+    {
+      title: "Panel 4: Habilidades de Reparación",
+      text: "Leo tiene una gran habilidad técnica: ¡puede reparar naves espaciales cuando se dañan!",
+      english: "Leo has a great technical skill: he can repair spaceships when they get damaged!",
+      illustration: "🔧🛠️"
     }
   ],
   2: [
@@ -359,19 +375,29 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const selectedUserOption = currentQuestion?.options?.find(o => o.id === selectedOptionId);
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 760, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
+    <div 
+      className="glass-console auth-card panel-large animate-fadeIn" 
+      style={{ 
+        maxWidth: 760, 
+        width: "100%", 
+        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
+        position: "relative", 
+        margin: "0 auto",
+        boxSizing: "border-box" 
+      }}
+    >
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 8 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
               Etapa 3: Bitácora y Lectura de Cómic
             </span>
-            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity?.title || "Lectura de Cómic"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Lectura de Cómic"}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
             Cerrar X
           </button>
         </div>
@@ -379,7 +405,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
 
       {viewMode === "reading" ? (
         <div>
-          <p style={{ color: "#9be6df", fontSize: "0.9rem", marginBottom: 14, textAlign: "left" }}>
+          <p style={{ color: "#9be6df", fontSize: "clamp(0.78rem, 1.5vh, 0.88rem)", marginBottom: "clamp(6px, 1.2vh, 12px)", textAlign: "left" }}>
             📂 Analiza las bitácoras del tripulante en inglés y español antes de comenzar el cuestionario de acceso.
           </p>
 
@@ -388,9 +414,9 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
             className="comic-grid" 
             style={{ 
               display: "grid", 
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", 
-              gap: 14, 
-              marginBottom: 16 
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", 
+              gap: "clamp(8px, 1.4vh, 12px)", 
+              marginBottom: "clamp(8px, 1.5vh, 14px)" 
             }}
           >
             {(DEFAULT_COMIC_PANELS[dayNum] || DEFAULT_COMIC_PANELS[1]).map((panel, idx) => (
@@ -401,7 +427,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                   background: "rgba(0, 0, 0, 0.35)", 
                   border: "1.5px solid rgba(184, 255, 249, 0.15)", 
                   borderRadius: 12, 
-                  padding: 14, 
+                  padding: "clamp(8px, 1.4vh, 12px)", 
                   textAlign: "center",
                   position: "relative",
                   boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
@@ -409,26 +435,26 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                 }}
               >
                 {/* Visual Novel layout Header */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid rgba(184, 255, 249, 0.1)", paddingBottom: 6, marginBottom: 8 }}>
-                  <span style={{ fontSize: "1.2rem" }}>📄</span>
-                  <h4 style={{ color: "#ffd166", margin: 0, fontSize: "0.9rem", fontWeight: "bold" }}>{panel.title}</h4>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid rgba(184, 255, 249, 0.1)", paddingBottom: 4, marginBottom: 6 }}>
+                  <span style={{ fontSize: "1.1rem" }}>📄</span>
+                  <h4 style={{ color: "#ffd166", margin: 0, fontSize: "clamp(0.78rem, 1.6vh, 0.88rem)", fontWeight: "bold" }}>{panel.title}</h4>
                 </div>
 
                 {/* Floating Vector crewmate icon based on panel theme */}
-                <div style={{ display: "flex", justifyContent: "center", gap: 10, alignItems: "center", margin: "6px 0" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", margin: "4px 0" }}>
                   <div className="floating-crewmate" style={{ display: "flex", justifyContent: "center" }}>
                     <img 
                       src={ReclutaPrincipal} 
                       alt="Recluta" 
                       style={{ 
-                        width: "75px", 
-                        height: "75px",
+                        width: "clamp(45px, 7vh, 65px)", 
+                        height: "clamp(45px, 7vh, 65px)",
                         filter: idx % 2 === 0 ? "hue-rotate(130deg) saturate(1.5)" : "none",
                         objectFit: "contain"
                       }} 
                     />
                   </div>
-                  <span style={{ fontSize: "1.8rem" }}>{panel.illustration}</span>
+                  <span style={{ fontSize: "clamp(1.4rem, 3vh, 1.8rem)" }}>{panel.illustration}</span>
                 </div>
 
                 <p style={{ margin: "8px 0", fontSize: "0.9rem", color: "#e6f7ff", lineHeight: "1.3" }}>
@@ -499,14 +525,14 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                   transition: "all 0.3s ease"
                 }}
               >
-                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div style={{ display: "flex", gap: "clamp(8px, 1.5vw, 12px)", alignItems: "center" }}>
                   <div className="floating-crewmate">
                     <img 
                       src={ReclutaPrincipal} 
                       alt="Recluta Principal" 
                       style={{ 
-                        width: "80px", 
-                        height: "80px", 
+                        width: "clamp(48px, 8vh, 72px)", 
+                        height: "clamp(48px, 8vh, 72px)", 
                         filter: showSolution 
                           ? "hue-rotate(130deg) saturate(1.5) drop-shadow(0 0 8px #ff6b6b)" 
                           : selectedOptionId && !isError 
@@ -517,14 +543,14 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                       }} 
                     />
                   </div>
-                  <h3 style={{ color: "#e6f7ff", margin: 0, fontSize: "1rem", lineHeight: "1.4" }}>
+                  <h3 style={{ color: "#e6f7ff", margin: 0, fontSize: "clamp(0.85rem, 1.8vh, 1rem)", lineHeight: "1.3" }}>
                     {currentQuestion.text}
                   </h3>
                 </div>
               </div>
 
               {/* Quiz Options */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "clamp(5px, 1vh, 8px)" }}>
                 {shuffledOptions.map((opt) => {
                   const isSelected = selectedOptionId === opt.id;
                   const isRightOpt = showSolution && opt.is_correct;
@@ -554,19 +580,19 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                       onClick={() => handleOptionClick(opt)}
                       disabled={showSolution}
                       style={{
-                        padding: "10px 14px",
+                        padding: "clamp(7px, 1.3vh, 10px) clamp(10px, 1.8vw, 14px)",
                         borderRadius: 10,
                         border: borderStyle,
                         background: bgStyle,
                         color: colorStyle,
                         textAlign: "left",
-                        fontSize: "0.88rem",
+                        fontSize: "clamp(0.82rem, 1.6vh, 0.9rem)",
                         fontWeight: "600",
                         cursor: showSolution ? "default" : "pointer",
                         margin: 0,
                         transition: "all 0.2s ease",
                         display: "flex",
-                        justify: "space-between",
+                        justifyContent: "space-between",
                         alignItems: "center"
                       }}
                       className="quiz-option-btn"
@@ -586,21 +612,21 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                     background: "rgba(239, 68, 68, 0.12)", 
                     border: "1.5px solid #ef4444", 
                     borderRadius: "14px", 
-                    padding: "14px 18px", 
-                    marginTop: "14px", 
+                    padding: "clamp(10px, 2vh, 16px)", 
+                    marginTop: "clamp(8px, 1.5vh, 14px)", 
                     textAlign: "center" 
                   }} 
                   className="animate-fadeIn"
                 >
-                  <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.05rem", marginBottom: "6px" }}>
+                  <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "clamp(0.95rem, 1.8vh, 1.05rem)", marginBottom: "4px" }}>
                     💥 ¡RESPUESTA INCORRECTA REGISTRADA! (-0.75 pts)
                   </div>
 
-                  <div style={{ background: "rgba(0,0,0,0.4)", padding: "10px 14px", borderRadius: 10, textAlign: "left", marginBottom: 12, border: "1px solid rgba(255,255,255,0.1)" }}>
-                    <div style={{ color: "#fca5a5", fontSize: "0.88rem", marginBottom: 4 }}>
+                  <div style={{ background: "rgba(0,0,0,0.4)", padding: "8px 12px", borderRadius: 10, textAlign: "left", marginBottom: 10, border: "1px solid rgba(255,255,255,0.1)" }}>
+                    <div style={{ color: "#fca5a5", fontSize: "clamp(0.8rem, 1.5vh, 0.88rem)", marginBottom: 3 }}>
                       ❌ <strong>Tu respuesta:</strong> {selectedUserOption?.text || "Incorrecta"}
                     </div>
-                    <div style={{ color: "#2ec4b6", fontSize: "0.92rem", fontWeight: "bold" }}>
+                    <div style={{ color: "#2ec4b6", fontSize: "clamp(0.85rem, 1.6vh, 0.92rem)", fontWeight: "bold" }}>
                       ✔️ <strong>Respuesta Correcta de la Bitácora:</strong> {correctOption?.text}
                     </div>
                   </div>
@@ -608,13 +634,13 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                   <button
                     onClick={handleNextAfterError}
                     style={{
-                      padding: "12px 28px",
+                      padding: "clamp(8px, 1.6vh, 12px) clamp(16px, 3vw, 28px)",
                       background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
                       border: "none",
                       borderRadius: "12px",
                       color: "#0d1b2a",
                       fontWeight: "900",
-                      fontSize: "0.98rem",
+                      fontSize: "clamp(0.85rem, 1.7vh, 0.98rem)",
                       cursor: "pointer",
                       boxShadow: "0 0 20px rgba(255, 209, 102, 0.5)",
                       transition: "all 0.2s ease"

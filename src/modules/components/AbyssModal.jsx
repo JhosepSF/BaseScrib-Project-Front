@@ -231,23 +231,27 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
       position: "fixed",
       top: 0,
       left: 0,
-      width: "100vw",
-      height: "100vh",
+      width: "100%",
+      height: "100dvh",
+      minHeight: "100vh",
       background: "radial-gradient(ellipse at center, rgba(35, 8, 60, 0.96), rgba(4, 1, 14, 0.99))",
       backdropFilter: "blur(14px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10000,
-      padding: 20
+      padding: "clamp(8px, 1.8vh, 20px)"
     }}>
       <div className="modal-card animate-scaleUp" style={{
         background: "linear-gradient(150deg, #1d0b38, #090318)",
         border: "2px solid #f72585",
         borderRadius: 24,
-        padding: 28,
+        padding: "clamp(16px, 2.5vh, 28px)",
         maxWidth: 680,
         width: "100%",
+        maxHeight: "min(92vh, 92dvh)",
+        overflowY: "auto",
+        minHeight: 0,
         boxShadow: "0 0 70px rgba(247, 37, 133, 0.4), inset 0 0 30px rgba(114, 9, 183, 0.4)",
         position: "relative",
         color: "#e6f7ff"

@@ -47,23 +47,27 @@ export default function UnlockMissionModal({ mission, token, onClose, onUnlocked
       position: "fixed",
       top: 0,
       left: 0,
-      width: "100vw",
-      height: "100vh",
+      width: "100%",
+      height: "100dvh",
+      minHeight: "100vh",
       background: "rgba(3, 15, 23, 0.85)",
       backdropFilter: "blur(8px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10000,
-      padding: 20
+      padding: "clamp(8px, 1.8vh, 20px)"
     }}>
       <div className="modal-card animate-scaleUp" style={{
         background: "linear-gradient(145deg, #0d2833, #051820)",
         border: "2px solid #b8fff9",
         borderRadius: 20,
-        padding: 30,
+        padding: "clamp(16px, 2.5vh, 28px)",
         maxWidth: 450,
         width: "100%",
+        maxHeight: "min(92vh, 92dvh)",
+        overflowY: "auto",
+        minHeight: 0,
         boxShadow: "0 0 40px rgba(184, 255, 249, 0.25)",
         position: "relative",
         color: "#e6f7ff"

@@ -41,8 +41,8 @@ export function AuthHome({ setStep, setRegisterRole }) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          flex: "1 1 540px",
-          minWidth: "400px"
+          flex: "1 1 340px",
+          minWidth: "min(100%, 280px)"
         }}
       >
         {/* Interactive Speech Bubble */}
@@ -50,18 +50,18 @@ export function AuthHome({ setStep, setRegisterRole }) {
           onClick={handleCrewmateClick}
           style={{
             position: "absolute",
-            top: "20px",
+            top: "10px",
             left: "50%",
             transform: "translateX(-50%)",
             background: "rgba(30, 18, 28, 0.95)",
             border: "2.5px solid #c97aab",
             borderRadius: "14px",
-            padding: "12px 18px",
+            padding: "10px 16px",
             color: "#f5d8eb",
-            fontSize: "0.9rem",
+            fontSize: "clamp(0.78rem, 1vw, 0.9rem)",
             fontWeight: "bold",
             boxShadow: "0 0 20px rgba(200, 100, 160, 0.4)",
-            width: "220px",
+            width: "clamp(180px, 22vw, 240px)",
             zIndex: 100,
             cursor: "pointer",
             textAlign: "center",
@@ -88,8 +88,10 @@ export function AuthHome({ setStep, setRegisterRole }) {
           alt="Recluta Principal" 
           className="recluta-main-avatar floating-crewmate" 
           style={{ 
-            width: "540px", 
-            height: "540px", 
+            width: "clamp(200px, 30vw, 440px)", 
+            height: "clamp(200px, 30vw, 440px)",
+            maxHeight: "min(50vh, 440px)",
+            objectFit: "contain",
             filter: "drop-shadow(0 0 15px rgba(46, 196, 182, 0.5))",
             cursor: "pointer",
             transition: "all 0.25s ease"
@@ -102,10 +104,10 @@ export function AuthHome({ setStep, setRegisterRole }) {
       <div 
         className="glass-console auth-card" 
         style={{ 
-          flex: "1 1 450px", 
-          maxWidth: "500px", 
-          minWidth: "320px",
-          padding: "40px 30px", 
+          flex: "1 1 360px", 
+          maxWidth: "480px", 
+          minWidth: "min(100%, 280px)",
+          padding: "clamp(20px, 3vh, 36px) clamp(16px, 2.5vw, 28px)", 
           position: "relative",
           margin: "0"
         }}

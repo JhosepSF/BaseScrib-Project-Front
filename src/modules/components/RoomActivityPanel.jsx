@@ -470,7 +470,20 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
 
   // Render game overlays
   if (activeGame) {
-    const gameType = ((activeGame.activity.id - 1) % 5) + 1;
+    let gameType = ((activeGame.activity.id - 1) % 5) + 1;
+    const tLower = (activeGame.activity.title || "").toLowerCase();
+    const dLower = (activeGame.activity.description || "").toLowerCase();
+    if (tLower.includes("writing") || dLower.includes("writing") || tLower.includes("redacción") || tLower.includes("informe")) {
+      gameType = 5;
+    } else if (tLower.includes("comic") || dLower.includes("comic") || tLower.includes("reading") || tLower.includes("lectura")) {
+      gameType = 1;
+    } else if (tLower.includes("sentence") || dLower.includes("sentence") || tLower.includes("launch") || tLower.includes("gramática")) {
+      gameType = 2;
+    } else if (tLower.includes("recovery") || dLower.includes("recovery") || tLower.includes("frecuencia") || tLower.includes("escucha")) {
+      gameType = 3;
+    } else if (tLower.includes("repair") || dLower.includes("repair") || tLower.includes("maintenance") || tLower.includes("vocabulario")) {
+      gameType = 4;
+    }
     let gameComponent = null;
 
     if (gameType === 1) {

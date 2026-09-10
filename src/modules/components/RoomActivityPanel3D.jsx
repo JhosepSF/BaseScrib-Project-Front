@@ -468,7 +468,7 @@ export function RoomActivityPanel3D({
   }, [activities, activeRunnerDay]);
 
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "#020108", overflow: "hidden", zIndex: 100 }}>
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100dvh", minHeight: "100vh", background: "#020108", overflow: "hidden", zIndex: 100 }}>
 
       {/* TOP HUD BAR */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 1000 }}>
@@ -503,15 +503,16 @@ export function RoomActivityPanel3D({
             position: "fixed",
             top: 0,
             left: 0,
-            width: "100vw",
-            height: "100vh",
+            width: "100%",
+            height: "100dvh",
+            minHeight: "100vh",
             background: "rgba(2, 6, 18, 0.82)",
             backdropFilter: "blur(12px)",
             zIndex: 3000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "20px"
+            padding: "clamp(8px, 1.5vh, 20px)"
           }}
           onClick={() => setActiveModal(null)}
         >
@@ -520,9 +521,14 @@ export function RoomActivityPanel3D({
               background: "linear-gradient(135deg, rgba(10, 25, 50, 0.96) 0%, rgba(5, 12, 28, 0.98) 100%)",
               border: "2px solid #2ec4b6",
               borderRadius: "24px",
-              padding: "30px 36px",
+              padding: "clamp(16px, 2.5vh, 28px) clamp(16px, 3vw, 32px)",
               maxWidth: "650px",
-              width: "90%",
+              width: "95%",
+              maxHeight: "min(92vh, 92dvh)",
+              display: "flex",
+              flexDirection: "column",
+              overflowY: "auto",
+              minHeight: 0,
               color: "#e6f7ff",
               boxShadow: "0 0 60px rgba(46, 196, 182, 0.5), inset 0 0 30px rgba(46, 196, 182, 0.2)",
               position: "relative"

@@ -27,26 +27,26 @@ export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuth
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          flex: "1 1 540px",
-          minWidth: "400px"
+          flex: "1 1 340px",
+          minWidth: "min(100%, 280px)"
         }}
       >
         {/* Interactive Speech Bubble */}
         <div 
           style={{
             position: "absolute",
-            top: "20px",
+            top: "10px",
             left: "50%",
             transform: "translateX(-50%)",
             background: "rgba(4, 10, 18, 0.95)",
             border: "2.5px solid #2ec4b6",
             borderRadius: "14px",
-            padding: "12px 18px",
+            padding: "10px 16px",
             color: "#b8fff9",
-            fontSize: "0.9rem",
+            fontSize: "clamp(0.78rem, 1vw, 0.9rem)",
             fontWeight: "bold",
             boxShadow: "0 0 20px rgba(46, 196, 182, 0.4)",
-            width: "220px",
+            width: "clamp(180px, 22vw, 240px)",
             zIndex: 100,
             textAlign: "center",
             lineHeight: "1.3",
@@ -73,8 +73,10 @@ export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuth
           alt="Recluta Principal" 
           className="recluta-main-avatar floating-crewmate" 
           style={{ 
-            width: "540px", 
-            height: "540px", 
+            width: "clamp(200px, 30vw, 440px)", 
+            height: "clamp(200px, 30vw, 440px)",
+            maxHeight: "min(50vh, 440px)",
+            objectFit: "contain",
             filter: loading 
               ? "hue-rotate(180deg) brightness(1.2) drop-shadow(0 0 15px #2ec4b6)" 
               : "drop-shadow(0 0 15px rgba(46, 196, 182, 0.5))",
@@ -87,10 +89,10 @@ export function LoginForm({ authUsername, authPassword, setAuthUsername, setAuth
       <div 
         className="glass-console auth-card" 
         style={{ 
-          flex: "1 1 450px", 
-          maxWidth: "500px", 
-          minWidth: "320px",
-          padding: "40px 30px", 
+          flex: "1 1 360px", 
+          maxWidth: "480px", 
+          minWidth: "min(100%, 280px)",
+          padding: "clamp(20px, 3vh, 36px) clamp(16px, 2.5vw, 28px)", 
           position: "relative",
           margin: "0"
         }}

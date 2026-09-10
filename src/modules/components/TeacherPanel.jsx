@@ -267,22 +267,26 @@ export function TeacherPanel({
           position: "fixed",
           top: 0,
           left: 0,
-          width: "100vw",
-          height: "100vh",
+          width: "100%",
+          height: "100dvh",
+          minHeight: "100vh",
           background: "rgba(3, 7, 18, 0.85)",
           backdropFilter: "blur(8px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          zIndex: 9999
+          zIndex: 9999,
+          padding: "clamp(8px, 1.8vh, 20px)"
         }}>
           <div className="modal-card animate-scaleUp" style={{
             background: "linear-gradient(135deg, #180a1e, #0b1329)",
             border: "2px solid #ff6b6b",
             borderRadius: "20px",
-            padding: "26px",
+            padding: "clamp(16px, 2.5vh, 26px)",
             maxWidth: "480px",
             width: "90%",
+            maxHeight: "min(92vh, 92dvh)",
+            overflowY: "auto",
             boxShadow: "0 0 40px rgba(255, 107, 107, 0.4)",
             color: "#ffffff",
             textAlign: "center"

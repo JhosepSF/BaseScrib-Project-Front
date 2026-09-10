@@ -1,8 +1,19 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { renderAnnotatedText } from "../utils/textAnnotations";
+import { API_BASE } from "../../config";
+import { soundFx } from "../utils/soundEffects";
 import "../../styles/WritingFeedbackModal.css";
 
 export function WritingFeedbackModal({ notification, onClose }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [revisedText, setRevisedText] = useState(
+    notification?.original_text || ""
+  );
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState(false);
+
   if (!notification) return null;
 
   const originalOrAnnotated =
@@ -10,6 +21,64 @@ export function WritingFeedbackModal({ notification, onClose }) {
   const hasErrorsMarked =
     notification.annotated_text &&
     notification.annotated_text.includes("<mark");
+
+  const minChars = 20;
+  const charsRemaining = Math.max(0, minChars - revisedText.trim().length);
+  const isValidLength = revisedText.trim().length >= minChars;
+
+  const handleStartEdit = () => {
+    soundFx.playClick();
+    if (!revisedText && notification.original_text) {
+      setRevisedText(notification.original_text);
+    }
+    setIsEditing(true);
+    setErrorMsg("");
+  };
+
+  const handleResubmit = async (e) => {
+    e.preventDefault();
+    if (!isValidLength) {
+      setErrorMsg(`Tu escrito debe contener al menos ${minChars} caracteres. Faltan ${charsRemaining} caracteres.`);
+      soundFx.playError();
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const token = localStorage.getItem("basescrib_token") || "";
+      const day = notification.day_number || 1;
+
+      const res = await fetch(`${API_BASE}/writing-submissions/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          day_number: day,
+          text: revisedText.trim(),
+          reviewed: false
+        })
+      });
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({ detail: "Error al transmitir" }));
+        throw new Error(errBody.detail || "Error al transmitir tu versión corregida");
+      }
+
+      soundFx.playSuccess();
+      soundFx.playStreakBonus();
+      setSuccessMsg(true);
+      setIsEditing(false);
+    } catch (err) {
+      setErrorMsg(err.message || "No se pudo reenviar la redacción.");
+      soundFx.playError();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="feedback-modal-overlay" onClick={onClose}>
@@ -81,11 +150,97 @@ export function WritingFeedbackModal({ notification, onClose }) {
                 "El docente ha revisado tu informe de escritura."}
             </div>
           </div>
+
+          {/* SECCIÓN 4: PANEL DE CORRECCIÓN Y REENVÍO (SI SE ACTIVA) */}
+          {isEditing && (
+            <div className="feedback-revision-box animate-fadeIn">
+              <div className="section-title-bar" style={{ marginBottom: 10 }}>
+                <span className="section-icon">✍️</span>
+                <h4 style={{ color: "#ffd166" }}>
+                  Bandeja de Corrección y Mejora de Redacción:
+                </h4>
+              </div>
+              <p style={{ fontSize: "0.84rem", color: "#b8fff9", margin: "0 0 10px 0" }}>
+                Aplica las recomendaciones del profesor y reenvía tu texto para subir tu nota.
+              </p>
+
+              {errorMsg && (
+                <div className="feedback-revision-error">
+                  ⚠️ {errorMsg}
+                </div>
+              )}
+
+              <form onSubmit={handleResubmit}>
+                <textarea
+                  value={revisedText}
+                  onChange={(e) => setRevisedText(e.target.value)}
+                  disabled={loading}
+                  rows={4}
+                  className="feedback-revision-textarea"
+                  placeholder="Corrige tu redacción en inglés aquí..."
+                />
+
+                <div className="feedback-revision-counter">
+                  <span>
+                    {isValidLength ? (
+                      <strong style={{ color: "#2ec4b6" }}>✓ Longitud suficiente ({revisedText.trim().length} caracteres)</strong>
+                    ) : (
+                      <span style={{ color: "#ffd166" }}>⏳ Mínimo requerido: {minChars} caracteres (Faltan {charsRemaining})</span>
+                    )}
+                  </span>
+                  <span>LOG: {revisedText.trim().length} CHR</span>
+                </div>
+
+                <div className="feedback-revision-actions">
+                  <button
+                    type="button"
+                    className="btn-revision-cancel"
+                    onClick={() => setIsEditing(false)}
+                    disabled={loading}
+                  >
+                    ← Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-revision-submit"
+                    disabled={loading || !isValidLength}
+                  >
+                    {loading ? "📡 Transmitiendo..." : "✉️ Reenviar al Profesor para Recalificar ➔"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* CONFIRMACIÓN DE REENVÍO EXITOSO */}
+          {successMsg && (
+            <div className="feedback-success-banner animate-scaleUp">
+              <span style={{ fontSize: "1.8rem" }}>📬</span>
+              <div>
+                <h4 style={{ margin: "0 0 4px 0", color: "#2ec4b6", fontSize: "1rem" }}>
+                  ¡NUEVA VERSIÓN TRANSMITIDA AL PROFESOR!
+                </h4>
+                <p style={{ margin: 0, fontSize: "0.85rem", color: "#e6f7ff" }}>
+                  Tu redacción corregida ya está en la bandeja del docente para una nueva evaluación.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        <button className="btn-understand-feedback" onClick={onClose}>
-          ¡Entendido, Capitán! 🚀
-        </button>
+        {/* ACCIONES DEL MODAL */}
+        {!isEditing && (
+          <div className="feedback-modal-actions">
+            <button className="btn-understand-feedback" onClick={onClose}>
+              ¡Entendido, Capitán! 🚀
+            </button>
+            {!successMsg && (
+              <button className="btn-retry-writing-feedback" onClick={handleStartEdit}>
+                ✏️ Corregir Mi Redacción y Reenviar ➔
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -93,6 +248,7 @@ export function WritingFeedbackModal({ notification, onClose }) {
 
 WritingFeedbackModal.propTypes = {
   notification: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     title: PropTypes.string,
     created_at: PropTypes.string,
     score: PropTypes.number,
@@ -101,6 +257,7 @@ WritingFeedbackModal.propTypes = {
     original_text: PropTypes.string,
     annotated_text: PropTypes.string,
     corrected_text: PropTypes.string,
+    day_number: PropTypes.number,
   }),
   onClose: PropTypes.func.isRequired,
 };

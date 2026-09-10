@@ -7,8 +7,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: #020108;
   display: flex;
   align-items: center;
@@ -22,8 +24,8 @@
   position: relative;
   width: 100vw;
   height: calc(100vw * (9 / 16));
-  max-width: calc(100vh * (16 / 9));
-  max-height: 100vh;
+  max-width: calc(min(100vh, 100dvh) * (16 / 9));
+  max-height: min(100vh, 100dvh);
   aspect-ratio: 16 / 9;
   background-image: url('/src/assets/amongus/Nave_dentro_16_9.jpg');
   background-size: 100% 100%;

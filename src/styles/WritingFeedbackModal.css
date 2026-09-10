@@ -2,34 +2,40 @@
 
 .feedback-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
+  height: 100dvh;
   background: rgba(2, 6, 20, 0.85);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 5000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: clamp(6px, 1.8vh, 18px);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .feedback-modal-card {
   background: linear-gradient(135deg, rgba(10, 25, 50, 0.98) 0%, rgba(5, 12, 28, 0.99) 100%);
   border: 2px solid #ffd166;
-  border-radius: 28px;
-  padding: 28px 34px;
+  border-radius: 24px;
+  padding: clamp(14px, 2.8vh, 26px) clamp(16px, 3vw, 32px);
   max-width: 640px;
   width: 100%;
-  max-height: 90vh;
+  max-height: min(94vh, 94dvh);
   display: flex;
   flex-direction: column;
   color: #e6f7ff;
   box-shadow: 0 0 50px rgba(255, 209, 102, 0.4), inset 0 0 20px rgba(255, 209, 102, 0.15);
   position: relative;
   animation: feedbackPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 @keyframes feedbackPopIn {
@@ -93,20 +99,20 @@
 .feedback-score-hero {
   background: rgba(255, 209, 102, 0.08);
   border: 1.5px dashed #ffd166;
-  border-radius: 18px;
-  padding: 12px 16px;
+  border-radius: 16px;
+  padding: clamp(6px, 1.4vh, 12px) clamp(10px, 2vw, 16px);
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: clamp(8px, 1.6vh, 14px);
   flex-shrink: 0;
 }
 
 .score-hero-label {
   display: block;
-  font-size: 0.76rem;
+  font-size: clamp(0.7rem, 1.3vh, 0.76rem);
   font-weight: 800;
   color: #ffd166;
   letter-spacing: 0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .hero-score-badge {
@@ -117,17 +123,17 @@
 }
 
 .score-star {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vh, 2rem);
 }
 
 .score-num {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 3.8vh, 2.5rem);
   font-weight: 900;
   color: #ffd166;
 }
 
 .score-max {
-  font-size: 1.2rem;
+  font-size: clamp(0.95rem, 2vh, 1.2rem);
   font-weight: 800;
   color: #e6f7ff;
 }
@@ -135,11 +141,24 @@
 /* SCROLLABLE FEEDBACK BODY */
 .feedback-modal-body {
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 6px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(8px, 1.6vh, 14px);
+  flex: 1 1 auto;
+  min-height: 0; /* CRITICO para scroll sin desbordes */
+  scrollbar-width: thin;
+  scrollbar-color: #ffd166 rgba(5, 15, 30, 0.6);
+}
+
+.feedback-modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+.feedback-modal-body::-webkit-scrollbar-thumb {
+  background: #ffd166;
+  border-radius: 3px;
 }
 
 .feedback-section {
@@ -254,23 +273,235 @@
   white-space: pre-wrap;
 }
 
+/* ACTIONS WRAPPER - STICKY AT BOTTOM */
+.feedback-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 209, 102, 0.2);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  position: sticky;
+  bottom: 0;
+  background: rgba(6, 15, 32, 0.95);
+  z-index: 10;
+}
+
 /* UNDERSTAND BUTTON */
 .btn-understand-feedback {
-  width: 100%;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
-  border: none;
-  border-radius: 16px;
-  color: #0d1b2a;
-  font-weight: 900;
-  font-size: 1rem;
+  flex: 1;
+  min-width: 150px;
+  padding: clamp(9px, 1.6vh, 13px) 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  color: #e6f7ff;
+  font-weight: 800;
+  font-size: clamp(0.85rem, 1.6vh, 0.95rem);
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 209, 102, 0.5);
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 
 .btn-understand-feedback:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(255, 209, 102, 0.8);
 }
+
+/* RETRY WRITING BUTTON */
+.btn-retry-writing-feedback {
+  flex: 1.3;
+  min-width: 180px;
+  padding: clamp(9px, 1.6vh, 13px) 18px;
+  background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
+  border: none;
+  border-radius: 14px;
+  color: #0d1b2a;
+  font-weight: 900;
+  font-size: clamp(0.88rem, 1.7vh, 0.98rem);
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 209, 102, 0.5);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-retry-writing-feedback:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(255, 209, 102, 0.85);
+}
+
+/* REVISION BOX IN-SITU */
+.feedback-revision-box {
+  background: linear-gradient(135deg, rgba(10, 30, 20, 0.85), rgba(5, 20, 15, 0.95));
+  border: 2px solid #2ec4b6;
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: 0 0 25px rgba(46, 196, 182, 0.25);
+}
+
+.feedback-revision-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(2, 10, 8, 0.9);
+  border: 1.5px solid #2ec4b6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #b8fff9;
+  font-family: 'Inter', monospace, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 110px;
+}
+
+.feedback-revision-textarea:focus {
+  outline: none;
+  border-color: #ffd166;
+  box-shadow: 0 0 15px rgba(255, 209, 102, 0.4);
+}
+
+.feedback-revision-counter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  margin-top: 6px;
+  color: #9be6df;
+}
+
+.feedback-revision-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-revision-cancel {
+  padding: 10px 18px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #cbd5e0;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-revision-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.btn-revision-submit {
+  padding: 11px 22px;
+  background: linear-gradient(135deg, #2ec4b6, #208b81);
+  border: none;
+  color: #002427;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(46, 196, 182, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-revision-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(46, 196, 182, 0.7);
+}
+
+.btn-revision-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.feedback-revision-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ff8080;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.feedback-success-banner {
+  background: rgba(46, 196, 182, 0.15);
+  border: 2px solid #2ec4b6;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 0 20px rgba(46, 196, 182, 0.3);
+}
+
+/* MEDIA QUERIES PARA LAPTOPS Y ALTURAS REDUCIDAS */
+@media (max-height: 750px) {
+  .feedback-modal-card {
+    padding: 12px 18px;
+    border-radius: 18px;
+  }
+  .feedback-modal-header h2 {
+    font-size: 1.15rem;
+    margin: 4px 0 2px 0;
+  }
+  .feedback-modal-header {
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+  .feedback-score-hero {
+    padding: 4px 10px;
+    margin-bottom: 8px;
+  }
+  .feedback-annotated-box,
+  .feedback-corrected-box,
+  .feedback-comments-box {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* MEDIA QUERIES PARA TELÉFONOS Y PANTALLAS ESTRECHAS (<600px & <480px) */
+@media (max-width: 600px) {
+  .feedback-modal-card {
+    padding: 12px 14px;
+    border-radius: 16px;
+    width: 96vw;
+  }
+
+  .feedback-close-btn {
+    top: 10px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .feedback-modal-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .btn-understand-feedback,
+  .btn-retry-writing-feedback {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .feedback-revision-actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .btn-revision-cancel,
+  .btn-revision-submit {
+    width: 100%;
+  }
+}
+

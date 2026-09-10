@@ -1769,12 +1769,13 @@ button:active {
   background: radial-gradient(ellipse at 50% 50%, #0b132b 0%, #070d1e 60%, #02050b 100%) !important;
   position: relative;
   overflow-x: hidden;
-  max-width: none !important;
-  width: 100vw;
+  max-width: 100% !important;
+  width: 100% !important;
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 !important;
   border-radius: 0 !important;
-  padding: 40px 20px;
+  padding: clamp(16px, 3vh, 36px) clamp(12px, 3vw, 24px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -2006,20 +2007,21 @@ button:active {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  height: 420px;
+  height: clamp(210px, 34vh, 290px);
   background: radial-gradient(circle, #101622 0%, #080b11 100%);
-  border: 4px solid #2e3b52;
+  border: 3px solid #2e3b52;
   border-radius: 12px;
-  padding: 25px 20px;
+  padding: clamp(10px, 1.8vh, 18px) clamp(10px, 2vw, 18px);
   position: relative;
   box-shadow: inset 0 0 35px rgba(0,0,0,0.95), 0 0 15px rgba(0,0,0,0.5);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .wire-minigame-deck::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; height: 10px;
+  top: 0; left: 0; right: 0; height: 8px;
   background: repeating-linear-gradient(-45deg, #ffd166, #ffd166 10px, #220 10px, #220 20px);
   opacity: 0.85;
   border-bottom: 2px solid #2e3b52;
@@ -2037,26 +2039,28 @@ button:active {
 .wire-node {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 1.2vw, 10px);
 }
 
 .wire-port {
-  width: 28px;
-  height: 28px;
+  width: clamp(22px, 3.4vh, 28px);
+  height: clamp(22px, 3.4vh, 28px);
   border-radius: 50%;
-  border: 4px solid #000;
+  border: 3px solid #000;
   cursor: pointer;
   position: relative;
   z-index: 12;
   transition: all 0.2s ease;
   box-shadow: 0 0 10px rgba(0,0,0,0.85), inset 0 0 6px rgba(255,255,255,0.4);
+  flex-shrink: 0;
 }
 
 .wire-port::after {
   content: "";
   position: absolute;
   top: 50%; left: 50%;
-  width: 8px; height: 8px;
+  width: clamp(6px, 1vh, 8px);
+  height: clamp(6px, 1vh, 8px);
   background: #333;
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -2070,21 +2074,22 @@ button:active {
 }
 
 .wire-port:hover {
-  transform: scale(1.25);
+  transform: scale(1.22);
   box-shadow: 0 0 12px rgba(184, 255, 249, 0.6);
 }
 
 .wire-label {
-  padding: 8px 12px;
+  padding: clamp(4px, 0.8vh, 7px) clamp(8px, 1.4vw, 12px);
   background: rgba(27, 38, 59, 0.85);
   border: 1px solid rgba(184, 255, 249, 0.25);
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: clamp(0.78rem, 1.7vh, 0.92rem);
   color: #e6f7ff;
   font-weight: 600;
-  max-width: 160px;
+  max-width: clamp(120px, 32vw, 160px);
   white-space: normal;
   text-align: left;
+  line-height: 1.25;
 }
 
 .wire-svg-canvas {
@@ -2102,13 +2107,14 @@ button:active {
   background: radial-gradient(circle, rgba(255, 209, 102, 0.1) 0%, rgba(8, 12, 20, 0.85) 100%);
   border: 2px solid rgba(255, 209, 102, 0.25);
   border-radius: 15px;
-  padding: 25px;
-  min-height: 160px;
+  padding: clamp(10px, 2vh, 20px);
+  min-height: clamp(85px, 14vh, 130px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 20px rgba(255, 209, 102, 0.05), inset 0 0 25px rgba(0,0,0,0.8);
+  box-sizing: border-box;
 }
 
 .fuel-slot-active {
@@ -2122,17 +2128,17 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 25px;
-  margin: 30px 0;
+  gap: clamp(10px, 2vw, 20px);
+  margin: clamp(10px, 2vh, 22px) 0;
   flex-wrap: wrap;
 }
 
 .shield-node {
-  width: 70px;
-  height: 70px;
+  width: clamp(52px, 8vh, 68px);
+  height: clamp(52px, 8vh, 68px);
   background: rgba(255, 107, 107, 0.1);
-  border: 3px solid #ff6b6b;
-  border-radius: 15px;
+  border: 2.5px solid #ff6b6b;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2504,5 +2510,175 @@ html {
   100% {
     opacity: 1;
     transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   SISTEMA UNIVERSAL DE RESPONSIVIDAD Y PREVENCIÓN DE CORTES (UI/UX)
+   Asegura adaptación a cualquier aspect-ratio, resolución y altura de pantalla
+   ========================================================================== */
+
+/* 1. Modales y Subventanas Universales */
+.modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(6px, 1.8vh, 16px) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  z-index: 10000 !important;
+}
+
+.modal-card {
+  max-height: min(94vh, 94dvh) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Permitir que hijos flexibles dentro de cards de modal tengan scroll natural sin cortes */
+.modal-card > form,
+.modal-card > .modal-body,
+.modal-card > .custom-scroll {
+  min-height: 0 !important;
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+}
+
+/* 2. Glass Consoles y Paneles de Juego Responsivos */
+.glass-console.auth-card {
+  box-sizing: border-box !important;
+  max-width: min(96vw, 760px) !important;
+  padding: clamp(10px, 2vh, 20px) clamp(12px, 2.5vw, 24px) !important;
+  margin: 0 auto !important;
+}
+
+/* 3. Media Queries de Altura para Laptops Estándar (1366x768, 1080p escalados, Meet/Zoom banners) */
+@media (max-height: 760px) {
+  .panel-title-row {
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
+  }
+  .panel-title-row h2 {
+    font-size: 1.15rem !important;
+  }
+  .dashboard-kicker {
+    font-size: 0.7rem !important;
+  }
+  .glass-console.auth-card {
+    padding: 8px 12px !important;
+  }
+  .modal-card {
+    padding: clamp(12px, 2vh, 20px) !important;
+    border-radius: 18px !important;
+  }
+}
+
+@media (max-height: 620px) {
+  .panel-title-row {
+    margin-bottom: 4px !important;
+    padding-bottom: 4px !important;
+  }
+  .panel-title-row h2 {
+    font-size: 1.05rem !important;
+  }
+  .glass-console.auth-card {
+    padding: 6px 10px !important;
+  }
+  .modal-card {
+    padding: 10px 14px !important;
+  }
+}
+
+/* 4. Media Queries de Ancho para Teléfonos y Pantallas Móviles (<600px & <480px) */
+@media (max-width: 600px) {
+  .modal-card {
+    width: 96vw !important;
+    max-width: 100% !important;
+    max-height: min(88vh, 88dvh) !important;
+    border-radius: 16px !important;
+    padding: 10px 10px !important;
+  }
+
+  .glass-console.auth-card {
+    width: 96vw !important;
+    padding: 10px 12px !important;
+  }
+
+  .entry-card {
+    padding: 18px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .panel-header {
+    margin-bottom: 12px !important;
+  }
+
+  .home-title-comic {
+    font-size: 2.2rem !important;
+    -webkit-text-stroke: 1.5px #000000 !important;
+  }
+
+  .role-buttons {
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .role-buttons button {
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .store-grid,
+  .inventory-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  .form-actions {
+    flex-direction: column !important;
+    gap: 6px !important;
+    margin-top: 10px !important;
+  }
+
+  .form-actions button {
+    width: 100% !important;
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-card {
+    width: 98vw !important;
+    padding: 8px 6px !important;
+  }
+
+  .panel-header h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .tagline {
+    font-size: 0.8rem !important;
+  }
+
+  .teacher-panel, .student-panel, .created-room, .in-room {
+    padding: 10px 8px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .teacher-panel input, .student-panel input, .room-form input, .student-form select {
+    padding: 8px 10px !important;
+    margin-bottom: 8px !important;
+    font-size: 0.85rem !important;
   }
 }

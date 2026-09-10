@@ -240,15 +240,16 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
       position: "fixed",
       top: 0,
       left: 0,
-      width: "100vw",
-      height: "100vh",
+      width: "100%",
+      height: "100dvh",
+      minHeight: "100vh",
       background: "radial-gradient(circle at center, rgba(13, 27, 42, 0.95), rgba(3, 10, 20, 0.99))",
       backdropFilter: "blur(12px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10000,
-      padding: 16
+      padding: "clamp(6px, 1.5vh, 16px)"
     }}>
       <div className="modal-card animate-scaleUp" style={{
         background: "linear-gradient(150deg, #0d1b2a, #050c18)",
@@ -257,9 +258,9 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         padding: 0,
         maxWidth: 1080,
         width: "95%",
-        maxHeight: "calc(100vh - 32px)",
+        maxHeight: "min(94vh, 94dvh)",
         height: "min(92vh, 880px)",
-        minHeight: "min(540px, 86vh)",
+        minHeight: 0,
         display: "flex",
         flexDirection: "column",
         boxShadow: "0 0 55px rgba(255, 209, 102, 0.4), inset 0 0 25px rgba(255, 209, 102, 0.05)",
@@ -512,6 +513,7 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
         {/* CONTENIDOR DEL APARTADO SELECCIONADO */}
         <div style={{
           flex: 1,
+          minHeight: 0,
           overflowY: "auto",
           padding: "0 26px 18px 26px",
           display: "flex",

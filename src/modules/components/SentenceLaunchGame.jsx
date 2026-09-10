@@ -635,31 +635,41 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   return (
-    <div className="glass-console auth-card panel-large animate-fadeIn" style={{ maxWidth: 740, width: "100%", padding: "16px 20px", position: "relative", margin: "auto" }}>
+    <div 
+      className="glass-console auth-card panel-large animate-fadeIn" 
+      style={{ 
+        maxWidth: 740, 
+        width: "100%", 
+        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
+        position: "relative", 
+        margin: "0 auto",
+        boxSizing: "border-box" 
+      }}
+    >
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
       {!hideHeader && (
-        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: 10 }}>
+        <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "0.78rem", fontWeight: "bold" }}>
+            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
               Etapa 1: Cableado de Vocabulario Espacial
             </span>
-            <h2 style={{ margin: "3px 0 0 0", color: "#b8fff9", fontSize: "1.4rem" }}>{activity?.title || "Reconexión de Energía Espacial"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Reconexión de Energía Espacial"}</h2>
           </div>
-          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "6px 14px" }}>
+          <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Cerrar X
           </button>
         </div>
       )}
 
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
           <span>Fusibles de Red: {currentQIndex + 1} de {questions.length}</span>
           <span>Energía Restablecida: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
         </div>
 
-        <h3 style={{ color: "#ffd166", marginBottom: 10, fontSize: "0.95rem", textAlign: "left", lineHeight: "1.4" }}>
+        <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>
           ⚡ Instructions / Instrucciones: Une los cables de cada palabra en Inglés (izquierda) con su significado correcto en Español (derecha) para restablecer la corriente del cohete.
         </h3>
 
@@ -668,7 +678,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
           id="wire-canvas-container" 
           ref={containerRef} 
           className="wire-minigame-deck"
-          style={{ maxWidth: "480px", margin: "10px auto", padding: "12px 14px", minHeight: "210px" }}
+          style={{ maxWidth: "480px", margin: "6px auto" }}
         >
           {/* SVG Canvas to render cables */}
           <svg className="wire-svg-canvas">
@@ -877,10 +887,10 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
         {/* Normal Action buttons */}
         {!showSolution && (
-          <div style={{ display: "flex", gap: 15, marginTop: 14 }}>
+          <div style={{ display: "flex", gap: "clamp(8px, 1.5vw, 15px)", marginTop: "clamp(6px, 1.4vh, 12px)" }}>
             <button 
               className="btn-cancel" 
-              style={{ flex: 1, margin: 0, padding: "10px 16px" }} 
+              style={{ flex: 1, margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.82rem, 1.6vh, 0.95rem)", borderRadius: 10 }} 
               onClick={() => setConnections({})}
               disabled={Object.keys(connections).length === 0 || isSuccess}
             >
@@ -888,7 +898,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
             </button>
             <button 
               className="btn-create" 
-              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0, padding: "10px 16px" }} 
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.85rem, 1.6vh, 0.98rem)", fontWeight: "900", borderRadius: 10 }} 
               onClick={handleVerify}
               disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
             >
@@ -899,25 +909,25 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
         {/* Feedback Mode Panel with Manual Student Control Button */}
         {showSolution && (
-          <div style={{ background: "rgba(239, 68, 68, 0.15)", border: "1.5px solid #ef4444", borderRadius: "16px", padding: "20px", marginTop: "20px", textAlign: "center" }} className="animate-fadeIn">
-            <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "1.15rem", marginBottom: "6px" }}>
+          <div style={{ background: "rgba(239, 68, 68, 0.15)", border: "1.5px solid #ef4444", borderRadius: "14px", padding: "clamp(10px, 2vh, 16px)", marginTop: "clamp(8px, 1.5vh, 14px)", textAlign: "center" }} className="animate-fadeIn">
+            <div style={{ color: "#ef4444", fontWeight: "900", fontSize: "clamp(0.95rem, 1.8vh, 1.1rem)", marginBottom: "4px" }}>
               💥 ¡CONEXIÓN INCORRECTA REGISTRADA! (-0.75 pts)
             </div>
-            <p style={{ color: "#e6f7ff", fontSize: "0.95rem", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+            <p style={{ color: "#e6f7ff", fontSize: "clamp(0.78rem, 1.5vh, 0.88rem)", margin: "0 0 clamp(8px, 1.5vh, 12px) 0", lineHeight: "1.4" }}>
               Las conexiones en <strong style={{ color: "#ef4444" }}>rojo (❌)</strong> representan tu intento incorrecto. Las líneas punteadas en <strong style={{ color: "#10b981" }}>verde (✔️)</strong> indican la traducción correcta. Tómate el tiempo necesario para revisarlas.
             </p>
             <button
               onClick={handleNextRound}
               style={{
-                padding: "16px 36px",
+                padding: "clamp(8px, 1.6vh, 12px) clamp(16px, 3vw, 28px)",
                 background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
                 border: "none",
-                borderRadius: "14px",
+                borderRadius: "12px",
                 color: "#0d1b2a",
                 fontWeight: "900",
-                fontSize: "1.1rem",
+                fontSize: "clamp(0.85rem, 1.7vh, 1rem)",
                 cursor: "pointer",
-                boxShadow: "0 0 25px rgba(255, 209, 102, 0.6)",
+                boxShadow: "0 0 20px rgba(255, 209, 102, 0.5)",
                 transition: "all 0.2s ease"
               }}
             >

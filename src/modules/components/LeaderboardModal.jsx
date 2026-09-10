@@ -50,24 +50,26 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
       position: "fixed",
       top: 0,
       left: 0,
-      width: "100vw",
-      height: "100vh",
+      width: "100%",
+      height: "100dvh",
+      minHeight: "100vh",
       background: "rgba(3, 15, 23, 0.88)",
       backdropFilter: "blur(10px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       zIndex: 10000,
-      padding: 20
+      padding: "clamp(8px, 1.8vh, 20px)"
     }}>
       <div className="modal-card animate-scaleUp" style={{
         background: "linear-gradient(145deg, #0d2833, #051820)",
         border: "2px solid #ffd166",
         borderRadius: 24,
-        padding: 30,
+        padding: "clamp(16px, 2.5vh, 28px)",
         maxWidth: 600,
         width: "100%",
-        maxHeight: "90vh",
+        maxHeight: "min(92vh, 92dvh)",
+        minHeight: 0,
         display: "flex",
         flexDirection: "column",
         boxShadow: "0 0 50px rgba(255, 209, 102, 0.3)",
@@ -121,7 +123,7 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
             Aún no hay reclutas registrados en esta sala.
           </div>
         ) : (
-          <div style={{ overflowY: "auto", paddingTop: 18, paddingRight: 6 }}>
+          <div style={{ overflowY: "auto", paddingTop: 18, paddingRight: 6, flex: "1 1 auto", minHeight: 0 }}>
             {/* TOP 3 PODIUM */}
             {top3.length > 0 && (
               <div style={{

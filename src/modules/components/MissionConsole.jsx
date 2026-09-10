@@ -18,6 +18,7 @@ const missionMeta = [
 export default function MissionConsole({
   dayActivities,
   completedList,
+  onStartGame,
 }) {
   const [selectedInfo, setSelectedInfo] = useState(null);
 
@@ -148,23 +149,47 @@ export default function MissionConsole({
               </p>
             </div>
 
-            <button
-              onClick={() => setSelectedInfo(null)}
-              style={{
-                marginTop: "20px",
-                width: "100%",
-                padding: "12px",
-                background: "linear-gradient(135deg, #2ec4b6, #208b81)",
-                border: "none",
-                borderRadius: "14px",
-                color: "#ffffff",
-                fontWeight: "bold",
-                fontSize: "0.95rem",
-                cursor: "pointer"
-              }}
-            >
-              Entendido 🚀
-            </button>
+            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+              <button
+                onClick={() => setSelectedInfo(null)}
+                style={{
+                  flex: 1,
+                  padding: "12px",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: "14px",
+                  color: "#cbd5e0",
+                  fontWeight: "bold",
+                  fontSize: "0.95rem",
+                  cursor: "pointer"
+                }}
+              >
+                Cerrar
+              </button>
+              {onStartGame && (
+                <button
+                  onClick={() => {
+                    const act = selectedInfo.act;
+                    setSelectedInfo(null);
+                    onStartGame(act);
+                  }}
+                  style={{
+                    flex: 1.6,
+                    padding: "12px",
+                    background: "linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%)",
+                    border: "none",
+                    borderRadius: "14px",
+                    color: "#0d1b2a",
+                    fontWeight: "900",
+                    fontSize: "0.95rem",
+                    cursor: "pointer",
+                    boxShadow: "0 0 15px rgba(255, 209, 102, 0.5)"
+                  }}
+                >
+                  {selectedInfo.meta.name === "Writing Lab" ? "✍️ Redactar / Reenviar Writing ➔" : "🚀 Jugar Esta Etapa ➔"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -173,6 +198,7 @@ export default function MissionConsole({
 }
 
 MissionConsole.propTypes = {
-  dayActivities: PropTypes.array.isRequired,
-  completedList: PropTypes.object.isRequired,
+  dayActivities: PropTypes.array,
+  completedList: PropTypes.object,
+  onStartGame: PropTypes.func,
 };
