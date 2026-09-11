@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, getAccessToken } from "../utils/apiClient";
 import StoreModal from "../components/StoreModal";
 import "../../styles/Panel.css";
 
@@ -9,7 +10,7 @@ export default function AvatarCustomizer() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const token = localStorage.getItem("basescrib_token") || "";
+  const token = getAccessToken();
 
   useEffect(() => {
     if (!token) {
@@ -20,8 +21,7 @@ export default function AvatarCustomizer() {
 
     const fetchProfile = async () => {
       try {
-        const headers = { Authorization: `Bearer ${token}` };
-        const meRes = await fetch(`${API_BASE}/users/me/`, { headers });
+        const meRes = await fetchWithAuth(`${API_BASE}/users/me/`);
         if (!meRes.ok) throw new Error("Token inválido");
         const userData = await meRes.json();
         setUser(userData);

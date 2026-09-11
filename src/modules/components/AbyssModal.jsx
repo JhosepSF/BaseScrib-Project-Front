@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { soundFx } from "../utils/soundEffects";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, getAccessToken } from "../utils/apiClient";
 
 export default function AbyssModal({ user, token, onClose, onUserUpdated, selectedDay = 1 }) {
   const [floor, setFloor] = useState(selectedDay);
@@ -32,8 +33,7 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
   }, [selectedDay]);
 
   const fetchAbyssDayData = (dayNum) => {
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    fetch(`${API_BASE}/abyss-levels/by_day/?day=${dayNum}`, { headers })
+    fetchWithAuth(`${API_BASE}/abyss-levels/by_day/?day=${dayNum}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.questions && data.questions.length > 0) {
@@ -188,12 +188,12 @@ export default function AbyssModal({ user, token, onClose, onUserUpdated, select
       setRunStarsEarned(localStars);
 
       // Submit result to backend for Genshin star calculations and claimed coins
-      if (token) {
-        fetch(`${API_BASE}/abyss-levels/submit_result/`, {
+      const currentToken = token || getAccessToken();
+      if (currentToken) {
+        fetchWithAuth(`${API_BASE}/abyss-levels/submit_result/`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             day_number: floor,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { API_BASE } from "../../config";
+import { fetchWithAuth } from "../utils/apiClient";
 import AvatarFrame from "./AvatarFrame";
 
 export default function LeaderboardModal({ roomId, token, onClose }) {
@@ -9,15 +10,13 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!roomId || !token) return;
+    if (!roomId) return;
 
     const fetchLeaderboard = async () => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`${API_BASE}/rooms/${roomId}/leaderboard/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await fetchWithAuth(`${API_BASE}/rooms/${roomId}/leaderboard/`);
 
         if (!res.ok) {
           throw new Error("Error al obtener la tabla de clasificación.");
@@ -34,7 +33,7 @@ export default function LeaderboardModal({ roomId, token, onClose }) {
     };
 
     fetchLeaderboard();
-  }, [roomId, token]);
+  }, [roomId]);
 
   const top3 = ranking.slice(0, 3);
 

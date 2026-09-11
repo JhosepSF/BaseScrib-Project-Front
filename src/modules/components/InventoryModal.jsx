@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { soundFx } from "../utils/soundEffects";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, getAccessToken } from "../utils/apiClient";
 import AvatarShowcase from "./AvatarShowcase";
 import AvatarFrame from "./AvatarFrame";
 
@@ -169,7 +170,8 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
 
     localStorage.setItem("basescrib_equipped_pet", newPet);
 
-    if (!token) {
+    const currentToken = token || getAccessToken();
+    if (!currentToken) {
       if (onUserUpdated) {
         onUserUpdated({
           ...user,
@@ -189,11 +191,10 @@ export default function InventoryModal({ user, token, onClose, onUserUpdated }) 
     }
 
     try {
-      const res = await fetch(`${API_BASE}/users/select_outfit/`, {
+      const res = await fetchWithAuth(`${API_BASE}/users/select_outfit/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           outfit_id: newOutfit,

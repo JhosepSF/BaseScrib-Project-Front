@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, getAccessToken } from "../utils/apiClient";
 import { ComicGame } from "./ComicGame";
 import { SentenceLaunchGame } from "./SentenceLaunchGame";
 import { WordRecoveryGame } from "./WordRecoveryGame";
@@ -292,7 +293,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   };
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("basescrib_token") || "";
+  const token = getAccessToken();
 
   // Sparky phrases rotation
   useEffect(() => {
@@ -323,16 +324,14 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
 
     const fetchData = async () => {
       try {
-        const headers = { Authorization: `Bearer ${token}` };
-
         // Fetch User profile to get latest coins/xp
-        const userRes = await fetch(`${API_BASE}/users/me/`, { headers });
+        const userRes = await fetchWithAuth(`${API_BASE}/users/me/`);
         if (!userRes.ok) throw new Error("Error cargando perfil");
         const userData = await userRes.json();
         setUser(userData);
 
         // Fetch Activities
-        const actRes = await fetch(`${API_BASE}/activities/`, { headers });
+        const actRes = await fetchWithAuth(`${API_BASE}/activities/`);
         if (!actRes.ok) throw new Error("Error cargando actividades");
         const actData = await actRes.json();
 
@@ -341,7 +340,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
         setActivities(sortedActs);
 
         // Check writing submissions from backend to see if Activity 5 is submitted
-        const subRes = await fetch(`${API_BASE}/writing-submissions/`, { headers });
+        const subRes = await fetchWithAuth(`${API_BASE}/writing-submissions/`);
         let writingSubmitted = false;
         if (subRes.ok) {
           const subData = await subRes.json();
@@ -375,11 +374,10 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     const duration = gameStartTime ? (Date.now() - gameStartTime) / 1000 : 30.0;
     try {
       // 1. Award rewards in backend
-      const res = await fetch(`${API_BASE}/users/award_rewards/`, {
+      const res = await fetchWithAuth(`${API_BASE}/users/award_rewards/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ xp: xpEarned, coins: coinsEarned }),
       });
@@ -396,14 +394,13 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       }
 
       // 2. Track Event in backend
-      await fetch(`${API_BASE}/tracking-events/`, {
+      await fetchWithAuth(`${API_BASE}/tracking-events/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          student: user.id,
+          student: user?.id,
           event_type: "activity_complete",
           metadata: { activity_id: activityId, xp: xpEarned, coins: coinsEarned },
           duration: duration
@@ -411,14 +408,13 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       });
 
       // 3. Send EngagementMetric to backend (so it calculates on the Teacher Dashboard!)
-      await fetch(`${API_BASE}/engagement-metrics/`, {
+      await fetchWithAuth(`${API_BASE}/engagement-metrics/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          student: user.id,
+          student: user?.id,
           metric: "time_on_task",
           value: duration
         }),
@@ -427,7 +423,9 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
       // 4. Update local state and localStorage
       const updatedMap = { ...completedList, [activityId]: true };
       setCompletedList(updatedMap);
-      localStorage.setItem(`completed_acts_${user.id}`, JSON.stringify(updatedMap));
+      if (user?.id) {
+        localStorage.setItem(`completed_acts_${user.id}`, JSON.stringify(updatedMap));
+      }
 
       // Close game
       setActiveGame(null);

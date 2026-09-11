@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 import { API_BASE } from "../../config";
+import { fetchWithAuth } from "../utils/apiClient";
 import { renderAnnotatedText, stripHtmlMarks } from "../utils/textAnnotations";
 import "../../styles/TeacherWritingInbox.css";
 
@@ -21,9 +22,7 @@ export function TeacherWritingInbox({ token }) {
   const fetchSubmissions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/writing-submissions/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetchWithAuth(`${API_BASE}/writing-submissions/`);
       if (res.ok) {
         const data = await res.json();
         setSubmissions(data);
@@ -33,7 +32,7 @@ export function TeacherWritingInbox({ token }) {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchSubmissions();
@@ -104,11 +103,10 @@ export function TeacherWritingInbox({ token }) {
     setStatusMsg("");
 
     try {
-      const res = await fetch(`${API_BASE}/writing-submissions/${selectedSubmission.id}/mark_reviewed/`, {
+      const res = await fetchWithAuth(`${API_BASE}/writing-submissions/${selectedSubmission.id}/mark_reviewed/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           reviewed: true,

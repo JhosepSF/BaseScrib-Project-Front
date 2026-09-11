@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { API_BASE } from "../../config";
+import { fetchWithAuth } from "../utils/apiClient";
 
 export default function PrePostTestModal({ testType, user, token, onClose, onCompleted }) {
   const isPre = testType === "pre";
@@ -61,11 +62,10 @@ export default function PrePostTestModal({ testType, user, token, onClose, onCom
     setError("");
 
     try {
-      const res = await fetch(`${API_BASE}/pre-post-tests/`, {
+      const res = await fetchWithAuth(`${API_BASE}/pre-post-tests/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           student: user.id,

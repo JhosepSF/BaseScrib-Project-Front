@@ -8,7 +8,6 @@ export default defineConfig({
     host: true,
     allowedHosts: [
       'basescrib-project-front.onrender.com',
-      'ale-n7o2.onrender.com',
       '.onrender.com',
       'localhost',
       '127.0.0.1'

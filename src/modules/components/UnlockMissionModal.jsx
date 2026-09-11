@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { API_BASE } from "../../config";
+import { fetchWithAuth } from "../utils/apiClient";
 
 export default function UnlockMissionModal({ mission, token, onClose, onUnlocked }) {
   const [code, setCode] = useState("");
@@ -16,11 +17,10 @@ export default function UnlockMissionModal({ mission, token, onClose, onUnlocked
     setSuccess("");
 
     try {
-      const res = await fetch(`${API_BASE}/missions/${mission.id}/validate_code/`, {
+      const res = await fetchWithAuth(`${API_BASE}/missions/${mission.id}/validate_code/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ code }),
       });

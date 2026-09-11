@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_BASE } from "../../config";
+import { fetchWithAuth, getAccessToken } from "../utils/apiClient";
 import { soundFx } from "../utils/soundEffects";
 import AvatarShowcase from "./AvatarShowcase";
 import AvatarFrame from "./AvatarFrame";
@@ -197,18 +198,18 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
       if (onUserUpdated) onUserUpdated(updated);
     };
 
-    if (!token) {
+    const currentToken = token || getAccessToken();
+    if (!currentToken) {
       applyLocalUnlock();
       setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE}/users/unlock_outfit/`, {
+      const res = await fetchWithAuth(`${API_BASE}/users/unlock_outfit/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({ outfit_id: outfitId })
       });
@@ -266,7 +267,8 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
     }
 
     try {
-      if (!token) {
+      const currentToken = token || getAccessToken();
+      if (!currentToken) {
         if (onUserUpdated) {
           onUserUpdated({ ...user, ...payload });
         }
@@ -275,11 +277,10 @@ export default function StoreModal({ user, token, onClose, onUserUpdated }) {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/users/select_outfit/`, {
+      const res = await fetchWithAuth(`${API_BASE}/users/select_outfit/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       });

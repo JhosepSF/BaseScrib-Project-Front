@@ -40,7 +40,7 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
     } catch (err) {
       console.error(err);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
@@ -58,9 +58,8 @@ export default function RecluteHUD({ user, onOpenStore, onOpenRank, onOpenEval, 
     // Mark as read in backend
     if (!notif.is_read) {
       try {
-        await fetch(`${API_BASE}/notifications/${notif.id}/mark_read/`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` }
+        await fetchWithAuth(`${API_BASE}/notifications/${notif.id}/mark_read/`, {
+          method: "POST"
         });
         fetchNotifications();
       } catch (err) {
