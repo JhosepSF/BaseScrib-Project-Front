@@ -16,6 +16,11 @@ import bgCabin from "../../../assets/cinematicas/bg_toma6_cabin.jpg";
 import bgMailbox from "../../../assets/cinematicas/bg_toma7_mailbox.jpg";
 import bgConsole from "../../../assets/cinematicas/bg_toma8_console.jpg";
 import bgVallePortales from "../../../assets/cinematicas/bg_toma9_valle_portales.jpg";
+import bgGame1 from "../../../assets/cinematicas/bg_toma10_juego1.jpg";
+import bgGame2 from "../../../assets/cinematicas/bg_toma11_juego2.jpg";
+import bgGame3 from "../../../assets/cinematicas/bg_toma12_juego3.jpg";
+import bgGame4 from "../../../assets/cinematicas/bg_toma13_juego4.jpg";
+import bgGame5 from "../../../assets/cinematicas/bg_toma14_juego5.jpg";
 
 export const SPEAKERS = {
   GENERAL_BRIC: {
@@ -193,35 +198,42 @@ export const MISSION_1_TUTORIAL_SLIDES = [
     id: "m1_intro",
     bg: bgCabin,
     speaker: SPEAKERS.GENERAL_BRIC,
-    en: "Recruit, your Day 1 mission starts now! Topic: Personal Information & Verb to Be. You will complete all 5 daily modules.",
-    es: "¡Recluta, tu misión del Día 1 inicia ahora! Tema: Información Personal y Verbo to Be. Desarrollarás los 5 módulos del día.",
+    en: "Recruit, your Day 1 mission starts now! Topic: Personal Information & Verb to Be. You will complete all 5 daily game modules.",
+    es: "¡Recluta, tu misión del Día 1 inicia ahora! Tema: Información Personal y Verbo to Be. Desarrollarás los 5 módulos de juego del día.",
   },
   {
-    id: "m1_vocab",
-    bg: bgCabin,
+    id: "m1_game1",
+    bg: bgGame1,
     speaker: SPEAKERS.SPARKY,
-    en: "Game 1: VOCABULARY. Learn essential base actions: 'Use computers', 'Read books', 'Write notes', and 'Work in teams'.",
-    es: "Juego 1: VOCABULARIO. Aprende acciones clave de la base: 'Use computers', 'Read books', 'Write notes' y 'Work in teams'.",
+    en: "Game 1: SENTENCE LAUNCH (Grammar). Arrange scrambled word torpedoes to calibrate the launcher and fire photon energy beams!",
+    es: "Juego 1: LANZAMIENTO DE ORACIONES (Gramática). Ordena los bloques de palabras para calibrar los torpedos y disparar rayos de energía fotónica.",
   },
   {
-    id: "m1_reading",
-    bg: bgCabin,
+    id: "m1_game2",
+    bg: bgGame2,
+    speaker: SPEAKERS.SPARKY,
+    en: "Game 2: SHIP REPAIR (Vocabulary). Repair damaged ship modules by matching tech gear and vocabulary items with their definitions.",
+    es: "Juego 2: REPARACIÓN DE LA NAVE (Vocabulario). Repara los módulos averiados de la nave emparejando herramientas y vocabulario clave.",
+  },
+  {
+    id: "m1_game3",
+    bg: bgGame3,
     speaker: SPEAKERS.DANI,
-    en: "Game 2: READING. Read our squad dialogue to practice comprehension: 'My name is Dani. I am 13 years old. I am from Peru.'",
-    es: "Juego 2: LECTURA. Lee nuestro diálogo de escuadrón para practicar comprensión: 'My name is Dani. I am 13 years old. I am from Peru.'",
+    en: "Game 3: COMIC LOG (Reading). Read our squad's illustrated comic log and answer comprehension questions in the speech bubbles!",
+    es: "Juego 3: CÓMIC DE BITÁCORA (Lectura). Lee la historieta ilustrada de nuestro escuadrón y responde las preguntas de comprensión en los globos de diálogo.",
   },
   {
-    id: "m1_grammar",
-    bg: bgCabin,
+    id: "m1_game4",
+    bg: bgGame4,
     speaker: SPEAKERS.SPARKY,
-    en: "Game 3 & 4: GRAMMAR LAUNCH & PORTALS. Sort words to repair flight power: 'My / name / is / Leo', then challenge the Portal Altar!",
-    es: "Juegos 3 y 4: LANZAMIENTO GRAMATICAL Y PORTALES. Ordena palabras para reparar el código de vuelo: 'My / name / is / Leo', ¡y desafía el Altar de Portales!",
+    en: "Game 4: WORD RECOVERY (Listening). Tune radio frequencies, decode deep space audio signals, and recover missing soundwaves!",
+    es: "Juego 4: RECUPERACIÓN DE FRECUENCIA (Escucha). Sintoniza las frecuencias de radio, decodifica señales de audio del espacio y recupera palabras perdidas.",
   },
   {
-    id: "m1_writing",
-    bg: bgMailbox,
+    id: "m1_game5",
+    bg: bgGame5,
     speaker: SPEAKERS.GENERAL_BRIC,
-    en: "Game 5: WRITING PRODUCTION. Type your official presentation letter and send it via the Space Mailbox. Your professor will grade it and assign your score!",
-    es: "Juego 5: PRODUCCIÓN ESCRITA (WRITING). Redacta tu carta o correo de presentación y envíalo por el Buzón Espacial. Tu profesor lo revisará y aplicará tu nota oficial.",
+    en: "Game 5: WRITING REPORT. Write your official daily dispatch letter and transmit it via the Space Mailbox for my evaluation!",
+    es: "Juego 5: INFORME ESCRITO (Writing). Redacta tu informe o carta de presentación y transmítelo por el Buzón Espacial para mi evaluación oficial.",
   },
 ];
