@@ -34,9 +34,10 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   height: auto;
-  max-height: 58vh;
-  max-height: 58dvh;
-  background-size: cover;
+  max-height: 62vh;
+  max-height: 62dvh;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   background-position: center;
   border-radius: 20px;
   border: 2.5px solid #00f0ff;
