@@ -306,13 +306,14 @@
 }
 
 .genshin-avatar-selection-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 10px;
   display: flex;
   align-items: center;
   gap: 30px;
-  position: relative;
   z-index: 30;
-  margin-right: -10px;
-  /* Leave room for sidebar on right */
 }
 
 .genshin-arrow-btn {
