@@ -18,22 +18,30 @@
   user-select: none;
 }
 
+/* CONTAINER MODAL PRINCIPAL QUE ENG LOBA HEADER, PANTALLA Y DIÁLOGO */
+.holo-sim-modal-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 980px;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
 /* CONTAINER HOLOGRÁFICO PRINCIPAL */
 .holo-sim-screen-card {
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  height: min(82vh, 560px);
-  height: min(82dvh, 560px);
+  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: 58vh;
+  max-height: 58dvh;
   background-size: cover;
   background-position: center;
-  border-radius: 24px;
-  border: 2px solid #00f0ff;
+  border-radius: 20px;
+  border: 2.5px solid #00f0ff;
   box-shadow: 0 0 45px rgba(0, 240, 255, 0.4), inset 0 0 35px rgba(112, 0, 255, 0.3);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 
@@ -53,15 +61,15 @@
   z-index: 2;
 }
 
-/* TOP HEADER DE LA PANTALLA HOLOGRÁFICA */
+/* TOP HEADER FUERA DE LA PANTALLA DE LA IMAGEN */
 .holo-sim-header {
   position: relative;
   z-index: 5;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 24px;
-  background: linear-gradient(180deg, rgba(3, 15, 23, 0.88) 0%, rgba(3, 15, 23, 0) 100%);
+  padding: 0 4px;
+  width: 100%;
 }
 
 .holo-sim-title-badge {
@@ -114,19 +122,19 @@
   100% { transform: scale(1.02); box-shadow: 0 0 32px rgba(255, 209, 102, 0.9); }
 }
 
-/* TARJETA DE DIÁLOGO FLOTANTE DE SPARKY */
+/* TARJETA DE DIÁLOGO DE SPARKY FUERA DE LA IMAGEN */
 .holo-sim-tooltip-card {
   position: relative;
   z-index: 10;
-  margin: 16px 24px;
+  margin: 0;
   background: linear-gradient(135deg, rgba(8, 26, 38, 0.95), rgba(4, 15, 22, 0.98));
   border: 2px solid #00f0ff;
   border-radius: 20px;
-  padding: 16px 22px;
+  padding: 14px 20px;
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   color: #e6f7ff;
 }
 

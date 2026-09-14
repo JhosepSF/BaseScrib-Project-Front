@@ -67,15 +67,9 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
 
   return (
     <div className="holo-sim-overlay">
-      {/* SIMULADOR HOLOGRÁFICO PANTALLA PRINCIPAL */}
-      <div 
-        className="holo-sim-screen-card"
-        style={{ backgroundImage: `url(${bgRoom2D})` }}
-      >
-        {/* EFECTO SCANLINES HOLOGRÁFICAS */}
-        <div className="holo-sim-scanlines" />
-
-        {/* HEADER TOP DE PANTALLA HOLOGRÁFICA */}
+      {/* CONTAINER MODAL PRINCIPAL */}
+      <div className="holo-sim-modal-container">
+        {/* HEADER TOP DE PANTALLA HOLOGRÁFICA (AFUERA DE LA IMAGEN) */}
         <div className="holo-sim-header">
           <div className="holo-sim-title-badge">
             📡 SIMULADOR HOLOGRÁFICO BASE ONE — ENTRENAMIENTO DE CABINA
@@ -88,13 +82,22 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
           </button>
         </div>
 
-        {/* SPOTLIGHT ILUMINADO DE LA ZONA EXPLICADA */}
+        {/* PANTALLA PRINCIPAL 100% DESPEJADA */}
         <div 
-          className="holo-sim-spotlight-box"
-          style={step.spotlight}
-        />
+          className="holo-sim-screen-card"
+          style={{ backgroundImage: `url(${bgRoom2D})` }}
+        >
+          {/* EFECTO SCANLINES HOLOGRÁFICAS */}
+          <div className="holo-sim-scanlines" />
 
-        {/* TARJETA DIÁLOGO DE SPARKY AL PIE */}
+          {/* SPOTLIGHT ILUMINADO DE LA ZONA EXPLICADA */}
+          <div 
+            className="holo-sim-spotlight-box"
+            style={step.spotlight}
+          />
+        </div>
+
+        {/* TARJETA DIÁLOGO DE SPARKY AL PIE (AFUERA DE LA IMAGEN) */}
         <div className="holo-sim-tooltip-card">
           <div className="holo-sim-tooltip-header">
             <img src={sparkyAvatar} alt="Sparky" className="holo-sim-sparky-avatar" />
