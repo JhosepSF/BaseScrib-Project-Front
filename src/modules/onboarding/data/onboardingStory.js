@@ -21,6 +21,7 @@ import bgGame2 from "../../../assets/cinematicas/bg_toma11_juego2.jpg";
 import bgGame3 from "../../../assets/cinematicas/bg_toma12_juego3.jpg";
 import bgGame4 from "../../../assets/cinematicas/bg_toma13_juego4.jpg";
 import bgGame5 from "../../../assets/cinematicas/bg_toma14_juego5.jpg";
+import bgMission1Intro from "../../../assets/cinematicas/bg_toma15_presentacion.jpg";
 
 export const SPEAKERS = {
   GENERAL_BRIC: {
@@ -196,7 +197,7 @@ export const HUD_SPOTLIGHT_STEPS = [
 export const MISSION_1_TUTORIAL_SLIDES = [
   {
     id: "m1_intro",
-    bg: bgCabin,
+    bg: bgMission1Intro,
     speaker: SPEAKERS.GENERAL_BRIC,
     en: "Recruit, your Day 1 mission starts now! Topic: Personal Information & Verb to Be. You will complete all 5 daily game modules.",
     es: "¡Recluta, tu misión del Día 1 inicia ahora! Tema: Información Personal y Verbo to Be. Desarrollarás los 5 módulos de juego del día.",

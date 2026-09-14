@@ -533,7 +533,7 @@
 /* Holographic Game Preview Overlays for Cinematic Cutscene */
 .vn-game-preview-overlay {
   position: absolute;
-  top: 15%;
+  top: 23%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -544,8 +544,15 @@
 }
 
 @keyframes vnCardPop {
-  0% { opacity: 0; transform: translate(-50%, 20px) scale(0.95); }
-  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 
 .vn-game-preview-card {
@@ -683,23 +690,29 @@
   .vn-top-bar {
     padding: 8px 16px;
   }
+
   .vn-portrait-wrapper {
     height: clamp(120px, 28vh, 260px);
   }
+
   .vn-dialogue-box {
     margin: 0 16px 12px 16px;
     padding: 10px 16px;
   }
+
   .vn-speaker-name {
     font-size: 1.1rem;
   }
+
   .vn-text-body {
     min-height: 60px;
     gap: 6px;
   }
+
   .vn-text-en {
     font-size: 0.95rem;
   }
+
   .vn-text-es {
     font-size: 0.82rem;
   }
@@ -709,16 +722,20 @@
   .vn-portrait-wrapper {
     display: none;
   }
+
   .vn-dialogue-box {
     margin: 0 10px 6px 10px;
     padding: 8px 12px;
   }
+
   .vn-speaker-name {
     font-size: 0.95rem;
   }
+
   .vn-text-body {
     min-height: 45px;
   }
+
   .vn-text-en {
     font-size: 0.85rem;
   }

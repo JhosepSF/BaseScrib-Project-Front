@@ -12,6 +12,7 @@ import bgGame2 from "../../assets/cinematicas/bg_toma11_juego2.jpg";
 import bgGame3 from "../../assets/cinematicas/bg_toma12_juego3.jpg";
 import bgGame4 from "../../assets/cinematicas/bg_toma13_juego4.jpg";
 import bgGame5 from "../../assets/cinematicas/bg_toma14_juego5.jpg";
+import bgMission1Intro from "../../assets/cinematicas/bg_toma15_presentacion.jpg";
 import vallePortalesMain from "../../assets/amongus/valle de portales.jpg";
 import cabinaMain from "../../assets/amongus/cabina.png";
 
@@ -29,6 +30,7 @@ const KEY_BACKGROUNDS = [
   bgGame3,
   bgGame4,
   bgGame5,
+  bgMission1Intro,
   vallePortalesMain,
   cabinaMain,
 ];
