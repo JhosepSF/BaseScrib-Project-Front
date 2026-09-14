@@ -44,12 +44,18 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
         if (!isMounted || !Array.isArray(data)) return;
         const daySubs = data.filter(s => {
           const sDay = s.day_number || (s.mission_id && s.mission_id <= 14 ? s.mission_id : 1);
-          return sDay === dayNum;
+          const studentMatches = userId
+            ? (s.student === userId || s.student_id === userId || s.student?.id === userId)
+            : true;
+          return sDay === dayNum && studentMatches;
         });
         if (daySubs.length > 0) {
           daySubs.sort((a, b) => new Date(b.submitted_at) - new Date(a.submitted_at));
           const latest = daySubs[0];
+          setPrevSubmission(latest);
           setText(prev => (prev ? prev : (latest.text || "")));
+        } else {
+          setPrevSubmission(null);
         }
       })
       .catch(err => {
@@ -59,7 +65,7 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
     return () => {
       isMounted = false;
     };
-  }, [dayNum]);
+  }, [dayNum, userId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

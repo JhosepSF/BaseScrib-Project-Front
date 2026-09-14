@@ -14,278 +14,364 @@ function shuffle(array) {
   return arr;
 }
 
-// Curricular Comic Comprehension Questions for all 14 Days
+// Curricular Comic Comprehension Questions for all 14 Days (Fallback & Database Sync)
 const DEFAULT_COMIC_QUESTIONS = {
   1: [
-    { id: "cq1-1", text: "¿Cuál es la estación espacial a la que arriba el recluta?", options: [{ id: "co1-1", text: "Base ONE", is_correct: true }, { id: "co1-2", text: "Estación Cero", is_correct: false }, { id: "co1-3", text: "Nave Impostora", is_correct: false }] },
-    { id: "cq1-2", text: "¿Quién es el asistente de vuelo con inteligencia artificial?", options: [{ id: "co1-4", text: "Sparky Bot", is_correct: true }, { id: "co1-5", text: "Capitán Bric", is_correct: false }, { id: "co1-6", text: "Recluta Leo", is_correct: false }] },
-    { id: "cq1-3", text: "¿Cuál es el nombre del nuevo recluta de la tripulación?", options: [{ id: "co1-7", text: "Leo", is_correct: true }, { id: "co1-8", text: "Tom", is_correct: false }, { id: "co1-9", text: "Emma", is_correct: false }] },
-    { id: "cq1-4", text: "¿De qué país es originario el recluta Leo?", options: [{ id: "co1-10", text: "Perú", is_correct: true }, { id: "co1-11", text: "Brasil", is_correct: false }, { id: "co1-12", text: "México", is_correct: false }] },
-    { id: "cq1-5", text: "¿Qué le gusta al recluta Leo?", options: [{ id: "co1-13", text: "Los robots y la ciencia", is_correct: true }, { id: "co1-14", text: "Fútbol y música", is_correct: false }, { id: "co1-15", text: "Manuales de vuelo", is_correct: false }] },
-    { id: "cq1-6", text: "¿Qué habilidad técnica posee el recluta Leo?", options: [{ id: "co1-16", text: "Reparar naves espaciales", is_correct: true }, { id: "co1-17", text: "Volar la nave sola", is_correct: false }, { id: "co1-18", text: "Cocinar comida espacial", is_correct: false }] }
+    { id: "cq1-1", text: "Where has the spaceship arrived?", options: [{ id: "co1-1", text: "Base ONE", is_correct: true }, { id: "co1-2", text: "Mars", is_correct: false }, { id: "co1-3", text: "Earth", is_correct: false }] },
+    { id: "cq1-2", text: "What is the recruit's name?", options: [{ id: "co1-4", text: "Leo", is_correct: true }, { id: "co1-5", text: "Tom", is_correct: false }, { id: "co1-6", text: "Emma", is_correct: false }] },
+    { id: "cq1-3", text: "Where is the recruit from?", options: [{ id: "co1-7", text: "Peru", is_correct: true }, { id: "co1-8", text: "Brazil", is_correct: false }, { id: "co1-9", text: "Mexico", is_correct: false }] },
+    { id: "cq1-4", text: "What does the recruit like?", options: [{ id: "co1-10", text: "Robots and science", is_correct: true }, { id: "co1-11", text: "Football and music", is_correct: false }, { id: "co1-12", text: "Space guide books", is_correct: false }] },
+    { id: "cq1-5", text: "What can the recruit do?", options: [{ id: "co1-13", text: "Repair spaceships", is_correct: true }, { id: "co1-14", text: "Fly a spaceship", is_correct: false }, { id: "co1-15", text: "Cook space food", is_correct: false }] }
   ],
   2: [
-    { id: "cq2-1", text: "¿Dónde descansan los miembros de la tripulación?", options: [{ id: "co2-1", text: "En los dormitorios de la base", is_correct: true }, { id: "co2-2", text: "En la esclusa de aire", is_correct: false }, { id: "co2-3", text: "Fuera de la órbita", is_correct: false }] },
-    { id: "cq2-2", text: "¿Qué elemento protege al explorador en el vacío espacial?", options: [{ id: "co2-4", text: "El traje espacial y casco", is_correct: true }, { id: "co2-5", text: "Una manta térmica", is_correct: false }, { id: "co2-6", text: "El radar de consola", is_correct: false }] }
+    { id: "cq2-1", text: "Where will the crew go to visit first?", options: [{ id: "co2-1", text: "The spaceship garden", is_correct: true }, { id: "co2-2", text: "The moon base", is_correct: false }, { id: "co2-3", text: "The engine room", is_correct: false }] },
+    { id: "cq2-2", text: "What are in the study room?", options: [{ id: "co2-4", text: "Five computers and books", is_correct: true }, { id: "co2-5", text: "Three telescopes", is_correct: false }, { id: "co2-6", text: "Only chairs", is_correct: false }] },
+    { id: "cq2-3", text: "What does the small robot show to the crew?", options: [{ id: "co2-7", text: "Photos of the new planet", is_correct: true }, { id: "co2-8", text: "A map of Earth", is_correct: false }, { id: "co2-9", text: "A video game", is_correct: false }] },
+    { id: "cq2-4", text: "Who welcomes the crew to Basescrib?", options: [{ id: "co2-10", text: "The General", is_correct: true }, { id: "co2-11", text: "The alien guard", is_correct: false }, { id: "co2-12", text: "The pilot", is_correct: false }] },
+    { id: "cq2-5", text: "How many computers are in the study room?", options: [{ id: "co2-13", text: "Five computers", is_correct: true }, { id: "co2-14", text: "Two computers", is_correct: false }, { id: "co2-15", text: "Zero computers", is_correct: false }] }
   ],
   3: [
-    { id: "cq3-1", text: "¿Qué actividad realiza la tripulación al inicio del turno?", options: [{ id: "co3-1", text: "Reunión informativa y desayuno", is_correct: true }, { id: "co3-2", text: "Dormir todo el día", is_correct: false }, { id: "co3-3", text: "Abandonar la estación", is_correct: false }] },
-    { id: "cq3-2", text: "¿A qué hora reportan los reclutas su informe?", options: [{ id: "co3-4", text: "Al finalizar su turno diario", is_correct: true }, { id: "co3-5", text: "Nunca reportan", is_correct: false }, { id: "co3-6", text: "Solo los domingos", is_correct: false }] }
+    { id: "cq3-1", text: "What time does the General wake up?", options: [{ id: "co3-1", text: "At 7:00", is_correct: true }, { id: "co3-2", text: "At 8:30", is_correct: false }, { id: "co3-3", text: "At 6:00", is_correct: false }] },
+    { id: "cq3-2", text: "What does the Trainer do every morning?", options: [{ id: "co3-4", text: "Eats fruits and trains", is_correct: true }, { id: "co3-5", text: "Cleans the control room", is_correct: false }, { id: "co3-6", text: "Sleeps all morning", is_correct: false }] },
+    { id: "cq3-3", text: "What does the recruit do after lunch?", options: [{ id: "co3-7", text: "Cleans the control room", is_correct: true }, { id: "co3-8", text: "Trains with robots", is_correct: false }, { id: "co3-9", text: "Goes to sleep", is_correct: false }] },
+    { id: "cq3-4", text: "What does another recruit do every day?", options: [{ id: "co3-10", text: "Studies English and sleeps early", is_correct: true }, { id: "co3-11", text: "Eats cereal all day", is_correct: false }, { id: "co3-12", text: "Plays video games", is_correct: false }] },
+    { id: "cq3-5", text: "What does the General do every day?", options: [{ id: "co3-13", text: "Writes reports and reads", is_correct: true }, { id: "co3-14", text: "Cooks lunch", is_correct: false }, { id: "co3-15", text: "Repairs the engines", is_correct: false }] }
   ],
   4: [
-    { id: "cq4-1", text: "¿Qué tarea técnica está supervisando Dani?", options: [{ id: "co4-1", text: "La calibración del radar estelar", is_correct: true }, { id: "co4-2", text: "Cocinar la cena", is_correct: false }, { id: "co4-3", text: "Pintar los pasillos", is_correct: false }] },
-    { id: "cq4-2", text: "¿Quién está reparando la bobina del motor?", options: [{ id: "co4-4", text: "Sparky Bot", is_correct: true }, { id: "co4-5", text: "El General Bric", is_correct: false }, { id: "co4-6", text: "Un visitante desconocido", is_correct: false }] }
+    { id: "cq4-1", text: "What is the recruit in the learning room doing?", options: [{ id: "co4-1", text: "Studying English", is_correct: true }, { id: "co4-2", text: "Cleaning the room", is_correct: false }, { id: "co4-3", text: "Drawing maps", is_correct: false }] },
+    { id: "cq4-2", text: "What is the recruit in the control room doing?", options: [{ id: "co4-4", text: "Cleaning the control room", is_correct: true }, { id: "co4-5", text: "Sleeping", is_correct: false }, { id: "co4-6", text: "Eating lunch", is_correct: false }] },
+    { id: "cq4-3", text: "What is the recruit with the book doing?", options: [{ id: "co4-7", text: "Reading a space guide", is_correct: true }, { id: "co4-8", text: "Writing a novel", is_correct: false }, { id: "co4-9", text: "Drawing pictures", is_correct: false }] },
+    { id: "cq4-4", text: "What is the recruit in the communication center doing?", options: [{ id: "co4-10", text: "Writing a report", is_correct: true }, { id: "co4-11", text: "Playing games", is_correct: false }, { id: "co4-12", text: "Watching videos", is_correct: false }] },
+    { id: "cq4-5", text: "Why is the General resting today?", options: [{ id: "co4-13", text: "He is sick", is_correct: true }, { id: "co4-14", text: "He is on vacation", is_correct: false }, { id: "co4-15", text: "He is visiting Earth", is_correct: false }] }
   ],
   5: [
-    { id: "cq5-1", text: "¿Qué regla de seguridad es obligatoria en la base?", options: [{ id: "co5-1", text: "Llevar casco en zonas de descompresión", is_correct: true }, { id: "co5-2", text: "Apagar los escudos", is_correct: false }, { id: "co5-3", text: "Abrir las compuertas sin aviso", is_correct: false }] },
-    { id: "cq5-2", text: "¿Quién tiene autorización para acceder al núcleo del reactor?", options: [{ id: "co5-4", text: "Solo oficiales autorizados", is_correct: true }, { id: "co5-5", text: "Cualquier recluta nuevo", is_correct: false }, { id: "co5-6", text: "Nadie en absoluto", is_correct: false }] }
+    { id: "cq5-1", text: "Where is the crew eating lunch?", options: [{ id: "co5-1", text: "In the spaceship garden", is_correct: true }, { id: "co5-2", text: "In the control room", is_correct: false }, { id: "co5-3", text: "In the dormitory", is_correct: false }] },
+    { id: "cq5-2", text: "What time does your friend always wake up?", options: [{ id: "co5-4", text: "At 6:00 a.m.", is_correct: true }, { id: "co5-5", text: "At 9:00 a.m.", is_correct: false }, { id: "co5-6", text: "At 7:30 a.m.", is_correct: false }] },
+    { id: "cq5-3", text: "How often does your friend study English?", options: [{ id: "co5-7", text: "Always at 4:00 p.m.", is_correct: true }, { id: "co5-8", text: "Never", is_correct: false }, { id: "co5-9", text: "Sometimes at night", is_correct: false }] },
+    { id: "cq5-4", text: "What does your friend do after lunch?", options: [{ id: "co5-10", text: "Always helps new recruits", is_correct: true }, { id: "co5-11", text: "Always sleeps", is_correct: false }, { id: "co5-12", text: "Never talks to anyone", is_correct: false }] },
+    { id: "cq5-5", text: "When does your friend draw?", options: [{ id: "co5-13", text: "Never during missions, but sometimes on weekends", is_correct: true }, { id: "co5-14", text: "Always during missions", is_correct: false }, { id: "co5-15", text: "Every morning at 6:00", is_correct: false }] }
   ],
   6: [
-    { id: "cq6-1", text: "¿Qué descubrió la tripulación en su bitácora pasada?", options: [{ id: "co6-1", text: "Un campo de asteroides luminosos", is_correct: true }, { id: "co6-2", text: "Un agujero negro gigante", is_correct: false }, { id: "co6-3", text: "Una flota enemiga", is_correct: false }] },
-    { id: "cq6-2", text: "¿Logró el equipo aterrizar la sonda?", options: [{ id: "co6-4", text: "Sí, aterrizó con éxito", is_correct: true }, { id: "co6-5", text: "No, se perdió en el espacio", is_correct: false }, { id: "co6-6", text: "Nunca despegaron", is_correct: false }] }
+    { id: "cq6-1", text: "What does your friend have for training?", options: [{ id: "co6-1", text: "A notebook and a pencil", is_correct: true }, { id: "co6-2", text: "A calculator and ruler", is_correct: false }, { id: "co6-3", text: "Only a water bottle", is_correct: false }] },
+    { id: "cq6-2", text: "What item does the second recruit have?", options: [{ id: "co6-4", text: "A ruler", is_correct: true }, { id: "co6-5", text: "A calculator", is_correct: false }, { id: "co6-6", text: "A dictionary", is_correct: false }] },
+    { id: "cq6-3", text: "What item does the second recruit not have?", options: [{ id: "co6-7", text: "A calculator", is_correct: true }, { id: "co6-8", text: "A pencil", is_correct: false }, { id: "co6-9", text: "A backpack", is_correct: false }] },
+    { id: "cq6-4", text: "What does every recruit have according to the General?", options: [{ id: "co6-10", text: "A backpack", is_correct: true }, { id: "co6-11", text: "A laptop", is_correct: false }, { id: "co6-12", text: "A robot assistant", is_correct: false }] },
+    { id: "cq6-5", text: "Who wants all recruits to be ready before the mission?", options: [{ id: "co6-13", text: "The Great Boss", is_correct: true }, { id: "co6-14", text: "The alien visitor", is_correct: false }, { id: "co6-15", text: "Sparky Bot", is_correct: false }] }
   ],
   7: [
-    { id: "cq7-1", text: "¿De dónde provino la señal de socorro registrada?", options: [{ id: "co7-1", text: "Del Sector 4 de Scribtonia", is_correct: true }, { id: "co7-2", text: "Del planeta Tierra", is_correct: false }, { id: "co7-3", text: "De la propia nave", is_correct: false }] },
-    { id: "cq7-2", text: "¿Qué acción tomó el equipo al escuchar la señal?", options: [{ id: "co7-4", text: "Enviaron un informe al General Bric", is_correct: true }, { id: "co7-5", text: "Ignoraron la alerta", is_correct: false }, { id: "co7-6", text: "Apagaron la radio", is_correct: false }] }
+    { id: "cq7-1", text: "What is your friend recruit's favorite subject?", options: [{ id: "co7-1", text: "Science", is_correct: true }, { id: "co7-2", text: "Art", is_correct: false }, { id: "co7-3", text: "History", is_correct: false }] },
+    { id: "cq7-2", text: "Where is the library located?", options: [{ id: "co7-4", text: "Next to the classroom", is_correct: true }, { id: "co7-5", text: "In the spaceship garden", is_correct: false }, { id: "co7-6", text: "Near the airlock", is_correct: false }] },
+    { id: "cq7-3", text: "When does the new mission start?", options: [{ id: "co7-7", text: "At 9:00 a.m.", is_correct: true }, { id: "co7-8", text: "At midnight", is_correct: false }, { id: "co7-9", text: "Next week", is_correct: false }] },
+    { id: "cq7-4", text: "How are the recruits feeling before training?", options: [{ id: "co7-10", text: "Happy and ready", is_correct: true }, { id: "co7-11", text: "Tired and bored", is_correct: false }, { id: "co7-12", text: "Scared", is_correct: false }] },
+    { id: "cq7-5", text: "Who asked you to interview the new recruits?", options: [{ id: "co7-13", text: "The Great Boss", is_correct: true }, { id: "co7-14", text: "Sparky Bot", is_correct: false }, { id: "co7-15", text: "The pilot", is_correct: false }] }
   ],
   8: [
-    { id: "cq8-1", text: "¿Cómo se compara el motor de iones con el cohete químico?", options: [{ id: "co8-1", text: "Es más rápido y eficiente", is_correct: true }, { id: "co8-2", text: "Es más lento y ruidoso", is_correct: false }, { id: "co8-3", text: "Es exactamente idéntico", is_correct: false }] },
-    { id: "cq8-2", text: "¿Qué planeta tiene una atmósfera más densa?", options: [{ id: "co8-4", text: "Scribtonia", is_correct: true }, { id: "co8-5", text: "La Luna", is_correct: false }, { id: "co8-6", text: "Marte", is_correct: false }] }
+    { id: "cq8-1", text: "Whose blue jacket is on the chair?", options: [{ id: "co8-1", text: "The Trainer's jacket", is_correct: true }, { id: "co8-2", text: "The General's jacket", is_correct: false }, { id: "co8-3", text: "Emma's jacket", is_correct: false }] },
+    { id: "cq8-2", text: "Whose tablet is found on the desk?", options: [{ id: "co8-4", text: "The recruit's tablet", is_correct: true }, { id: "co8-5", text: "The Trainer's tablet", is_correct: false }, { id: "co8-6", text: "The General's tablet", is_correct: false }] },
+    { id: "cq8-3", text: "Whose headphones are near the books?", options: [{ id: "co8-7", text: "Emma's headphones (hers)", is_correct: true }, { id: "co8-8", text: "The Trainer's headphones", is_correct: false }, { id: "co8-9", text: "The recruit's headphones", is_correct: false }] },
+    { id: "cq8-4", text: "Whose water bottle is on the table?", options: [{ id: "co8-10", text: "Our water bottle (ours)", is_correct: true }, { id: "co8-11", text: "The alien's bottle", is_correct: false }, { id: "co8-12", text: "Nobody's bottle", is_correct: false }] },
+    { id: "cq8-5", text: "Why was the crew organizing the items?", options: [{ id: "co8-13", text: "They were preparing for an important mission", is_correct: true }, { id: "co8-14", text: "They were leaving the spaceship", is_correct: false }, { id: "co8-15", text: "They were having a party", is_correct: false }] }
   ],
   9: [
-    { id: "cq9-1", text: "¿Cuál es la instalación más avanzada de la flota?", options: [{ id: "co9-1", text: "La Base ONE", is_correct: true }, { id: "co9-2", text: "El puesto minero", is_correct: false }, { id: "co9-3", text: "La nave de carga", is_correct: false }] },
-    { id: "cq9-2", text: "¿Cuál es la estrella más brillante de la constelación?", options: [{ id: "co9-4", text: "Nova Scrib", is_correct: true }, { id: "co9-5", text: "Alpha Centauri", is_correct: false }, { id: "co9-6", text: "El Sol", is_correct: false }] }
+    { id: "cq9-1", text: "Whose tablet is missing before the report?", options: [{ id: "co9-1", text: "Emma's tablet", is_correct: true }, { id: "co9-2", text: "The Trainer's tablet", is_correct: false }, { id: "co9-3", text: "The General's tablet", is_correct: false }] },
+    { id: "cq9-2", text: "Who finds Emma's tablet on the desk?", options: [{ id: "co9-4", text: "You (the recruit)", is_correct: true }, { id: "co9-5", text: "Sparky Bot", is_correct: false }, { id: "co9-6", text: "The Great Boss", is_correct: false }] },
+    { id: "cq9-3", text: "Who helps the recruits when they need assistance?", options: [{ id: "co9-7", text: "The Trainer", is_correct: true }, { id: "co9-8", text: "The robot guard", is_correct: false }, { id: "co9-9", text: "The alien pilot", is_correct: false }] },
+    { id: "cq9-4", text: "Who does the Great Boss congratulate for great teamwork?", options: [{ id: "co9-10", text: "The recruits (them)", is_correct: true }, { id: "co9-11", text: "Only the General", is_correct: false }, { id: "co9-12", text: "Nobody", is_correct: false }] },
+    { id: "cq9-5", text: "Who helps the General organize the mission?", options: [{ id: "co9-13", text: "The Trainer (helps him)", is_correct: true }, { id: "co9-14", text: "The alien commander", is_correct: false }, { id: "co9-15", text: "The computer AI", is_correct: false }] }
   ],
   10: [
-    { id: "cq10-1", text: "¿Qué maniobra planea realizar el comandante mañana?", options: [{ id: "co10-1", text: "Navegar a través de la nebulosa", is_correct: true }, { id: "co10-2", text: "Regresar a la Tierra", is_correct: false }, { id: "co10-3", text: "Desmantelar la nave", is_correct: false }] },
-    { id: "cq10-2", text: "¿A qué hora está programado el acoplamiento del módulo?", options: [{ id: "co10-4", text: "A las 14:00 horas", is_correct: true }, { id: "co10-5", text: "A medianoche", is_correct: false }, { id: "co10-6", text: "En tres semanas", is_correct: false }] }
+    { id: "cq10-1", text: "Whose notebook is on the desk?", options: [{ id: "co10-1", text: "The Trainer's notebook", is_correct: true }, { id: "co10-2", text: "The General's notebook", is_correct: false }, { id: "co10-3", text: "The recruit's notebook", is_correct: false }] },
+    { id: "cq10-2", text: "Whose tablet is on another desk?", options: [{ id: "co10-4", text: "The General's tablet", is_correct: true }, { id: "co10-5", text: "The Trainer's tablet", is_correct: false }, { id: "co10-6", text: "The recruit's tablet", is_correct: false }] },
+    { id: "cq10-3", text: "What are near the whiteboard?", options: [{ id: "co10-7", text: "The students' pencils", is_correct: true }, { id: "co10-8", text: "The recruits' backpacks", is_correct: false }, { id: "co10-9", text: "The English worksheets", is_correct: false }] },
+    { id: "cq10-4", text: "What are near the door?", options: [{ id: "co10-10", text: "The recruits' backpacks", is_correct: true }, { id: "co10-11", text: "The students' pencils", is_correct: false }, { id: "co10-12", text: "The Trainer's notebooks", is_correct: false }] },
+    { id: "cq10-5", text: "What do you find on the table?", options: [{ id: "co10-13", text: "The English worksheets", is_correct: true }, { id: "co10-14", text: "The General's laptops", is_correct: false }, { id: "co10-15", text: "The Trainer's markers", is_correct: false }] }
   ],
   11: [
-    { id: "cq11-1", text: "¿Qué sucederá si los escudos de plasma fallan?", options: [{ id: "co11-1", text: "El casco sufrirá una brecha de presión", is_correct: true }, { id: "co11-2", text: "La nave irá más rápido", is_correct: false }, { id: "co11-3", text: "Se apagarán las luces interiores", is_correct: false }] },
-    { id: "cq11-2", text: "¿Cómo asegurará el escuadrón su supervivencia?", options: [{ id: "co11-4", text: "Siguiendo el protocolo al pie de la letra", is_correct: true }, { id: "co11-5", text: "Desconectando los sensores", is_correct: false }, { id: "co11-6", text: "Saliendo sin traje", is_correct: false }] }
+    { id: "cq11-1", text: "What resource does Dani check in the main tanks?", options: [{ id: "co11-1", text: "Plasma fuel", is_correct: true }, { id: "co11-2", text: "Water supplies", is_correct: false }, { id: "co11-3", text: "Oxygen tanks", is_correct: false }] },
+    { id: "cq11-2", text: "How many energy cells does the ship have?", options: [{ id: "co11-4", text: "A lot of energy cells", is_correct: true }, { id: "co11-5", text: "Zero energy cells", is_correct: false }, { id: "co11-6", text: "Only one cell", is_correct: false }] }
   ],
   12: [
-    { id: "cq12-1", text: "¿Cuántas estaciones orbitales ha visitado la tripulación?", options: [{ id: "co12-1", text: "Tres estaciones alienígenas", is_correct: true }, { id: "co12-2", text: "Ninguna hasta ahora", is_correct: false }, { id: "co12-3", text: "Más de cien", is_correct: false }] },
-    { id: "cq12-2", text: "¿Ha completado el oficial científico los análisis?", options: [{ id: "co12-4", text: "Sí, ya completó todos los escaneos", is_correct: true }, { id: "co12-5", text: "No, aún no ha comenzado", is_correct: false }, { id: "co12-6", text: "Perdió los datos", is_correct: false }] }
+    { id: "cq12-1", text: "Where does the crew encounter friendly alien explorers?", options: [{ id: "co12-1", text: "In Sector 7", is_correct: true }, { id: "co12-2", text: "On Earth", is_correct: false }, { id: "co12-3", text: "In the dormitory", is_correct: false }] },
+    { id: "cq12-2", text: "How does the scientist describe the alien creature?", options: [{ id: "co12-4", text: "Small, fast, and intelligent", is_correct: true }, { id: "co12-5", text: "Slow and dangerous", is_correct: false }, { id: "co12-6", text: "Giant and noisy", is_correct: false }] }
   ],
   13: [
-    { id: "cq13-1", text: "¿Cómo fue detectada la señal en la anomalía?", options: [{ id: "co13-1", text: "Fue captada por los sensores de radar de la base", is_correct: true }, { id: "co13-2", text: "Por observación visual directa", is_correct: false }, { id: "co13-3", text: "Por un mensaje de texto", is_correct: false }] },
-    { id: "cq13-2", text: "¿Dónde deben almacenarse las muestras cósmicas?", options: [{ id: "co13-4", text: "En cápsulas de biocontención", is_correct: true }, { id: "co13-5", text: "En la cocina de la nave", is_correct: false }, { id: "co13-6", text: "En los casilleros de ropa", is_correct: false }] }
+    { id: "cq13-1", text: "How does Scribtonia compare in size to Mars?", options: [{ id: "co13-1", text: "Scribtonia is larger than Mars", is_correct: true }, { id: "co13-2", text: "Mars is much bigger", is_correct: false }, { id: "co13-3", text: "They are identical", is_correct: false }] },
+    { id: "cq13-2", text: "Which station is the safest in the sector?", options: [{ id: "co13-4", text: "Base ONE", is_correct: true }, { id: "co13-5", text: "Mining Station 4", is_correct: false }, { id: "co13-6", text: "Cargo Outpost", is_correct: false }] }
   ],
   14: [
-    { id: "cq14-1", text: "¿Qué logro celebra hoy el escuadrón de Base ONE?", options: [{ id: "co14-1", text: "Completar la formación lingüística y de vuelo", is_correct: true }, { id: "co14-2", text: "El fin de la misión de rescate", is_correct: false }, { id: "co14-3", text: "El retiro del General Bric", is_correct: false }] },
-    { id: "cq14-2", text: "¿Para qué está preparado el equipo de expedición?", options: [{ id: "co14-4", text: "Para la exploración del espacio profundo", is_correct: true }, { id: "co14-5", text: "Para quedarse en los dormitorios", is_correct: false }, { id: "co14-6", text: "Para reiniciar el curso básico", is_correct: false }] }
+    { id: "cq14-1", text: "What achievement is the Base ONE squadron celebrating?", options: [{ id: "co14-1", text: "Completing star academy training", is_correct: true }, { id: "co14-2", text: "Building a new spaceship", is_correct: false }, { id: "co14-3", text: "Returning to Earth", is_correct: false }] },
+    { id: "cq14-2", text: "What is the squadron prepared for after graduation?", options: [{ id: "co14-4", text: "Deep space exploration", is_correct: true }, { id: "co14-5", text: "Retirement", is_correct: false }, { id: "co14-6", text: "Staying in base dorms", is_correct: false }] }
   ]
 };
 
-// Curricular Comic Bitácora Panels for all 14 Days
+// Curricular Comic Bitácora Panels for all 14 Days (English only for full immersion)
 const DEFAULT_COMIC_PANELS = {
   1: [
     {
-      title: "Panel 1: Arribo a Base ONE",
-      text: "Nuestra nave espacial acaba de acoplarse con éxito a la estación Base ONE.",
-      english: "Our spaceship has just docked successfully at Base ONE station.",
+      title: "Panel 1: Arrival at Base ONE",
+      text: "Our spaceship has just docked successfully at Base ONE station.",
       illustration: "🚀🛰️"
     },
     {
-      title: "Panel 2: Asistente Sparky Bot",
-      text: "¡Saludos recluta! Soy Sparky Bot, tu asistente de vuelo con inteligencia artificial.",
-      english: "Greetings recruit! I am Sparky Bot, your artificial intelligence flight assistant.",
+      title: "Panel 2: Sparky Bot Assistant",
+      text: "Greetings recruit! I am Sparky Bot, your artificial intelligence flight assistant.",
       illustration: "🤖⚡"
     },
     {
-      title: "Panel 3: Recluta Leo",
-      text: "El nuevo miembro de la tripulación es el recluta Leo. Él tiene 13 años, es de Perú y le fascinan los robots y la ciencia.",
-      english: "The new crew member is recruit Leo. He is 13 years old, from Peru, and loves robots and science.",
+      title: "Panel 3: Recruit Leo",
+      text: "The new crew member is recruit Leo. He is 13 years old, from Peru, and loves robots and science.",
       illustration: "🧑‍🚀🇵🇪"
     },
     {
-      title: "Panel 4: Habilidades de Reparación",
-      text: "Leo tiene una gran habilidad técnica: ¡puede reparar naves espaciales cuando se dañan!",
-      english: "Leo has a great technical skill: he can repair spaceships when they get damaged!",
+      title: "Panel 4: Technical Skills",
+      text: "Leo has a great technical skill: he can repair spaceships when they get damaged!",
       illustration: "🔧🛠️"
     }
   ],
   2: [
     {
-      title: "Panel 1: Dormitorios de la Base",
-      text: "Después de un largo viaje, la tripulación descansa en los dormitorios de la base.",
-      english: "After a long journey, the crew rests in the base dormitories.",
-      illustration: "🛏️💤"
+      title: "Panel 1: Welcome to Basescrib",
+      text: "The General welcomes the crew: 'Good morning, everyone! Welcome back to Basescrib.'",
+      illustration: "🚀🪐"
     },
     {
-      title: "Panel 2: Traje y Casco Espacial",
-      text: "El traje espacial presurizado y el casco protegen al explorador en el vacío cósmico.",
-      english: "The pressurized spacesuit and helmet protect the explorer in the cosmic vacuum.",
-      illustration: "🧑‍🚀🛡️"
+      title: "Panel 2: Spaceship Garden",
+      text: "The Grand Boss smiles and says: 'Today, we will visit the spaceship garden together.'",
+      illustration: "🌱🌺"
+    },
+    {
+      title: "Panel 3: The Study Room",
+      text: "The Trainer opens the door: 'There are five computers and there are books.'",
+      illustration: "💻📚"
+    },
+    {
+      title: "Panel 4: Robot & Photos",
+      text: "Suddenly, a small robot arrives: 'There is a robot!' It shows photos of the planet.",
+      illustration: "🤖📷"
     }
   ],
   3: [
     {
-      title: "Panel 1: Reunión y Desayuno",
-      text: "Iniciamos el turno matutino con una reunión informativa y desayuno energético.",
-      english: "We begin the morning shift with a briefing meeting and energetic breakfast.",
-      illustration: "🍳📋"
+      title: "Panel 1: Morning Routine",
+      text: "The General wakes up at 7:00, eats cereal, and drinks milk at 7:30.",
+      illustration: "⏰🥣"
     },
     {
-      title: "Panel 2: Reporte de Fin de Turno",
-      text: "Todos los reclutas deben transmitir su informe oficial al finalizar su turno diario.",
-      english: "All recruits must transmit their official report at the end of their daily shift.",
-      illustration: "📊💻"
+      title: "Panel 2: Trainer's Routine",
+      text: "'What do you do every morning?' The Trainer answers: 'I eat fruits and train.'",
+      illustration: "🍎🏋️"
+    },
+    {
+      title: "Panel 3: In the Control Room",
+      text: "'What do you do after lunch?' 'I clean the control room,' the recruit replies.",
+      illustration: "🧹🎛️"
+    },
+    {
+      title: "Panel 4: Daily Habits",
+      text: "'What does the General do every day?' 'The General writes reports and reads.'",
+      illustration: "📖✍️"
     }
   ],
   4: [
     {
-      title: "Panel 1: Calibración del Radar",
-      text: "Dani está supervisando atentamente la calibración del radar estelar.",
-      english: "Dani is attentively supervising the calibration of the stellar radar.",
-      illustration: "📡🔍"
+      title: "Panel 1: Supervising the Crew",
+      text: "The General asks you to supervise the recruits and check what everyone is doing.",
+      illustration: "👨‍✈️📋"
     },
     {
-      title: "Panel 2: Bobina de Sparky Bot",
-      text: "Mientras tanto, Sparky Bot está reparando la bobina del motor principal.",
-      english: "Meanwhile, Sparky Bot is repairing the main engine coil.",
-      illustration: "🔧🤖"
+      title: "Panel 2: Learning Room",
+      text: "'Hey, what are you doing?' 'I am studying English,' the recruit answers.",
+      illustration: "📚💻"
+    },
+    {
+      title: "Panel 3: Control Room",
+      text: "'What are you doing?' 'I am cleaning the control room,' says another recruit.",
+      illustration: "🧹🎛️"
+    },
+    {
+      title: "Panel 4: Communication Center",
+      text: "'I am reading a space guide and writing a mission report,' says the crew.",
+      illustration: "📖✍️"
     }
   ],
   5: [
     {
-      title: "Panel 1: Zonas de Descompresión",
-      text: "Es una regla de seguridad obligatoria llevar casco en las zonas de descompresión.",
-      english: "It is a mandatory safety rule to wear a helmet in decompression zones.",
-      illustration: "⛑️⚠️"
+      title: "Panel 1: Lunch in the Garden",
+      text: "The crew is eating lunch together in the peaceful spaceship garden.",
+      illustration: "🥗🌸"
     },
     {
-      title: "Panel 2: Núcleo del Reactor",
-      text: "Solo los oficiales autorizados tienen permiso para ingresar al núcleo del reactor.",
-      english: "Only authorized officers have permission to enter the reactor core.",
-      illustration: "⚛️🔐"
+      title: "Panel 2: Daily Schedule",
+      text: "'I always wake up at 6:00 a.m. and I always study English at 4:00 p.m.'",
+      illustration: "⏰📖"
+    },
+    {
+      title: "Panel 3: Training & Helping",
+      text: "'Then, I sometimes train at 5:00 p.m. and always help new recruits after lunch.'",
+      illustration: "🏋️🤝"
+    },
+    {
+      title: "Panel 4: Hobbies & Chat",
+      text: "'I never draw during missions, but I sometimes draw on weekends!'",
+      illustration: "🎨🚀"
     }
   ],
   6: [
     {
-      title: "Panel 1: Asteroides Luminosos",
-      text: "En nuestra bitácora pasada descubrimos un deslumbrante campo de asteroides luminosos.",
-      english: "In our past log we discovered a dazzling luminous asteroid field.",
-      illustration: "☄️✨"
+      title: "Panel 1: Checking Supplies",
+      text: "The Trainer looks at the crew: 'Before training, let's check our materials.'",
+      illustration: "📋🎒"
     },
     {
-      title: "Panel 2: Aterrizaje Exitoso",
-      text: "El equipo confirmó que la sonda de exploración aterrizó con total éxito en la roca.",
-      english: "The team confirmed that the exploration probe landed successfully on the rock.",
-      illustration: "🛸🪐"
+      title: "Panel 2: Notebook & Pencil",
+      text: "'Do you have your notebook?' 'Yes, I do. I have my notebook and my pencil.'",
+      illustration: "📓✏️"
+    },
+    {
+      title: "Panel 3: Ruler & Calculator",
+      text: "'Do you have your calculator?' 'No, I have my ruler, but I don't have my calculator.'",
+      illustration: "📏🔢"
+    },
+    {
+      title: "Panel 4: Ready for the Mission",
+      text: "The General checks the supplies: 'Good. Every recruit has a backpack!'",
+      illustration: "🎒🚀"
     }
   ],
   7: [
     {
-      title: "Panel 1: Señal del Sector 4",
-      text: "Registramos una misteriosa señal de socorro proveniente del Sector 4 de Scribtonia.",
-      english: "We recorded a mysterious distress signal coming from Sector 4 of Scribtonia.",
-      illustration: "📻🚨"
+      title: "Panel 1: The Interview Mission",
+      text: "The Great Boss asks you to interview the new recruits and collect information.",
+      illustration: "🎙️📋"
     },
     {
-      title: "Panel 2: Reporte al General Bric",
-      text: "Inmediatamente enviamos un informe detallado de la anomalía al General Bric.",
-      english: "We immediately sent a detailed report of the anomaly to General Bric.",
-      illustration: "🎖️📨"
+      title: "Panel 2: Favorite Subject",
+      text: "'What is your favorite subject?' 'My favorite subject is Science,' answers your friend.",
+      illustration: "🔬🧪"
+    },
+    {
+      title: "Panel 3: Location & Time",
+      text: "'Where is the library?' 'Next to the classroom.' 'When does the mission start?' 'At 9:00 a.m.'",
+      illustration: "📚⏰"
+    },
+    {
+      title: "Panel 4: Crew Readiness",
+      text: "'How are the recruits feeling?' 'We are feeling happy and ready for training!'",
+      illustration: "😊🚀"
     }
   ],
   8: [
     {
-      title: "Panel 1: Motor Iónico vs Químico",
-      text: "El nuevo motor de iones es notablemente más rápido y eficiente que el cohete químico.",
-      english: "The new ion engine is remarkably faster and more efficient than chemical rockets.",
-      illustration: "🚀⚡"
+      title: "Panel 1: Lost Items",
+      text: "The crew is preparing for a mission, but several items are left in the main room.",
+      illustration: "🔍🛋️"
     },
     {
-      title: "Panel 2: Atmósfera de Scribtonia",
-      text: "Los sensores revelan que el planeta Scribtonia posee una atmósfera más densa.",
-      english: "Sensors reveal that planet Scribtonia possesses a much denser atmosphere.",
-      illustration: "🪐💨"
+      title: "Panel 2: The Blue Jacket",
+      text: "'Whose jacket is this?' 'That blue jacket is his,' says a recruit.",
+      illustration: "🧥🪑"
+    },
+    {
+      title: "Panel 3: Tablet & Headphones",
+      text: "'That tablet is mine!' and 'Those headphones are hers,' answers Emma.",
+      illustration: "📱🎧"
+    },
+    {
+      title: "Panel 4: Returned Equipment",
+      text: "'This water bottle is ours!' Everything is returned to its rightful owner.",
+      illustration: "🍶🎒"
     }
   ],
   9: [
     {
-      title: "Panel 1: La Base ONE",
-      text: "La Base ONE es reconocida como la instalación más avanzada y segura de toda la flota.",
-      english: "Base ONE is recognized as the most advanced and secure facility in the fleet.",
-      illustration: "🏢🌌"
+      title: "Panel 1: Project Deadline",
+      text: "The crew is working hard to complete their mission reports on time.",
+      illustration: "📊💻"
     },
     {
-      title: "Panel 2: Estrella Nova Scrib",
-      text: "En la noche cósmica, Nova Scrib brilla como la estrella más brillante de la galaxia.",
-      english: "In the cosmic night, Nova Scrib shines as the brightest star in the galaxy.",
-      illustration: "⭐🌟"
+      title: "Panel 2: The Missing Tablet",
+      text: "Emma asks: 'Where is my tablet? Whose tablet is on that desk?'",
+      illustration: "📱🔍"
+    },
+    {
+      title: "Panel 3: Team Collaboration",
+      text: "'This tablet is yours, Emma!' 'Thank you! The Trainer helps us with our project.'",
+      illustration: "🤝✨"
+    },
+    {
+      title: "Panel 4: Commendation",
+      text: "The General smiles: 'The Great Boss congratulates them for their great teamwork!'",
+      illustration: "🎖️👏"
     }
   ],
   10: [
     {
-      title: "Panel 1: Hacia la Nebulosa",
-      text: "El comandante anunció que planea navegar a través de la nebulosa interestelar mañana.",
-      english: "The commander announced he plans to navigate through the interstellar nebula tomorrow.",
-      illustration: "🌌🧭"
+      title: "Panel 1: Organizing the Room",
+      text: "The Great Boss wants the training room clean and organized before the mission.",
+      illustration: "🧹🚪"
     },
     {
-      title: "Panel 2: Acoplamiento a las 14:00",
-      text: "El acoplamiento del módulo logístico está programado exactamente a las 14:00 horas.",
-      english: "Docking of the logistics module is scheduled at exactly 14:00 hours.",
-      illustration: "🕑🛰️"
+      title: "Panel 2: This Notebook & That Tablet",
+      text: "'This is my notebook,' says the Trainer. 'That is the General's tablet.'",
+      illustration: "📓📱"
+    },
+    {
+      title: "Panel 3: These Pencils & Those Backpacks",
+      text: "'These are the students' pencils, and those are the recruits' backpacks.'",
+      illustration: "✏️🎒"
+    },
+    {
+      title: "Panel 4: English Worksheets",
+      text: "'Are these the English worksheets?' 'Yes, they are!' The room is ready.",
+      illustration: "📑✨"
     }
   ],
   11: [
     {
-      title: "Panel 1: Falla de Escudos",
-      text: "Si los escudos de plasma fallan bajo fuego solar, el casco sufrirá una brecha grave.",
-      english: "If plasma shields fail under solar fire, the hull will suffer a severe breach.",
-      illustration: "🛡️💥"
+      title: "Panel 1: Fuel Assessment",
+      text: "Dani checks the reserves: 'How much plasma fuel do we have in the main tanks?'",
+      illustration: "⚡🔋"
     },
     {
-      title: "Panel 2: Protocolo Estricto",
-      text: "El escuadrón asegurará su supervivencia siguiendo el protocolo al pie de la letra.",
-      english: "The squadron will ensure its survival by following the protocol strictly.",
-      illustration: "📜✔️"
+      title: "Panel 2: Energy Reserves",
+      text: "'We have a lot of energy cells and enough power for the hyperjump!'",
+      illustration: "🔋🚀"
     }
   ],
   12: [
     {
-      title: "Panel 1: Tres Estaciones Alienígenas",
-      text: "Hasta la fecha, nuestra tripulación ya ha visitado tres estaciones alienígenas.",
-      english: "To date, our crew has already visited three alien stations.",
+      title: "Panel 1: First Contact",
+      text: "The crew encounters friendly extraterrestrial explorers in Sector 7.",
       illustration: "👽🛸"
     },
     {
-      title: "Panel 2: Análisis Completados",
-      text: "El oficial científico confirmó que ya completó todos los escaneos planetarios.",
-      english: "The science officer confirmed he has already completed all planetary scans.",
-      illustration: "🔬📑"
+      title: "Panel 2: Alien Dossier",
+      text: "The scientist notes: 'This creature is small, fast, and very intelligent!'",
+      illustration: "🐾🔬"
     }
   ],
   13: [
     {
-      title: "Panel 1: Sensores de Radar",
-      text: "La extraña señal en la anomalía fue captada por los sensores de radar de la base.",
-      english: "The strange signal in the anomaly was captured by the base's radar sensors.",
-      illustration: "📡⚡"
+      title: "Panel 1: Celestial Chart",
+      text: "The navigator compares celestial bodies: 'Which planet has the densest atmosphere?'",
+      illustration: "🪐📊"
     },
     {
-      title: "Panel 2: Cápsulas de Biocontención",
-      text: "Las muestras biológicas cósmicas deben almacenarse en cápsulas de biocontención.",
-      english: "The cosmic biological samples must be stored in biocontainment capsules.",
-      illustration: "🧪🔒"
+      title: "Panel 2: Planetary Analysis",
+      text: "'Scribtonia is larger than Mars, but Base ONE is the safest station in the sector!'",
+      illustration: "🌌✨"
     }
   ],
   14: [
     {
-      title: "Panel 1: Graduación de Base ONE",
-      text: "¡Hoy celebramos con orgullo completar la formación lingüística y de vuelo estelar!",
-      english: "Today we proudly celebrate completing our linguistic and star flight training!",
+      title: "Panel 1: Graduation Ceremony",
+      text: "Today the Base ONE squadron proudly celebrates completing star academy training!",
       illustration: "🎓🏆"
     },
     {
-      title: "Panel 2: Expedición al Espacio Profundo",
-      text: "Nuestro escuadrón está plenamente preparado para la exploración del espacio profundo.",
-      english: "Our squadron is fully prepared for deep space exploration.",
-      illustration: "🚀✨"
+      title: "Panel 2: Deep Space Frontier",
+      text: "'Our squadron is fully prepared for deep space exploration across the galaxy!'",
+      illustration: "🚀🌟"
     }
   ]
 };
@@ -406,7 +492,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
       {viewMode === "reading" ? (
         <div>
           <p style={{ color: "#9be6df", fontSize: "clamp(0.78rem, 1.5vh, 0.88rem)", marginBottom: "clamp(6px, 1.2vh, 12px)", textAlign: "left" }}>
-            📂 Analiza las bitácoras del tripulante en inglés y español antes de comenzar el cuestionario de acceso.
+            📖 Read the crew member's logs in English before starting the access quiz.
           </p>
 
           {/* Comic panels grid */}
@@ -427,7 +513,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                   background: "rgba(0, 0, 0, 0.35)", 
                   border: "1.5px solid rgba(184, 255, 249, 0.15)", 
                   borderRadius: 12, 
-                  padding: "clamp(8px, 1.4vh, 12px)", 
+                  padding: "clamp(10px, 1.6vh, 14px)", 
                   textAlign: "center",
                   position: "relative",
                   boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
@@ -435,13 +521,13 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                 }}
               >
                 {/* Visual Novel layout Header */}
-                <div style={{ display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid rgba(184, 255, 249, 0.1)", paddingBottom: 4, marginBottom: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid rgba(184, 255, 249, 0.1)", paddingBottom: 4, marginBottom: 8 }}>
                   <span style={{ fontSize: "1.1rem" }}>📄</span>
                   <h4 style={{ color: "#ffd166", margin: 0, fontSize: "clamp(0.78rem, 1.6vh, 0.88rem)", fontWeight: "bold" }}>{panel.title}</h4>
                 </div>
 
                 {/* Floating Vector crewmate icon based on panel theme */}
-                <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", margin: "4px 0" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", margin: "6px 0 10px 0" }}>
                   <div className="floating-crewmate" style={{ display: "flex", justifyContent: "center" }}>
                     <img 
                       src={ReclutaPrincipal} 
@@ -457,23 +543,21 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                   <span style={{ fontSize: "clamp(1.4rem, 3vh, 1.8rem)" }}>{panel.illustration}</span>
                 </div>
 
-                <p style={{ margin: "8px 0", fontSize: "0.9rem", color: "#e6f7ff", lineHeight: "1.3" }}>
-                  "{panel.text}"
-                </p>
                 <div 
                   className="speech-bubble" 
                   style={{ 
                     background: "rgba(184, 255, 249, 0.08)", 
-                    borderRadius: 8, 
-                    padding: "8px 10px", 
-                    marginTop: 8,
-                    fontWeight: "600",
-                    color: "#b8fff9",
-                    border: "1px solid rgba(184, 255, 249, 0.15)",
-                    fontSize: "0.85rem"
+                    borderRadius: 10, 
+                    padding: "10px 14px", 
+                    fontWeight: "500",
+                    color: "#e6f7ff",
+                    border: "1px solid rgba(184, 255, 249, 0.2)",
+                    fontSize: "0.88rem",
+                    lineHeight: "1.4",
+                    textAlign: "center"
                   }}
                 >
-                  {panel.english}
+                  "{panel.text}"
                 </div>
               </div>
             ))}

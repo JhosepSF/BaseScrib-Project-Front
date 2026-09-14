@@ -424,7 +424,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const [rightNodes, setRightNodes] = useState([]);
   const [connections, setConnections] = useState({}); // { leftIndex: rightIndex }
   const [selectedLeft, setSelectedLeft] = useState(null); // left index
-  
+
   const [portCoords, setPortCoords] = useState({}); // { portId: {x, y} }
   const [mistakes, setMistakes] = useState(0);
   const [isError, setIsError] = useState(false);
@@ -635,15 +635,15 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   return (
-    <div 
-      className="glass-console auth-card panel-large animate-fadeIn" 
-      style={{ 
-        maxWidth: 740, 
-        width: "100%", 
-        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
-        position: "relative", 
+    <div
+      className="glass-console auth-card panel-large animate-fadeIn"
+      style={{
+        maxWidth: 740,
+        width: "100%",
+        padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)",
+        position: "relative",
         margin: "0 auto",
-        boxSizing: "border-box" 
+        boxSizing: "border-box"
       }}
     >
       {/* Scanline Overlay */}
@@ -674,9 +674,9 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
         </h3>
 
         {/* Wire Deck Area */}
-        <div 
-          id="wire-canvas-container" 
-          ref={containerRef} 
+        <div
+          id="wire-canvas-container"
+          ref={containerRef}
           className="wire-minigame-deck"
           style={{ maxWidth: "480px", margin: "6px auto" }}
         >
@@ -697,7 +697,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                 return (
                   <g key={`wire-${leftIdx}`}>
                     <path
-                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x) / 2} ${start.y}, ${(start.x + end.x) / 2} ${end.y}, ${end.x} ${end.y}`}
                       fill="none"
                       stroke="#000"
                       strokeWidth="12"
@@ -705,7 +705,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                       opacity="0.5"
                     />
                     <path
-                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x) / 2} ${start.y}, ${(start.x + end.x) / 2} ${end.y}, ${end.x} ${end.y}`}
                       fill="none"
                       stroke={wireColor}
                       strokeWidth="10"
@@ -714,14 +714,14 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                       style={{ filter: `blur(4px)` }}
                     />
                     <path
-                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x) / 2} ${start.y}, ${(start.x + end.x) / 2} ${end.y}, ${end.x} ${end.y}`}
                       fill="none"
                       stroke={wireColor}
                       strokeWidth="6"
                       strokeLinecap="round"
                     />
                     <path
-                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x) / 2} ${start.y}, ${(start.x + end.x) / 2} ${end.y}, ${end.x} ${end.y}`}
                       fill="none"
                       stroke="rgba(255, 255, 255, 0.35)"
                       strokeWidth="1.5"
@@ -729,7 +729,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                       strokeDasharray="8,12"
                     />
                     <path
-                      d={`M ${start.x} ${start.y} C ${(start.x + end.x)/2} ${start.y}, ${(start.x + end.x)/2} ${end.y}, ${end.x} ${end.y}`}
+                      d={`M ${start.x} ${start.y} C ${(start.x + end.x) / 2} ${start.y}, ${(start.x + end.x) / 2} ${end.y}, ${end.x} ${end.y}`}
                       fill="none"
                       stroke="#ffffff"
                       strokeWidth="2"
@@ -767,7 +767,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                     {userEnd && (
                       <>
                         <path
-                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x)/2} ${start.y}, ${(start.x + userEnd.x)/2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
+                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x) / 2} ${start.y}, ${(start.x + userEnd.x) / 2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
                           fill="none"
                           stroke={res.isCorrect ? "#2ec4b6" : "#ef4444"}
                           strokeWidth="8"
@@ -776,7 +776,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                           style={{ filter: `drop-shadow(0 0 8px ${res.isCorrect ? "#2ec4b6" : "#ef4444"})` }}
                         />
                         <path
-                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x)/2} ${start.y}, ${(start.x + userEnd.x)/2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
+                          d={`M ${start.x} ${start.y} C ${(start.x + userEnd.x) / 2} ${start.y}, ${(start.x + userEnd.x) / 2} ${userEnd.y}, ${userEnd.x} ${userEnd.y}`}
                           fill="none"
                           stroke="#ffffff"
                           strokeWidth="2"
@@ -789,7 +789,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                     {/* If Incorrect, Render Green Dashed Solution Wire */}
                     {!res.isCorrect && correctEnd && (
                       <path
-                        d={`M ${start.x} ${start.y} C ${(start.x + correctEnd.x)/2} ${start.y}, ${(start.x + correctEnd.x)/2} ${correctEnd.y}, ${correctEnd.x} ${correctEnd.y}`}
+                        d={`M ${start.x} ${start.y} C ${(start.x + correctEnd.x) / 2} ${start.y}, ${(start.x + correctEnd.x) / 2} ${correctEnd.y}, ${correctEnd.x} ${correctEnd.y}`}
                         fill="none"
                         stroke="#10b981"
                         strokeWidth="5"
@@ -826,7 +826,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
               const isSelected = selectedLeft === idx;
               const isConnected = connections[idx] !== undefined;
               const evalItem = evalResults[idx];
-              
+
               let wireColor = colors[node.matchIndex % colors.length];
               if (showSolution && evalItem) {
                 wireColor = evalItem.isCorrect ? "#2ec4b6" : "#ef4444";
@@ -834,7 +834,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
               return (
                 <div className="wire-node" key={`left-node-${idx}`}>
-                  <div 
+                  <div
                     id={`left-port-${idx}`}
                     className={`wire-port ${isConnected ? "connected" : ""} ${isSelected ? "selected-port-spark" : ""}`}
                     onClick={() => handleLeftClick(idx)}
@@ -845,7 +845,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                     }}
                   />
                   <div className="wire-label" style={{ fontWeight: "bold", color: showSolution && evalItem && !evalItem.isCorrect ? "#fca5a5" : "#ffd166", fontSize: "1rem" }}>
-                    🇬🇧 {node.text}
+                    {node.text}
                     {showSolution && evalItem && (
                       <span style={{ marginLeft: "6px", fontSize: "0.85rem" }}>
                         {evalItem.isCorrect ? "✔️" : "❌"}
@@ -866,7 +866,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
               return (
                 <div className="wire-node" key={`right-node-${idx}`} style={{ flexDirection: "row-reverse" }}>
-                  <div 
+                  <div
                     id={`right-port-${idx}`}
                     className={`wire-port ${isConnected ? "connected" : ""}`}
                     onClick={() => handleRightClick(idx)}
@@ -877,7 +877,7 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
                     }}
                   />
                   <div className="wire-label" style={{ textAlign: "right", fontWeight: "bold", color: "#9be6df", fontSize: "1rem" }}>
-                    🇪🇸 {node.text}
+                    {node.text}
                   </div>
                 </div>
               );
@@ -888,17 +888,17 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
         {/* Normal Action buttons */}
         {!showSolution && (
           <div style={{ display: "flex", gap: "clamp(8px, 1.5vw, 15px)", marginTop: "clamp(6px, 1.4vh, 12px)" }}>
-            <button 
-              className="btn-cancel" 
-              style={{ flex: 1, margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.82rem, 1.6vh, 0.95rem)", borderRadius: 10 }} 
+            <button
+              className="btn-cancel"
+              style={{ flex: 1, margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.82rem, 1.6vh, 0.95rem)", borderRadius: 10 }}
               onClick={() => setConnections({})}
               disabled={Object.keys(connections).length === 0 || isSuccess}
             >
               🔄 Limpiar Cables
             </button>
-            <button 
-              className="btn-create" 
-              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.85rem, 1.6vh, 0.98rem)", fontWeight: "900", borderRadius: 10 }} 
+            <button
+              className="btn-create"
+              style={{ flex: 2, background: "linear-gradient(135deg, #2ec4b6, #26a399)", color: "#002427", margin: 0, padding: "clamp(7px, 1.4vh, 10px) clamp(10px, 1.8vw, 16px)", fontSize: "clamp(0.85rem, 1.6vh, 0.98rem)", fontWeight: "900", borderRadius: 10 }}
               onClick={handleVerify}
               disabled={Object.keys(connections).length !== leftNodes.length || isSuccess}
             >
