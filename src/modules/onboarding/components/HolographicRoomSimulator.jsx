@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import bgRoom2D from "../../../assets/cinematicas/bg_toma4_general.jpg";
+import bgRoom2D from "../../../assets/cinematicas/bg_simulador_baseone.png";
 import sparkyAvatar from "../../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA ABIERTA.png";
 import { soundFx } from "../../utils/soundEffects";
 import "../styles/HolographicRoomSimulator.css";
