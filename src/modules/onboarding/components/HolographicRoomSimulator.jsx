@@ -14,35 +14,35 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
       titleES: "🧑‍🚀 Barra de Menú y Estadísticas (HUD)",
       titleEN: "Recruit Identity & Cockpit HUD",
       es: "Aquí controlarás tu racha diaria de estudio 🔥, tus monedas 🪙 acumuladas, tu XP ⭐ y podrás acceder a la Tienda 🛒, Ranking 🏆 y Evaluaciones 📝.",
-      spotlight: { top: "2%", left: "2%", width: "96%", height: "13%" }
+      spotlight: { top: "0%", left: "1%", width: "98%", height: "7%" }
     },
     {
       id: "missions",
       titleES: "📌 Bitácora de 14 Días y Mini-juegos",
       titleEN: "14-Day Timeline & Mini-Games",
       es: "¡Cada día abriás un nuevo capítulo! Jugarás el Cómic 📖, Lanzamiento de oraciones 🚀, Recuperación de palabras 🔋, Reparación de nave 🔧 y el Laboratorio de Escritura ✍️.",
-      spotlight: { top: "18%", left: "15%", width: "70%", height: "45%" }
+      spotlight: { top: "7%", left: "16%", width: "70%", height: "25%" }
     },
     {
       id: "store_chest",
       titleES: "🛒 Cofre de la Tienda & Armario de Skins",
       titleEN: "Outfits, Pets & Animated Frames Chest",
       es: "¡Canjea tus monedas en el Cofre! Podrás equipar Trajes Cyberpunk, Lentes Cibernéticos, Mascotas acompañantes y Marcos de Usuario Animados 🔥⚡🕷️👑.",
-      spotlight: { top: "64%", left: "3%", width: "32%", height: "32%" }
+      spotlight: { top: "75%", left: "1%", width: "24%", height: "24%" }
     },
     {
       id: "rankings",
       titleES: "🏆 Ranking de la Sala & Evaluaciones",
       titleEN: "Crew Leaderboard & Evaluations",
       es: "Compite por los primeros lugares del salón en tiempo real y demuestra tus habilidades en los exámenes de evaluación de la tripulación.",
-      spotlight: { top: "36%", left: "62%", width: "34%", height: "42%" }
+      spotlight: { top: "0%", left: "70%", width: "15%", height: "7%" }
     },
     {
       id: "abyss",
       titleES: "🌌 Abismo Cuántico & Vocabulario Clave",
       titleEN: "Quantum Abyss Survival & Vocabulary",
       es: "Supera oleadas infinitas de preguntas rápidas en el Abismo Cuántico y consulta el vocabulario clave para resolver tus misiones diarias.",
-      spotlight: { top: "64%", left: "75%", width: "22%", height: "32%" }
+      spotlight: { top: "82%", left: "88%", width: "12%", height: "18%" }
     }
   ];
 
@@ -74,7 +74,7 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
           <div className="holo-sim-title-badge">
             📡 SIMULADOR HOLOGRÁFICO BASE ONE — ENTRENAMIENTO DE CABINA
           </div>
-          <button 
+          <button
             className="holo-sim-btn-skip"
             onClick={() => { soundFx.playClick(); if (onSkipTour) onSkipTour(); }}
           >
@@ -83,7 +83,7 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
         </div>
 
         {/* PANTALLA PRINCIPAL 100% DESPEJADA */}
-        <div 
+        <div
           className="holo-sim-screen-card"
           style={{ backgroundImage: `url(${bgRoom2D})` }}
         >
@@ -91,7 +91,7 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
           <div className="holo-sim-scanlines" />
 
           {/* SPOTLIGHT ILUMINADO DE LA ZONA EXPLICADA */}
-          <div 
+          <div
             className="holo-sim-spotlight-box"
             style={step.spotlight}
           />
@@ -116,7 +116,7 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
 
             <div style={{ display: "flex", gap: 10 }}>
               {currentStep > 0 && (
-                <button 
+                <button
                   onClick={handlePrev}
                   style={{
                     background: "rgba(255,255,255,0.08)",
