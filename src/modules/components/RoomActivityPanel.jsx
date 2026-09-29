@@ -699,7 +699,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
 
           {/* LEFT MONITOR: BITACORA */}
           {missionBriefings[selectedDay] ? (
-            <HoloMonitor icon="📋" title={`BITÁCORA - DÍA ${selectedDay}`}>
+            <HoloMonitor className="station-bitacora-monitor" icon="📋" title={`BITÁCORA - DÍA ${selectedDay}`}>
               <div style={{ marginBottom: 12 }}>
                 <span style={{ color: "#ffd166", fontWeight: "bold" }}>Misión:</span>
                 <p style={{ margin: "4px 0", color: "rgba(230, 247, 255, 0.9)" }}>
@@ -714,7 +714,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
               </div>
             </HoloMonitor>
           ) : (
-            <HoloMonitor icon="🛰️" title={`MISIÓN ACTIVA - DÍA ${selectedDay}`}>
+            <HoloMonitor className="station-bitacora-monitor" icon="🛰️" title={`MISIÓN ACTIVA - DÍA ${selectedDay}`}>
               <p style={{ margin: "4px 0", color: "rgba(230, 247, 255, 0.9)" }}>
                 Completa el circuito de los 5 simuladores del Día {selectedDay} para desbloquear la estrella de la lección.
               </p>
@@ -722,7 +722,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
           )}
 
           {/* CENTRAL CONSOLE: MISSION TABS AND SLOTS */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 15 }}>
+          <div className="station-center-console">
             <div className="mission-console__day-tabs">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((dayNum) => {
                 const isUnlocked = getDayLockStatus(dayNum).isUnlocked;
@@ -811,7 +811,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
 
           {/* RIGHT MONITOR: VOCABULARY */}
           {missionBriefings[selectedDay] && (
-            <HoloMonitor icon="🔤" title="VOCABULARIO CLAVE">
+            <HoloMonitor className="station-vocab-monitor" icon="🔤" title="VOCABULARIO CLAVE">
               <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                 {missionBriefings[selectedDay].vocabulary.map((vocab, index) => (
                   <span key={index} className="vocab-chip" title={vocab.es}>
