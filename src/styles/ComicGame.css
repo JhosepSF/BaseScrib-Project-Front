@@ -13,8 +13,8 @@
 .comic-scene-viewport {
   position: relative;
   width: 100%;
-  min-height: 480px;
-  height: 520px;
+  min-height: 500px;
+  height: 540px;
   border-radius: 18px;
   overflow: hidden;
   background-size: cover;
@@ -30,14 +30,15 @@
   user-select: none;
 }
 
-/* Ambient Vignette Overlay (Leaves center clearer) */
+/* Ambient Dark Overlay (Leaves faces and upper 75% crystal clear) */
 .comic-scene-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(4, 10, 22, 0.15) 0%,
-    rgba(6, 15, 30, 0.45) 60%,
+  background: linear-gradient(
+    180deg,
+    rgba(6, 15, 30, 0.75) 0%,
+    rgba(4, 10, 22, 0.05) 25%,
+    rgba(4, 10, 22, 0.1) 60%,
     rgba(3, 8, 18, 0.85) 100%
   );
   pointer-events: none;
@@ -51,8 +52,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
-  background: rgba(8, 20, 36, 0.78);
+  padding: 10px 18px;
+  background: rgba(8, 20, 36, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(184, 255, 249, 0.2);
 }
@@ -119,78 +120,101 @@
   color: #ffd166;
 }
 
-/* Dynamic Interactive Speech Stage (No Scroll, Alternating Left/Right) */
-.comic-interactive-stage {
-  position: relative;
-  z-index: 2;
-  flex: 1;
+/* =========================================================
+   Lower Cinematic Dialogue Stage (Zero Face Blocking)
+   Anchored in lower 25% of viewport
+   ========================================================= */
+.comic-dialogue-stage-bottom {
+  position: absolute;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+  z-index: 3;
+  pointer-events: none;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px 20px;
-  pointer-events: none; /* Allows click through to viewport to advance */
+  align-items: flex-end;
+  min-height: 120px;
 }
 
-/* Top Speech Row (Typically Left Speaker e.g. General) */
-.comic-row-top {
-  display: flex;
+/* Speaker Side Alignments */
+.comic-stage-align-left {
   justify-content: flex-start;
-  width: 100%;
 }
 
-/* Middle / Center Row for Narrations or Reactions */
-.comic-row-center {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-/* Bottom Speech Row (Typically Right Speaker e.g. Leo) */
-.comic-row-bottom {
-  display: flex;
+.comic-stage-align-right {
   justify-content: flex-end;
-  width: 100%;
 }
 
-/* Left-Side Speech Bubble */
-.comic-bubble-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  max-width: 48%;
-  animation: popFromLeft 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+.comic-stage-align-center {
+  justify-content: center;
+}
+
+/* Cinematic Dialogue Card */
+.comic-dialogue-card {
   pointer-events: auto;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 68%;
+  min-width: 320px;
+  background: rgba(8, 20, 38, 0.94);
+  backdrop-filter: blur(16px);
+  border: 2px solid var(--speaker-color, #2ec4b6);
+  border-radius: 18px;
+  padding: 12px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px var(--speaker-glow, rgba(46, 196, 182, 0.35));
+  position: relative;
+  transition: all 0.25s ease;
 }
 
-/* Right-Side Speech Bubble */
-.comic-bubble-right {
-  display: flex;
+/* Right-side speaker layout (avatar on right) */
+.comic-card-right {
   flex-direction: row-reverse;
-  align-items: flex-start;
-  gap: 12px;
-  max-width: 48%;
-  animation: popFromRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  pointer-events: auto;
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.comic-bubble-dimmed {
-  opacity: 0.55;
-  transform: scale(0.96);
-  filter: grayscale(20%);
+.comic-card-right .comic-card-header {
+  justify-content: flex-end;
 }
 
-.comic-bubble-active {
-  opacity: 1;
-  transform: scale(1);
-  filter: none;
+/* Comic pointer tails pointing upward to the speaker */
+.comic-card-left::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 28px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid var(--speaker-color, #2ec4b6);
 }
 
-@keyframes popFromLeft {
+.comic-card-right::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 28px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 10px solid var(--speaker-color, #2ec4b6);
+}
+
+/* Slide Animations */
+.comic-card-slide-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.comic-card-slide-right {
+  animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInFromLeft {
   0% {
     opacity: 0;
-    transform: translateX(-18px) scale(0.92);
+    transform: translateX(-25px) scale(0.96);
   }
   100% {
     opacity: 1;
@@ -198,10 +222,10 @@
   }
 }
 
-@keyframes popFromRight {
+@keyframes slideInFromRight {
   0% {
     opacity: 0;
-    transform: translateX(18px) scale(0.92);
+    transform: translateX(25px) scale(0.96);
   }
   100% {
     opacity: 1;
@@ -209,142 +233,83 @@
   }
 }
 
-/* Character Avatar Circle */
-.comic-avatar-wrap {
+/* Character Avatar Wrap */
+.comic-card-avatar-wrap {
   position: relative;
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(6, 16, 32, 0.85);
+  background: rgba(4, 12, 24, 0.9);
   border: 2px solid var(--speaker-color, #2ec4b6);
-  box-shadow: 0 0 16px var(--speaker-glow, rgba(46, 196, 182, 0.5));
+  box-shadow: 0 0 14px var(--speaker-glow, rgba(46, 196, 182, 0.5));
 }
 
-.comic-avatar-img {
-  width: 44px;
-  height: 44px;
+.comic-card-avatar {
+  width: 46px;
+  height: 46px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
 }
 
-/* Speech Balloon Box */
-.comic-balloon {
-  position: relative;
-  background: rgba(9, 23, 42, 0.92);
-  backdrop-filter: blur(12px);
-  border: 1.5px solid var(--speaker-color, #2ec4b6);
-  border-radius: 14px;
-  padding: 9px 14px;
+/* Text Content Container */
+.comic-card-content {
+  flex: 1;
   text-align: left;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Pointer Tail for Left Bubble */
-.comic-bubble-left .comic-balloon::before {
-  content: "";
-  position: absolute;
-  top: 16px;
-  left: -9px;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-  border-right: 9px solid var(--speaker-color, #2ec4b6);
-}
-
-/* Pointer Tail for Right Bubble */
-.comic-bubble-right .comic-balloon::before {
-  content: "";
-  position: absolute;
-  top: 16px;
-  right: -9px;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-  border-left: 9px solid var(--speaker-color, #2ec4b6);
-}
-
-.comic-speaker-meta {
+.comic-card-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
-.comic-speaker-name {
-  font-size: 0.78rem;
+.comic-card-name {
+  font-size: 0.82rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: var(--speaker-color, #ffd166);
+  letter-spacing: 0.5px;
 }
 
-.comic-speaker-emotion {
-  font-size: 0.68rem;
+.comic-card-emotion {
+  font-size: 0.72rem;
   font-style: italic;
   color: #9be6df;
   opacity: 0.85;
 }
 
-.comic-balloon-text {
-  font-size: clamp(0.85rem, 1.7vh, 0.96rem);
-  font-weight: 500;
-  line-height: 1.35;
-  color: #f0fdfa;
+.comic-card-text {
+  font-size: clamp(0.92rem, 1.8vh, 1.05rem);
+  font-weight: 600;
+  line-height: 1.4;
+  color: #ffffff;
   margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-/* Narrative Box */
-.comic-narrator-box {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px dashed rgba(255, 209, 102, 0.6);
-  border-radius: 12px;
-  padding: 7px 18px;
+/* Narrator Bar */
+.comic-narrator-bar {
+  pointer-events: auto;
+  background: rgba(4, 12, 24, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1.5px dashed rgba(255, 209, 102, 0.65);
+  border-radius: 14px;
+  padding: 10px 24px;
   color: #ffd166;
-  font-size: 0.85rem;
+  font-size: 0.92rem;
+  font-weight: 600;
   font-style: italic;
   text-align: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-  max-width: 70%;
-  pointer-events: auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  max-width: 75%;
+  animation: fadeIn 0.3s ease-out;
 }
 
-/* Click to Advance Floating Hint */
-.comic-click-hint {
-  position: absolute;
-  bottom: 60px;
-  right: 18px;
-  z-index: 3;
-  background: rgba(8, 20, 36, 0.75);
-  border: 1px solid rgba(46, 196, 182, 0.4);
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #9be6df;
-  font-size: 0.72rem;
-  font-weight: bold;
-  letter-spacing: 0.3px;
-  pointer-events: none;
-  animation: pulseHint 2s infinite ease-in-out;
-}
-
-@keyframes pulseHint {
-  0%, 100% {
-    opacity: 0.75;
-    transform: translateY(0);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-2px);
-  }
-}
-
-/* Bottom Actions & Navigation Bar */
+/* Bottom Controls Bar */
 .comic-scene-footer {
   position: relative;
   z-index: 3;
@@ -352,8 +317,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: rgba(8, 20, 36, 0.88);
-  backdrop-filter: blur(10px);
+  background: rgba(8, 20, 36, 0.92);
+  backdrop-filter: blur(12px);
   border-top: 1px solid rgba(184, 255, 249, 0.2);
   gap: 10px;
 }
@@ -444,8 +409,8 @@
 .comic-script-modal {
   position: absolute;
   inset: 0;
-  background: rgba(6, 16, 32, 0.95);
-  backdrop-filter: blur(12px);
+  background: rgba(6, 16, 32, 0.96);
+  backdrop-filter: blur(14px);
   z-index: 10;
   border-radius: 18px;
   padding: 20px;
@@ -472,3 +437,33 @@
   padding-right: 8px;
   scrollbar-width: thin;
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .comic-scene-viewport {
+    height: 480px;
+    min-height: 440px;
+  }
+  .comic-dialogue-stage-bottom {
+    bottom: 58px;
+    padding: 0 10px;
+  }
+  .comic-dialogue-card {
+    max-width: 92%;
+    min-width: 260px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .comic-card-avatar-wrap {
+    width: 44px;
+    height: 44px;
+  }
+  .comic-card-avatar {
+    width: 38px;
+    height: 38px;
+  }
+  .comic-card-text {
+    font-size: 0.9rem;
+  }
+}
+

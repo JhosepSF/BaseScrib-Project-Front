@@ -131,40 +131,6 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const currentMeta = resolveCharacterMeta(currentDialogue?.speaker, currentDialogue?.emotion);
   const currentSide = currentMeta?.side || "left";
 
-  // Compute active left and right speech items for turn-by-turn comic layout
-  let leftDialogue = null;
-  let leftMeta = null;
-  let rightDialogue = null;
-  let rightMeta = null;
-
-  if (currentSide === "left") {
-    leftDialogue = currentDialogue;
-    leftMeta = currentMeta;
-
-    // Previous right speaker response if available
-    for (let i = currentDialogueIndex - 1; i >= 0; i--) {
-      const prevMeta = resolveCharacterMeta(dialogues[i].speaker, dialogues[i].emotion);
-      if (prevMeta.side === "right") {
-        rightDialogue = dialogues[i];
-        rightMeta = prevMeta;
-        break;
-      }
-    }
-  } else if (currentSide === "right") {
-    rightDialogue = currentDialogue;
-    rightMeta = currentMeta;
-
-    // Previous left speaker prompt if available
-    for (let i = currentDialogueIndex - 1; i >= 0; i--) {
-      const prevMeta = resolveCharacterMeta(dialogues[i].speaker, dialogues[i].emotion);
-      if (prevMeta.side === "left") {
-        leftDialogue = dialogues[i];
-        leftMeta = prevMeta;
-        break;
-      }
-    }
-  }
-
   // Handle advancing line by line
   const handleAdvance = () => {
     if (currentDialogueIndex < dialogues.length - 1) {
@@ -392,81 +358,42 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
               </div>
             </div>
 
-            {/* Interactive Turn-by-Turn Speech Stage */}
-            <div className="comic-interactive-stage">
-              {/* Top Row: Left-side speaker (e.g. General, Boss, Trainer) */}
-              <div className="comic-row-top">
-                {leftDialogue && (
-                  <div 
-                    className={`comic-bubble-left ${currentSide === "left" ? "comic-bubble-active" : "comic-bubble-dimmed"}`}
-                    style={{ 
-                      "--speaker-color": leftMeta.color, 
-                      "--speaker-glow": `${leftMeta.color}44` 
-                    }}
-                  >
-                    <div className="comic-avatar-wrap">
-                      <img 
-                        src={leftMeta.avatar} 
-                        alt={leftMeta.name} 
-                        className="comic-avatar-img animate-pop" 
-                      />
-                    </div>
-                    <div className="comic-balloon">
-                      <div className="comic-speaker-meta">
-                        <span className="comic-speaker-name">{leftMeta.name}</span>
-                        {leftDialogue.emotion && (
-                          <span className="comic-speaker-emotion">({leftDialogue.emotion})</span>
-                        )}
-                      </div>
-                      <p className="comic-balloon-text">"{leftDialogue.text}"</p>
-                    </div>
+            {/* Lower Cinematic Dialogue Stage (Zero Face Blocking) */}
+            <div className={`comic-dialogue-stage-bottom comic-stage-align-${currentSide}`}>
+              {currentSide === "center" ? (
+                <div className="comic-narrator-bar animate-pop">
+                  "{currentDialogue?.text}"
+                </div>
+              ) : (
+                <div 
+                  key={`${currentScenarioIndex}-${currentDialogueIndex}`}
+                  className={`comic-dialogue-card ${currentSide === "right" ? "comic-card-right comic-card-slide-right" : "comic-card-left comic-card-slide-left"}`}
+                  style={{ 
+                    "--speaker-color": currentMeta.color, 
+                    "--speaker-glow": `${currentMeta.color}55` 
+                  }}
+                >
+                  <div className="comic-card-avatar-wrap">
+                    <img 
+                      src={currentMeta.avatar} 
+                      alt={currentMeta.name} 
+                      className="comic-card-avatar animate-pop" 
+                    />
                   </div>
-                )}
-              </div>
 
-              {/* Center Row: Narrator action caption if active */}
-              {currentSide === "center" && (
-                <div className="comic-row-center">
-                  <div className="comic-narrator-box animate-pop">
-                    "{currentDialogue.text}"
+                  <div className="comic-card-content">
+                    <div className="comic-card-header">
+                      <span className="comic-card-name" style={{ color: currentMeta.color }}>
+                        {currentMeta.name}
+                      </span>
+                      {currentDialogue?.emotion && (
+                        <span className="comic-card-emotion">({currentDialogue.emotion})</span>
+                      )}
+                    </div>
+                    <p className="comic-card-text">"{currentDialogue?.text}"</p>
                   </div>
                 </div>
               )}
-
-              {/* Bottom Row: Right-side speaker (e.g. Leo, Lia, Recruit) */}
-              <div className="comic-row-bottom">
-                {rightDialogue && (
-                  <div 
-                    className={`comic-bubble-right ${currentSide === "right" ? "comic-bubble-active" : "comic-bubble-dimmed"}`}
-                    style={{ 
-                      "--speaker-color": rightMeta.color, 
-                      "--speaker-glow": `${rightMeta.color}44` 
-                    }}
-                  >
-                    <div className="comic-avatar-wrap">
-                      <img 
-                        src={rightMeta.avatar} 
-                        alt={rightMeta.name} 
-                        className="comic-avatar-img animate-pop" 
-                      />
-                    </div>
-                    <div className="comic-balloon">
-                      <div className="comic-speaker-meta">
-                        <span className="comic-speaker-name">{rightMeta.name}</span>
-                        {rightDialogue.emotion && (
-                          <span className="comic-speaker-emotion">({rightDialogue.emotion})</span>
-                        )}
-                      </div>
-                      <p className="comic-balloon-text">"{rightDialogue.text}"</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Click to Advance Floating Hint */}
-            <div className="comic-click-hint">
-              👆 Click scene or tap Next ▶ ({currentDialogueIndex + 1} / {dialogues.length})
             </div>
 
             {/* Bottom Controls Bar */}
