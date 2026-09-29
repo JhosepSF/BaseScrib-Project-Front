@@ -983,7 +983,7 @@ export function RoomActivityPanel3D({
 
         {/* VOCABULARIO CLAVE (Panel Superior Derecho) */}
         {missionBriefings[selectedDay] && (
-          <foreignObject x="2000" y="150" width="380" height="425" style={{ overflow: "hidden", pointerEvents: "none" }}>
+          <foreignObject x="2000" y="150" width="380" height="425" style={{ overflow: "visible", pointerEvents: "none" }}>
             <div
               className="mapped-screen mapped-vocab-right"
               onClick={(e) => { e.stopPropagation(); if (!showCalibrator) setActiveModal("vocabulario"); }}
@@ -1001,67 +1001,37 @@ export function RoomActivityPanel3D({
                 overflow: "hidden"
               }}
             >
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                borderBottom: "1px solid rgba(155,230,223,0.3)",
-                paddingBottom: "6px",
-                marginBottom: "6px",
-                flexShrink: 0
-              }}>
-                <h4 style={{ margin: 0, color: "#9be6df", fontSize: "17px", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span>🔤</span> VOCABULARIO CLAVE
-                </h4>
-                <span style={{ fontSize: "11px", background: "rgba(155,230,223,0.2)", color: "#9be6df", padding: "1px 6px", borderRadius: "8px", fontWeight: "bold" }}>
-                  DÍA {selectedDay}
-                </span>
-              </div>
-
+              <h4 style={{ margin: "0 0 10px 0", color: "#9be6df", fontSize: "24px", borderBottom: "1px solid rgba(155,230,223,0.3)", paddingBottom: "8px", flexShrink: 0 }}>
+                🔤 VOCABULARIO CLAVE
+              </h4>
               <div
                 className="vocab-scroll-list"
                 style={{
                   flex: 1,
                   minHeight: 0,
                   overflowY: "auto",
-                  overflowX: "hidden",
                   display: "flex",
                   flexWrap: "wrap",
-                  gap: "5px",
+                  gap: "6px",
                   alignContent: "flex-start",
-                  paddingRight: "2px"
+                  paddingRight: "6px"
                 }}
               >
                 {missionBriefings[selectedDay].vocabulary.map((vocab, index) => (
                   <span
                     key={index}
                     style={{
-                      fontSize: "13px",
+                      fontSize: "18px",
                       background: "rgba(255,255,255,0.08)",
                       border: "1px solid rgba(155,230,223,0.2)",
-                      padding: "2px 7px",
-                      borderRadius: "6px",
-                      color: "#e6f7ff",
-                      lineHeight: "1.25"
+                      padding: "4px 9px",
+                      borderRadius: "10px",
+                      color: "#e6f7ff"
                     }}
                   >
-                    <strong style={{ color: "#ffffff" }}>{vocab.en}</strong>{" "}
-                    <span style={{ color: "#ffd166" }}>({vocab.es})</span>
+                    <strong style={{ color: "#ffffff" }}>{vocab.en}</strong> <span style={{ color: "#ffd166" }}>({vocab.es})</span>
                   </span>
                 ))}
-              </div>
-
-              <div style={{
-                paddingTop: "4px",
-                marginTop: "3px",
-                borderTop: "1px solid rgba(255,255,255,0.08)",
-                textAlign: "center",
-                fontSize: "11px",
-                color: "#9be6df",
-                opacity: 0.8,
-                flexShrink: 0
-              }}>
-                🔍 Clic para ampliar en pantalla completa
               </div>
             </div>
           </foreignObject>

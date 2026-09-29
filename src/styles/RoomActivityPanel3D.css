@@ -112,20 +112,25 @@
   overflow: hidden;
 }
 
+.mapped-vocab-right .vocab-scroll-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46, 196, 182, 0.7) rgba(10, 25, 45, 0.4);
+}
+
 .mapped-vocab-right .vocab-scroll-list::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 .mapped-vocab-right .vocab-scroll-list::-webkit-scrollbar-track {
   background: rgba(10, 25, 45, 0.4);
   border-radius: 4px;
 }
 .mapped-vocab-right .vocab-scroll-list::-webkit-scrollbar-thumb {
-  background: rgba(46, 196, 182, 0.6);
+  background: rgba(46, 196, 182, 0.7);
   border-radius: 4px;
-  box-shadow: 0 0 4px rgba(46, 196, 182, 0.8);
+  box-shadow: 0 0 6px rgba(46, 196, 182, 0.8);
 }
 .mapped-vocab-right .vocab-scroll-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(46, 196, 182, 0.95);
+  background: rgba(46, 196, 182, 1);
 }
 
 /* AVATAR Y SPARKY */
