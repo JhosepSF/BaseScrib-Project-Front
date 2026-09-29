@@ -344,9 +344,9 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     const gameType = ((id - 1) % 5) + 1;
     switch (gameType) {
       case 1:
-        return { icon: "🛠️", typeName: "Vocabulary & Ship Repair", reward: "10 XP / 10 Coins 🪙" };
+        return { icon: "⚡", typeName: "Vocabulary - Sentence Launch", reward: "10 XP / 10 Coins 🪙" };
       case 2:
-        return { icon: "⚡", typeName: "Grammar - Sentence Launch", reward: "10 XP / 10 Coins 🪙" };
+        return { icon: "🛠️", typeName: "Grammar - Ship Repair", reward: "10 XP / 10 Coins 🪙" };
       case 3:
         return { icon: "📖", typeName: "Comic Reading", reward: "10 XP / 10 Coins 🪙" };
       case 4:

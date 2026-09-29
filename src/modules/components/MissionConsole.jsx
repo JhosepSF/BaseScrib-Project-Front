@@ -8,8 +8,8 @@ import { soundFx } from "../utils/soundEffects";
  */
 
 const STAGE_METAS = {
-  vocabulary: { id: 1, icon: "🛠️", name: "Vocabulary", activityName: "Ship Repair", stage: "Stage 1: Vocabulary", desc: "Detect technical faults and match space vocabulary.", reward: "10 XP / 10 Coins 🪙" },
-  grammar: { id: 2, icon: "⚡", name: "Grammar", activityName: "Sentence Launch", stage: "Stage 2: Grammar", desc: "Build and align space sentence grammar structures.", reward: "10 XP / 10 Coins 🪙" },
+  vocabulary: { id: 1, icon: "⚡", name: "Vocabulary", activityName: "Sentence Launch", stage: "Stage 1: Vocabulary", desc: "Connect vocabulary cables to restore ship power.", reward: "10 XP / 10 Coins 🪙" },
+  grammar: { id: 2, icon: "🛠️", name: "Grammar", activityName: "Ship Repair", stage: "Stage 2: Grammar", desc: "Detect technical faults and repair sentence grammar.", reward: "10 XP / 10 Coins 🪙" },
   reading: { id: 3, icon: "📖", name: "Reading", activityName: "Comic Reading", stage: "Stage 3: Reading", desc: "Read the comic panels and answer comprehension questions.", reward: "10 XP / 10 Coins 🪙" },
   listening: { id: 4, icon: "🛰️", name: "Listening", activityName: "Word Recovery", stage: "Stage 4: Listening", desc: "Tune audio frequencies and recover vocabulary words.", reward: "10 XP / 10 Coins 🪙" },
   writing: { id: 5, icon: "✉️", name: "Writing", activityName: "Writing Lab", stage: "Stage 5: Writing", desc: "Compose the mission log report for teacher review.", reward: "15 XP / Transmission" },
@@ -17,10 +17,10 @@ const STAGE_METAS = {
 
 function resolveActivityMeta(act, index) {
   const text = ((act?.title || "") + " " + (act?.description || "")).toLowerCase();
-  if (text.includes("repair") || text.includes("maintenance") || text.includes("vocab")) {
+  if (text.includes("sentence") || text.includes("launch") || text.includes("vocab") || text.includes("cable")) {
     return STAGE_METAS.vocabulary;
   }
-  if (text.includes("sentence") || text.includes("launch") || text.includes("grammar") || text.includes("gramát")) {
+  if (text.includes("repair") || text.includes("maintenance") || text.includes("grammar") || text.includes("gramát")) {
     return STAGE_METAS.grammar;
   }
   if (text.includes("comic") || text.includes("reading") || text.includes("lectura") || text.includes("bitácora")) {

@@ -341,8 +341,8 @@ export function RoomActivityPanel3D({
             {activeModal === "misiones" && (() => {
               const lockStatus = getDayLockStatus(selectedDay);
               const stages = [
-                { icon: "🛠️", name: "Ship Repair", type: "Vocabulary", desc: "Diagnostic technical checks and space vocabulary matching." },
-                { icon: "⚡", name: "Sentence Launch", type: "Grammar", desc: "Build and align space sentence grammar structures." },
+                { icon: "⚡", name: "Sentence Launch", type: "Vocabulary", desc: "Connect vocabulary cables and restore ship power." },
+                { icon: "🛠️", name: "Ship Repair", type: "Grammar", desc: "Diagnostic technical checks and grammar repairs." },
                 { icon: "📖", name: "Comic Reading", type: "Reading", desc: "Read interactive mission log panels and answer comprehension questions." },
                 { icon: "🛰️", name: "Word Recovery", type: "Listening", desc: "Audio frequency tuning and vocabulary word recovery." },
                 { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Compose the mission report for teacher review." }

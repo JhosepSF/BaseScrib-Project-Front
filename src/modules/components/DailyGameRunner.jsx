@@ -9,8 +9,8 @@ import { soundFx } from "../utils/soundEffects";
 import "../../styles/DailyGameRunner.css";
 
 const STAGES = [
-  { id: 1, type: "vocabulary", title: "Stage 1: Vocabulary", icon: "🛠️", component: ShipRepairGame, desc: "Ship Repair & Module Vocabulary" },
-  { id: 2, type: "grammar", title: "Stage 2: Grammar", icon: "⚡", component: SentenceLaunchGame, desc: "Sentence Launch & Grammar" },
+  { id: 1, type: "vocabulary", title: "Stage 1: Vocabulary", icon: "⚡", component: SentenceLaunchGame, desc: "Sentence Launch & Vocabulary Cables" },
+  { id: 2, type: "grammar", title: "Stage 2: Grammar", icon: "🛠️", component: ShipRepairGame, desc: "Ship Repair & Grammar Diagnostics" },
   { id: 3, type: "reading", title: "Stage 3: Reading", icon: "📖", component: ComicGame, desc: "Comic Reading & Log Comprehension" },
   { id: 4, type: "listening", title: "Stage 4: Listening", icon: "🛰️", component: WordRecoveryGame, desc: "Audio Frequency & Word Recovery" },
   { id: 5, type: "writing", title: "Stage 5: Writing", icon: "✉️", component: WritingGame, desc: "Final Mission Report to Teacher" },
@@ -91,8 +91,8 @@ export function DailyGameRunner({
   const findActivityForStage = (stageType, index) => {
     if (!activities || activities.length === 0) return null;
     const stageKeywords = {
-      grammar: ["grammar", "gramática", "sentence", "oración"],
-      vocabulary: ["vocabulary", "vocabulario", "repair", "reparación", "mantenimiento", "maintenance"],
+      vocabulary: ["sentence", "launch", "vocabulary", "vocabulario", "cable", "conectar"],
+      grammar: ["repair", "reparación", "mantenimiento", "maintenance", "grammar", "gramática"],
       reading: ["reading", "lectura", "comic", "cómic", "bitácora"],
       listening: ["listening", "escucha", "recovery", "recuperación", "frecuencia"],
       writing: ["writing", "redacción", "informe", "personal log", "log"]
