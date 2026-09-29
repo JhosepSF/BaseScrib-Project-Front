@@ -235,12 +235,12 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Etapa 4: Escucha y Frecuencia (Celdas de Energía)
+              Stage 4: Listening - Word Recovery & Frequency
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Recuperación de Frecuencia"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Word Recovery & Audio Frequency"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
-            Cerrar X
+            Close ✕
           </button>
         </div>
       )}
@@ -248,8 +248,8 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
       {currentQuestion ? (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
-            <span>Celda de Energía: {currentQIndex + 1} de {questions.length}</span>
-            <span>Estabilidad de Combustión: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
+            <span>Energy Cell: {currentQIndex + 1} of {questions.length}</span>
+            <span>Combustion Stability: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
           </div>
 
           <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>

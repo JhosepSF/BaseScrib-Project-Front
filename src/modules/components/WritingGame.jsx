@@ -159,10 +159,10 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
                 letterSpacing: "0.8px"
               }}
             >
-              ✉️ Etapa 5: Terminal de Redacción & Envío al Buzón Docente
+              ✉️ Stage 5: Writing Lab & Mission Report Submission
             </span>
             <h2 className="retro-text" style={{ margin: "2px 0 0 0", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)", color: "#ffffff" }}>
-              {activity?.title || `Informe Escrito Espacial — Día ${dayNum}`}
+              {activity?.title || `Space Writing Report — Day ${dayNum}`}
             </h2>
           </div>
           <button
@@ -178,7 +178,7 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
               fontWeight: "bold"
             }}
           >
-            Cerrar X
+            Close ✕
           </button>
         </div>
       )}

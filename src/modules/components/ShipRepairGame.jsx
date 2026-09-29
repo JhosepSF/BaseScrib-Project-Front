@@ -274,13 +274,13 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
       {!hideHeader && (
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#ff6b6b", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Etapa 2: Vocabulario y Construcción de Oraciones
+            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
+              Stage 1: Vocabulary & Ship Repair
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Reparación de Módulos"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Ship Repair & Module Vocabulary"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
-            Cerrar X
+            Close ✕
           </button>
         </div>
       )}

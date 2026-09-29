@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
+import { getBustEmotion, PERSONAJES_EMOCIONES } from "../../assets/emociones";
 import "../../styles/Panel.css";
 import { soundFx } from "../utils/soundEffects";
 
@@ -109,21 +110,29 @@ const DEFAULT_COMIC_PANELS = {
   1: [
     {
       title: "Panel 1: Arrival at Base ONE",
+      speaker: "general",
+      emotion: "serio",
       text: "Our spaceship has just docked successfully at Base ONE station.",
       illustration: "🚀🛰️"
     },
     {
       title: "Panel 2: Sparky Bot Assistant",
+      speaker: "sparky",
+      emotion: "habla",
       text: "Greetings recruit! I am Sparky Bot, your artificial intelligence flight assistant.",
       illustration: "🤖⚡"
     },
     {
       title: "Panel 3: Recruit Leo",
+      speaker: "leo",
+      emotion: "feliz",
       text: "The new crew member is recruit Leo. He is 13 years old, from Peru, and loves robots and science.",
       illustration: "🧑‍🚀🇵🇪"
     },
     {
       title: "Panel 4: Technical Skills",
+      speaker: "leo",
+      emotion: "emocionado",
       text: "Leo has a great technical skill: he can repair spaceships when they get damaged!",
       illustration: "🔧🛠️"
     }
@@ -131,21 +140,29 @@ const DEFAULT_COMIC_PANELS = {
   2: [
     {
       title: "Panel 1: Welcome to Basescrib",
+      speaker: "general",
+      emotion: "feliz",
       text: "The General welcomes the crew: 'Good morning, everyone! Welcome back to Basescrib.'",
       illustration: "🚀🪐"
     },
     {
       title: "Panel 2: Spaceship Garden",
+      speaker: "boss",
+      emotion: "holograma",
       text: "The Grand Boss smiles and says: 'Today, we will visit the spaceship garden together.'",
       illustration: "🌱🌺"
     },
     {
       title: "Panel 3: The Study Room",
+      speaker: "lia",
+      emotion: "animando",
       text: "The Trainer opens the door: 'There are five computers and there are books.'",
       illustration: "💻📚"
     },
     {
       title: "Panel 4: Robot & Photos",
+      speaker: "sparky",
+      emotion: "sorprendido",
       text: "Suddenly, a small robot arrives: 'There is a robot!' It shows photos of the planet.",
       illustration: "🤖📷"
     }
@@ -378,6 +395,49 @@ const DEFAULT_COMIC_PANELS = {
 
 const panelsMap = DEFAULT_COMIC_PANELS;
 
+function resolveSpeaker(panel, panelIdx) {
+  let speaker = panel.speaker;
+  let emotion = panel.emotion;
+
+  if (!speaker) {
+    const text = (panel.text + " " + panel.title).toLowerCase();
+    if (text.includes("sparky") || text.includes("robot")) {
+      speaker = "sparky";
+      emotion = (text.includes("photo") || text.includes("arrive") || text.includes("!")) ? "sorprendido" : "habla";
+    } else if (text.includes("general") || text.includes("bric")) {
+      speaker = "general";
+      emotion = (text.includes("welcome") || text.includes("smil") || text.includes("good")) ? "feliz" : "serio";
+    } else if (text.includes("trainer") || text.includes("lia") || text.includes("entrenadora")) {
+      speaker = "lia";
+      emotion = (text.includes("train") || text.includes("help") || text.includes("ready")) ? "animando" : "feliz";
+    } else if (text.includes("boss")) {
+      speaker = "boss";
+      emotion = "holograma";
+    } else if (text.includes("leo") || text.includes("skill") || text.includes("repair")) {
+      speaker = "leo";
+      emotion = text.includes("repair") ? "emocionado" : "feliz";
+    } else if (text.includes("question") || text.includes("whose") || text.includes("where") || text.includes("how")) {
+      speaker = panelIdx % 2 === 0 ? "leo" : "lia";
+      emotion = speaker === "leo" ? "pensativo" : "pensativa";
+    } else {
+      speaker = panelIdx % 2 === 0 ? "leo" : "lia";
+      emotion = "feliz";
+    }
+  }
+
+  const char = PERSONAJES_EMOCIONES[speaker?.toLowerCase()] || PERSONAJES_EMOCIONES.leo;
+  const avatar = getBustEmotion(speaker, emotion);
+
+  return {
+    speaker,
+    emotion: emotion || "feliz",
+    name: char.name,
+    color: char.color,
+    role: char.role,
+    avatar,
+  };
+}
+
 export function ComicGame({ activity, onComplete, onClose, hideHeader = false }) {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [viewMode, setViewMode] = useState("reading"); // "reading" | "quiz"
@@ -479,12 +539,12 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Etapa 3: Bitácora y Lectura de Cómic
+              Stage 3: Reading - Comic & Mission Log
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Lectura de Cómic"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Comic Reading & Mission Log"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem", background: "linear-gradient(135deg, #ff6b6b, #ee5a6f)" }}>
-            Cerrar X
+            Close ✕
           </button>
         </div>
       )}
@@ -505,62 +565,113 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
               marginBottom: "clamp(8px, 1.5vh, 14px)" 
             }}
           >
-            {(DEFAULT_COMIC_PANELS[dayNum] || DEFAULT_COMIC_PANELS[1]).map((panel, idx) => (
-              <div 
-                key={idx} 
-                className="comic-card" 
-                style={{ 
-                  background: "rgba(0, 0, 0, 0.35)", 
-                  border: "1.5px solid rgba(184, 255, 249, 0.15)", 
-                  borderRadius: 12, 
-                  padding: "clamp(10px, 1.6vh, 14px)", 
-                  textAlign: "center",
-                  position: "relative",
-                  boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-                  transition: "all 0.3s ease"
-                }}
-              >
-                {/* Visual Novel layout Header */}
-                <div style={{ display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid rgba(184, 255, 249, 0.1)", paddingBottom: 4, marginBottom: 8 }}>
-                  <span style={{ fontSize: "1.1rem" }}>📄</span>
-                  <h4 style={{ color: "#ffd166", margin: 0, fontSize: "clamp(0.78rem, 1.6vh, 0.88rem)", fontWeight: "bold" }}>{panel.title}</h4>
-                </div>
-
-                {/* Floating Vector crewmate icon based on panel theme */}
-                <div style={{ display: "flex", justifyContent: "center", gap: 8, alignItems: "center", margin: "6px 0 10px 0" }}>
-                  <div className="floating-crewmate" style={{ display: "flex", justifyContent: "center" }}>
-                    <img 
-                      src={ReclutaPrincipal} 
-                      alt="Recluta" 
-                      style={{ 
-                        width: "clamp(45px, 7vh, 65px)", 
-                        height: "clamp(45px, 7vh, 65px)",
-                        filter: idx % 2 === 0 ? "hue-rotate(130deg) saturate(1.5)" : "none",
-                        objectFit: "contain"
-                      }} 
-                    />
-                  </div>
-                  <span style={{ fontSize: "clamp(1.4rem, 3vh, 1.8rem)" }}>{panel.illustration}</span>
-                </div>
-
+            {(DEFAULT_COMIC_PANELS[dayNum] || DEFAULT_COMIC_PANELS[1]).map((panel, idx) => {
+              const speakerData = resolveSpeaker(panel, idx);
+              return (
                 <div 
-                  className="speech-bubble" 
+                  key={idx} 
+                  className="comic-card" 
                   style={{ 
-                    background: "rgba(184, 255, 249, 0.08)", 
-                    borderRadius: 10, 
-                    padding: "10px 14px", 
-                    fontWeight: "500",
-                    color: "#e6f7ff",
-                    border: "1px solid rgba(184, 255, 249, 0.2)",
-                    fontSize: "0.88rem",
-                    lineHeight: "1.4",
-                    textAlign: "center"
+                    background: "linear-gradient(180deg, rgba(8, 20, 36, 0.75) 0%, rgba(4, 10, 20, 0.85) 100%)", 
+                    border: `1.5px solid ${speakerData.color}44`, 
+                    borderRadius: 14, 
+                    padding: "clamp(10px, 1.6vh, 14px)", 
+                    textAlign: "center",
+                    position: "relative",
+                    boxShadow: `0 6px 20px rgba(0,0,0,0.4), inset 0 0 15px ${speakerData.color}0d`,
+                    transition: "all 0.3s ease",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between"
                   }}
                 >
-                  "{panel.text}"
+                  {/* Visual Novel layout Header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${speakerData.color}2a`, paddingBottom: 6, marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: "1.05rem" }}>📄</span>
+                      <h4 style={{ color: "#ffd166", margin: 0, fontSize: "clamp(0.78rem, 1.6vh, 0.88rem)", fontWeight: "bold" }}>{panel.title}</h4>
+                    </div>
+                    <span 
+                      style={{ 
+                        fontSize: "0.68rem", 
+                        fontWeight: "bold", 
+                        padding: "2px 8px", 
+                        borderRadius: 10, 
+                        background: `${speakerData.color}22`, 
+                        color: speakerData.color, 
+                        border: `1px solid ${speakerData.color}66`,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.4px"
+                      }}
+                    >
+                      {speakerData.name} • {speakerData.emotion}
+                    </span>
+                  </div>
+
+                  {/* Character Emotion Bust & Stage */}
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", gap: 10, margin: "6px 0 10px 0" }}>
+                    <div 
+                      className="comic-character-stage"
+                      style={{ 
+                        position: "relative",
+                        display: "flex", 
+                        justifyContent: "center", 
+                        alignItems: "center",
+                        cursor: "pointer"
+                      }}
+                      onClick={() => soundFx?.playPop?.() || soundFx?.playBeep?.()}
+                      title={`Toca para escuchar a ${speakerData.name} (${speakerData.emotion})`}
+                    >
+                      {/* Aura glow */}
+                      <div 
+                        style={{ 
+                          position: "absolute", 
+                          width: "72px", 
+                          height: "72px", 
+                          borderRadius: "50%", 
+                          background: `radial-gradient(circle, ${speakerData.color}33 0%, transparent 70%)`,
+                          zIndex: 0
+                        }} 
+                      />
+                      <img 
+                        src={speakerData.avatar} 
+                        alt={speakerData.name} 
+                        className="comic-character-bust animate-pop"
+                        style={{ 
+                          width: "clamp(58px, 8.5vh, 78px)", 
+                          height: "clamp(58px, 8.5vh, 78px)",
+                          objectFit: "contain",
+                          position: "relative",
+                          zIndex: 1,
+                          filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.5))",
+                          transition: "transform 0.2s ease"
+                        }} 
+                      />
+                    </div>
+                    <span style={{ fontSize: "clamp(1.4rem, 2.8vh, 1.8rem)" }}>{panel.illustration}</span>
+                  </div>
+
+                  {/* Speech Bubble */}
+                  <div 
+                    className="speech-bubble" 
+                    style={{ 
+                      background: "rgba(184, 255, 249, 0.08)", 
+                      borderRadius: 12, 
+                      padding: "10px 14px", 
+                      fontWeight: "500",
+                      color: "#e6f7ff",
+                      border: `1px solid ${speakerData.color}44`,
+                      fontSize: "0.88rem",
+                      lineHeight: "1.4",
+                      textAlign: "center",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+                    }}
+                  >
+                    "{panel.text}"
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div style={{ display: "flex", justifyContent: "center" }}>

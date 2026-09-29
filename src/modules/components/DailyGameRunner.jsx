@@ -9,11 +9,11 @@ import { soundFx } from "../utils/soundEffects";
 import "../../styles/DailyGameRunner.css";
 
 const STAGES = [
-  { id: 1, type: "grammar", title: "Etapa 1: Gramática Espacial", icon: "⚡", component: SentenceLaunchGame, desc: "Lanzamiento de Oraciones" },
-  { id: 2, type: "vocabulary", title: "Etapa 2: Vocabulario de la Nave", icon: "🛠️", component: ShipRepairGame, desc: "Reparación de Módulos" },
-  { id: 3, type: "reading", title: "Etapa 3: Lectura de Cómic", icon: "📖", component: ComicGame, desc: "Comprensión de Bitácora" },
-  { id: 4, type: "listening", title: "Etapa 4: Escucha y Frecuencias", icon: "🛰️", component: WordRecoveryGame, desc: "Recuperación de Frecuencia" },
-  { id: 5, type: "writing", title: "Etapa 5: Informe Final al Profesor", icon: "✉️", component: WritingGame, desc: "Redacción y Envío al Buzón" },
+  { id: 1, type: "vocabulary", title: "Stage 1: Vocabulary", icon: "🛠️", component: ShipRepairGame, desc: "Ship Repair & Module Vocabulary" },
+  { id: 2, type: "grammar", title: "Stage 2: Grammar", icon: "⚡", component: SentenceLaunchGame, desc: "Sentence Launch & Grammar" },
+  { id: 3, type: "reading", title: "Stage 3: Reading", icon: "📖", component: ComicGame, desc: "Comic Reading & Log Comprehension" },
+  { id: 4, type: "listening", title: "Stage 4: Listening", icon: "🛰️", component: WordRecoveryGame, desc: "Audio Frequency & Word Recovery" },
+  { id: 5, type: "writing", title: "Stage 5: Writing", icon: "✉️", component: WritingGame, desc: "Final Mission Report to Teacher" },
 ];
 
 class StageErrorBoundary extends React.Component {
@@ -25,7 +25,7 @@ class StageErrorBoundary extends React.Component {
     return { hasError: true, error };
   }
   componentDidCatch(error, errorInfo) {
-    console.error("Error capturado en etapa del juego:", error, errorInfo);
+    console.error("Error caught in game stage:", error, errorInfo);
   }
   render() {
     if (this.state.hasError) {
@@ -41,9 +41,9 @@ class StageErrorBoundary extends React.Component {
           color: "#ffd166"
         }}>
           <span style={{ fontSize: "2.5rem" }}>⚠️</span>
-          <h3 style={{ margin: "12px 0 6px 0", color: "#ffd166" }}>Interferencia Detectada en la Etapa</h3>
+          <h3 style={{ margin: "12px 0 6px 0", color: "#ffd166" }}>Interference Detected in Stage</h3>
           <p style={{ color: "#e6f7ff", fontSize: "0.9rem", marginBottom: "16px" }}>
-            {this.state.error?.message || "Ocurrió una anomalía al procesar los datos de esta misión."}
+            {this.state.error?.message || "An anomaly occurred while processing this mission's data."}
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
@@ -57,7 +57,7 @@ class StageErrorBoundary extends React.Component {
               cursor: "pointer"
             }}
           >
-            🔄 Reintentar Etapa
+            🔄 Retry Stage
           </button>
         </div>
       );
@@ -272,7 +272,7 @@ export function DailyGameRunner({
       {/* Floating Save Toast Notification — Positioned floating overlay so zero layout shift occurs */}
       {resumedNotice && (
         <div className="runner-floating-toast animate-fadeIn">
-          💾 Progreso Guardado Recuperado
+          💾 Saved Progress Restored
         </div>
       )}
 
@@ -280,8 +280,8 @@ export function DailyGameRunner({
       <div className="daily-runner-hud">
         <div className="runner-hud-left">
           <div className="runner-hud-meta">
-            <span className="runner-day-badge">🚀 DÍA {dayNumber}</span>
-            <span className="runner-step-counter">ETAPA {stageIndex + 1} / 5</span>
+            <span className="runner-day-badge">🚀 DAY {dayNumber}</span>
+            <span className="runner-step-counter">STAGE {stageIndex + 1} / 5</span>
           </div>
           <h3 className="runner-stage-name">
             {completedStages.includes(currentStage.id) ? "✅ " : currentStage.icon + " "}
@@ -308,16 +308,16 @@ export function DailyGameRunner({
                   }
                 }}
                 style={{ cursor: (isDone || i <= stageIndex) ? "pointer" : "default" }}
-                title={isDone ? `Etapa ${stg.id} superada (clic para revisar)` : `Etapa ${stg.id}`}
+                title={isDone ? `Stage ${stg.id}: ${stg.type} (click to review)` : `Stage ${stg.id}: ${stg.type}`}
               >
                 <span className="pill-icon">{isDone ? "✅" : stg.icon}</span>
-                <span className="pill-name">Etapa {stg.id}</span>
+                <span className="pill-name">Stage {stg.id}</span>
               </div>
             );
           })}
         </div>
 
-        <button className="runner-close-btn" onClick={onClose} title="Guardar y Salir al Panel">
+        <button className="runner-close-btn" onClick={onClose} title="Save and Exit to Station">
           ✕
         </button>
       </div>
@@ -339,8 +339,8 @@ export function DailyGameRunner({
           <div className="runner-transition-modal">
             <div className="transition-card">
               <div className="transition-icon-glow">{STAGES[stageIndex].icon}</div>
-              <h2>¡ETAPA {stageIndex + 1} COMPLETADA!</h2>
-              <p className="transition-subtitle">{STAGES[stageIndex].desc} superado con éxito.</p>
+              <h2>STAGE {stageIndex + 1} COMPLETED!</h2>
+              <p className="transition-subtitle">{STAGES[stageIndex].desc} completed successfully.</p>
               <div style={{
                 background: "rgba(46, 196, 182, 0.12)",
                 border: "1px dashed rgba(46, 196, 182, 0.5)",
@@ -350,41 +350,41 @@ export function DailyGameRunner({
                 color: "#b8fff9",
                 marginBottom: "12px"
               }}>
-                💾 Tu progreso ha sido guardado. Si cierras ahora, podrás retomar desde la Etapa {Math.min(5, stageIndex + 2)}.
+                💾 Your progress has been saved. If you exit now, you can resume from Stage {Math.min(5, stageIndex + 2)}.
               </div>
 
               {stageIndex < 4 ? (
                 <div className="transition-score-box">
                   <div className="score-stat">
-                    <span>Recompensa Acumulada</span>
-                    <strong>+{totalXP} XP | +{totalCoins} Monedas 🪙</strong>
+                    <span>Accumulated Rewards</span>
+                    <strong>+{totalXP} XP | +{totalCoins} Coins 🪙</strong>
                   </div>
                   <div className="score-stat">
-                    <span>Equivocaciones en Juegos</span>
+                    <span>Mistakes in Games</span>
                     <strong style={{ color: totalMistakes === 0 ? "#2ec4b6" : "#ff6b6b" }}>
-                      {totalMistakes} {totalMistakes === 1 ? "error" : "errores"}
+                      {totalMistakes} {totalMistakes === 1 ? "mistake" : "mistakes"}
                     </strong>
                   </div>
                   <div className="score-stat highlight-stat">
-                    <span>Nota Automática Actual (/20)</span>
+                    <span>Current Auto-Grade (/20)</span>
                     <strong className="auto-score-number">⭐ {currentAutoScore} / 20</strong>
                   </div>
                 </div>
               ) : (
                 <div className="transition-score-box writing-next-box">
-                  <h3>🎯 NOTA DE JUEGOS AUTOMÁTICOS: <span className="gold-score">{completedAutoScore} / 20</span></h3>
-                  <p>A continuación ingresarás a la <strong>Etapa 5: Writing (Redacción Espacial)</strong>.</p>
-                  <small>Esta etapa será enviada a la bandeja del profesor para su calificación manual independiente (0 a 20).</small>
+                  <h3>🎯 AUTOMATIC GAMES SCORE: <span className="gold-score">{completedAutoScore} / 20</span></h3>
+                  <p>Up next: <strong>Stage 5: Writing (Mission Report)</strong>.</p>
+                  <small>This stage will be submitted to the teacher's dashboard for grading (0 to 20).</small>
                 </div>
               )}
 
               <div className="next-stage-preview">
-                <span>SIGUIENTE PASO:</span>
+                <span>NEXT STAGE:</span>
                 <h4>{STAGES[stageIndex + 1]?.icon} {STAGES[stageIndex + 1]?.title}</h4>
               </div>
 
               <button className="btn-next-stage" onClick={handleNextStage}>
-                Continuar a Etapa {stageIndex + 2} ➔
+                Continue to Stage {stageIndex + 2} ➔
               </button>
             </div>
           </div>

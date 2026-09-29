@@ -568,20 +568,20 @@ export function RoomActivityPanel3D({
             {activeModal === "misiones" && (() => {
               const lockStatus = getDayLockStatus(selectedDay);
               const stages = [
-                { icon: "📖", name: "Comic Reading", type: "Lectura", desc: "Comprensión de viñetas interactivas de la bitácora espacial." },
-                { icon: "🚀", name: "Sentence Launch", type: "Gramática", desc: "Construcción y alineación espacial de estructuras gramaticales." },
-                { icon: "🔋", name: "Word Recovery", type: "Escucha", desc: "Sintonía de frecuencias de audio y recuperación de vocabulario." },
-                { icon: "🔧", name: "Ship Repair", type: "Vocabulario", desc: "Detección de fallos técnicos y emparejamiento de vocabulario." },
-                { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Redacción del informe de misión para revisión docente." }
+                { icon: "🛠️", name: "Ship Repair", type: "Vocabulary", desc: "Diagnostic technical checks and space vocabulary matching." },
+                { icon: "⚡", name: "Sentence Launch", type: "Grammar", desc: "Build and align space sentence grammar structures." },
+                { icon: "📖", name: "Comic Reading", type: "Reading", desc: "Read interactive mission log panels and answer comprehension questions." },
+                { icon: "🛰️", name: "Word Recovery", type: "Listening", desc: "Audio frequency tuning and vocabulary word recovery." },
+                { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Compose the mission report for teacher review." }
               ];
 
               return (
                 <div style={{ textAlign: "center", padding: "10px 0" }}>
                   <h2 style={{ margin: "0 0 16px 0", color: "#2ec4b6", fontSize: "24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderBottom: "2px solid rgba(46, 196, 182, 0.4)", paddingBottom: "10px" }}>
-                    🚀 MISIÓN Y TUTORIAL DEL DÍA {selectedDay}
+                    🚀 DAY {selectedDay} MISSION & BRIEFING
                   </h2>
                   <p style={{ fontSize: "15px", color: "#e6f7ff", lineHeight: "1.5", margin: "10px 0 18px 0" }}>
-                    En esta misión completarás las 5 etapas continuas en orden:
+                    In this mission you will complete 5 continuous stages in pedagogical sequence:
                   </p>
 
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginBottom: "20px" }}>
@@ -599,7 +599,7 @@ export function RoomActivityPanel3D({
                         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
                           <span style={{ fontSize: "20px" }}>{st.icon}</span>
                           <div>
-                            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#ffd166" }}>Etapa {idx + 1}: {st.type}</div>
+                            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#ffd166" }}>Stage {idx + 1}: {st.type}</div>
                             <div style={{ fontSize: "12px", color: "#9be6df" }}>{st.name}</div>
                           </div>
                         </div>
@@ -613,7 +613,7 @@ export function RoomActivityPanel3D({
                   {lockStatus.isUnlocked ? (
                     <div style={{ background: "rgba(46, 196, 182, 0.12)", border: "1.5px dashed #2ec4b6", borderRadius: "18px", padding: "20px", margin: "10px 0" }}>
                       <p style={{ fontSize: "13px", color: "#b8fff9", margin: "0 0 14px 0" }}>
-                        💡 <strong>Mecánica de Calificación:</strong> De 0 a 20 con resta de puntos por errores en intentos. El informe final de Writing se envía a la bandeja del profesor.
+                        💡 <strong>Grading Mechanics:</strong> Graded 0 to 20 with deductions for incorrect attempts. The final Writing report is submitted to the teacher.
                       </p>
                       <button
                         onClick={() => {
@@ -633,13 +633,13 @@ export function RoomActivityPanel3D({
                           boxShadow: "0 0 25px rgba(255, 209, 102, 0.6)"
                         }}
                       >
-                        🚀 ¡INICIAR MISIÓN DEL DÍA {selectedDay}! ➔
+                        🚀 START DAY {selectedDay} MISSION! ➔
                       </button>
                     </div>
                   ) : (
                     <div style={{ background: "rgba(239, 68, 68, 0.12)", border: "1.5px solid #ef4444", borderRadius: "18px", padding: "20px", margin: "10px 0" }}>
                       <span style={{ fontSize: "2.4rem", display: "block", marginBottom: "8px" }}>🔒</span>
-                      <h3 style={{ color: "#ef4444", margin: "0 0 8px 0" }}>DÍA BLOQUEADO POR COOLDOWN</h3>
+                      <h3 style={{ color: "#ef4444", margin: "0 0 8px 0" }}>DAY LOCKED BY COOLDOWN</h3>
                       <p style={{ fontSize: "14px", color: "#fca5a5", fontWeight: "bold", margin: 0 }}>
                         {lockStatus.reason}
                       </p>
@@ -1116,7 +1116,7 @@ export function RoomActivityPanel3D({
             }}
           >
             <div style={{ fontSize: "14px", fontWeight: "900", color: "#2ec4b6", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              🛰️ MISIÓN DÍA {selectedDay}
+              🛰️ DAY {selectedDay} MISSION
             </div>
 
             <div style={{ display: "flex", gap: "8px", width: "100%", height: "78px", marginTop: "4px" }}>
@@ -1148,10 +1148,10 @@ export function RoomActivityPanel3D({
                   boxShadow: "0 0 15px rgba(255, 209, 102, 0.4)",
                   transition: "all 0.15s ease"
                 }}
-                title="Iniciar los 5 minijuegos del Día"
+                title="Start today's 5 mission stages"
               >
                 <span style={{ fontSize: "20px" }}>🚀</span>
-                <span>INICIAR JUEGOS</span>
+                <span>START MISSION</span>
               </button>
 
               <button

@@ -7,13 +7,34 @@ import { soundFx } from "../utils/soundEffects";
  * Clicking a slot shows stage info and instructions.
  */
 
-const missionMeta = [
-  { icon: "📖", name: "Comic Reading", stage: "Etapa 1: Lectura", desc: "Comprensión de viñetas interactivas de la bitácora espacial.", reward: "5 XP / 5 🪙" },
-  { icon: "🚀", name: "Sentence Launch", stage: "Etapa 2: Gramática", desc: "Construcción y alineación espacial de estructuras gramaticales.", reward: "10 XP / 10 🪙" },
-  { icon: "🔋", name: "Word Recovery", stage: "Etapa 3: Escucha", desc: "Sintonía de frecuencias de audio y recuperación de vocabulario.", reward: "10 XP / 10 🪙" },
-  { icon: "🔧", name: "Ship Repair", stage: "Etapa 4: Vocabulario", desc: "Detección de fallos técnicos y emparejamiento de vocabulario.", reward: "10 XP / 10 🪙" },
-  { icon: "✍️", name: "Writing Lab", stage: "Etapa 5: Writing", desc: "Redacción del informe de misión para revisión docente.", reward: "15 XP / Transmisión" },
-];
+const STAGE_METAS = {
+  vocabulary: { id: 1, icon: "🛠️", name: "Vocabulary", activityName: "Ship Repair", stage: "Stage 1: Vocabulary", desc: "Detect technical faults and match space vocabulary.", reward: "10 XP / 10 Coins 🪙" },
+  grammar: { id: 2, icon: "⚡", name: "Grammar", activityName: "Sentence Launch", stage: "Stage 2: Grammar", desc: "Build and align space sentence grammar structures.", reward: "10 XP / 10 Coins 🪙" },
+  reading: { id: 3, icon: "📖", name: "Reading", activityName: "Comic Reading", stage: "Stage 3: Reading", desc: "Read the comic panels and answer comprehension questions.", reward: "10 XP / 10 Coins 🪙" },
+  listening: { id: 4, icon: "🛰️", name: "Listening", activityName: "Word Recovery", stage: "Stage 4: Listening", desc: "Tune audio frequencies and recover vocabulary words.", reward: "10 XP / 10 Coins 🪙" },
+  writing: { id: 5, icon: "✉️", name: "Writing", activityName: "Writing Lab", stage: "Stage 5: Writing", desc: "Compose the mission log report for teacher review.", reward: "15 XP / Transmission" },
+};
+
+function resolveActivityMeta(act, index) {
+  const text = ((act?.title || "") + " " + (act?.description || "")).toLowerCase();
+  if (text.includes("repair") || text.includes("maintenance") || text.includes("vocab")) {
+    return STAGE_METAS.vocabulary;
+  }
+  if (text.includes("sentence") || text.includes("launch") || text.includes("grammar") || text.includes("gramát")) {
+    return STAGE_METAS.grammar;
+  }
+  if (text.includes("comic") || text.includes("reading") || text.includes("lectura") || text.includes("bitácora")) {
+    return STAGE_METAS.reading;
+  }
+  if (text.includes("recovery") || text.includes("word") || text.includes("listen") || text.includes("frecuen")) {
+    return STAGE_METAS.listening;
+  }
+  if (text.includes("writing") || text.includes("informe") || text.includes("redac") || text.includes("log")) {
+    return STAGE_METAS.writing;
+  }
+  const ordered = [STAGE_METAS.vocabulary, STAGE_METAS.grammar, STAGE_METAS.reading, STAGE_METAS.listening, STAGE_METAS.writing];
+  return ordered[index % 5];
+}
 
 export default function MissionConsole({
   dayActivities,
@@ -35,19 +56,22 @@ export default function MissionConsole({
             color: "#9be6df",
             fontSize: "0.85rem"
           }}>
-            🛰️ No hay misiones registradas para este día aún.
+            🛰️ No mission logs registered for this day yet.
           </div>
         </div>
       </div>
     );
   }
 
+  // Map and sort activities by stage 1 to 5 order
+  const sortedActivities = [...dayActivities]
+    .map((act, index) => ({ act, meta: resolveActivityMeta(act, index) }))
+    .sort((a, b) => a.meta.id - b.meta.id);
+
   return (
     <div className="mission-console">
       <div className="mission-console__slots">
-        {dayActivities.map((act) => {
-          const gameType = ((act.id - 1) % 5);
-          const meta = missionMeta[gameType] || missionMeta[0];
+        {sortedActivities.map(({ act, meta }) => {
           const isCompleted = !!completedList[act.id];
 
           return (
@@ -58,13 +82,16 @@ export default function MissionConsole({
                 soundFx.playClick();
                 setSelectedInfo({ act, meta });
               }}
-              title="Haz clic para ver información de esta etapa"
+              title="Click to view stage details"
             >
               <span className="mission-slot__icon">{meta.icon}</span>
-              <span className="mission-slot__name">{meta.name}</span>
+              <span className="mission-slot__name" style={{ fontWeight: "700" }}>{meta.stage}</span>
+              <span className="mission-slot__subname" style={{ fontSize: "0.72rem", color: "#9be6df", opacity: 0.9 }}>
+                {meta.activityName}
+              </span>
               <span className="mission-slot__reward">{meta.reward}</span>
               {isCompleted && (
-                <span className="mission-slot__badge-complete">Completado</span>
+                <span className="mission-slot__badge-complete">Completed</span>
               )}
             </div>
           );
@@ -140,12 +167,12 @@ export default function MissionConsole({
               {selectedInfo.act.description || selectedInfo.meta.desc}
             </p>
 
-            <div style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px dashed rgba(255, 209, 102, 0.4)", borderRadius: "14px", padding: "12px 16px", marginTop: "16px" }}>
-              <span style={{ fontSize: "0.78rem", color: "#ffd166", fontWeight: "bold" }}>
-                💡 NOTA DEL COMANDO:
+            <div style={{ background: "rgba(255, 255, 255, 0.05)", border: "1px dashed rgba(46, 196, 182, 0.4)", borderRadius: "14px", padding: "12px 16px", marginTop: "16px" }}>
+              <span style={{ fontSize: "0.78rem", color: "#2ec4b6", fontWeight: "bold" }}>
+                🚀 FLUID MISSION SEQUENCE:
               </span>
               <p style={{ margin: "4px 0 0 0", fontSize: "0.82rem", color: "#9be6df" }}>
-                Para realizar esta etapa y el resto de actividades del día, presiona el botón principal <strong>"🚀 ¡INICIAR MISIÓN DEL DÍA!"</strong>.
+                Daily stages are completed in a continuous interactive sequence. Press <strong>PLAY</strong> to launch today's mission.
               </p>
             </div>
 
@@ -164,7 +191,7 @@ export default function MissionConsole({
                   cursor: "pointer"
                 }}
               >
-                Cerrar
+                Close
               </button>
               {onStartGame && (
                 <button
@@ -181,12 +208,17 @@ export default function MissionConsole({
                     borderRadius: "14px",
                     color: "#0d1b2a",
                     fontWeight: "900",
-                    fontSize: "0.95rem",
+                    fontSize: "1.05rem",
                     cursor: "pointer",
-                    boxShadow: "0 0 15px rgba(255, 209, 102, 0.5)"
+                    boxShadow: "0 0 15px rgba(255, 209, 102, 0.5)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    letterSpacing: "0.5px"
                   }}
                 >
-                  {selectedInfo.meta.name === "Writing Lab" ? "✍️ Redactar / Reenviar Writing ➔" : "🚀 Jugar Esta Etapa ➔"}
+                  ▶ PLAY
                 </button>
               )}
             </div>

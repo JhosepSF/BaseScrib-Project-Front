@@ -551,15 +551,15 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     const gameType = ((id - 1) % 5) + 1;
     switch (gameType) {
       case 1:
-        return { icon: "📖", typeName: "Comic Reading", reward: "5 XP / 5 Monedas" };
+        return { icon: "🛠️", typeName: "Vocabulary & Ship Repair", reward: "10 XP / 10 Coins 🪙" };
       case 2:
-        return { icon: "🚀", typeName: "Sentence Launch", reward: "10 XP / 10 Monedas" };
+        return { icon: "⚡", typeName: "Grammar - Sentence Launch", reward: "10 XP / 10 Coins 🪙" };
       case 3:
-        return { icon: "🔋", typeName: "Word Recovery", reward: "10 XP / 10 Monedas" };
+        return { icon: "📖", typeName: "Comic Reading", reward: "10 XP / 10 Coins 🪙" };
       case 4:
-        return { icon: "🔧", typeName: "Ship Repair", reward: "10 XP / 10 Monedas" };
+        return { icon: "🛰️", typeName: "Word Recovery", reward: "10 XP / 10 Coins 🪙" };
       case 5:
-        return { icon: "✍️", typeName: "Writing Lab", reward: "15 XP / Transmisión" };
+        return { icon: "✍️", typeName: "Writing Lab", reward: "15 XP / Transmission" };
       default:
         return { icon: "👾", typeName: "Game", reward: "10 XP" };
     }
@@ -588,9 +588,9 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
               setUser(prev => ({ ...prev, ...updatedUser }));
             }
           }}
-          onStartGame={(act) => {
-            setActiveGame({ type: act.id, activity: act });
-            setGameStartTime(Date.now());
+          onStartGame={() => {
+            soundFx.playWarp();
+            setActiveRunnerDay(selectedDay);
           }}
           onToggleViewMode={() => setViewMode("classic")}
           onOpenStore={() => setShowStore(true)}
@@ -733,7 +733,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
                     className={`mission-console__day-tab ${selectedDay === dayNum ? "mission-console__day-tab--active" : ""}`}
                     style={{ opacity: isUnlocked ? 1 : 0.65 }}
                   >
-                    {isUnlocked ? `🚀 Día ${dayNum}` : `🔒 Día ${dayNum}`}
+                    {isUnlocked ? `🚀 Day ${dayNum}` : `🔒 Day ${dayNum}`}
                   </button>
                 );
               })}
@@ -762,7 +762,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
                     transition: "all 0.2s ease"
                   }}
                 >
-                  🚀 ¡INICIAR MISIÓN DEL DÍA {selectedDay}! ➔
+                  🚀 START DAY {selectedDay} MISSION! ➔
                 </button>
               ) : (
                 <div style={{
@@ -776,7 +776,7 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
                   textAlign: "center",
                   marginBottom: "8px"
                 }}>
-                  🔒 DÍA BLOQUEADO: {lockStatus.reason}
+                  🔒 DAY LOCKED: {lockStatus.reason}
                 </div>
               );
             })()}
@@ -784,20 +784,20 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
             <MissionConsole
               dayActivities={dayActivities}
               completedList={completedList}
-              onStartGame={(act) => {
+              onStartGame={() => {
                 const lockStatus = getDayLockStatus(selectedDay);
                 if (!lockStatus.isUnlocked) {
-                  alert(`🔒 Este día está bloqueado. ${lockStatus.reason}`);
+                  alert(`🔒 This day is locked. ${lockStatus.reason}`);
                   return;
                 }
-                setActiveGame({ type: act.id, activity: act });
-                setGameStartTime(Date.now());
+                soundFx.playWarp();
+                setActiveRunnerDay(selectedDay);
               }}
             />
 
             <div className="station-progress">
               <div className="station-progress__labels">
-                <span>Progreso de Misión (Día {selectedDay})</span>
+                <span>Mission Progress (Day {selectedDay})</span>
                 <span>{dayCompletedCount} / {dayActivities.length || 5}</span>
               </div>
               <div className="station-progress__bar-bg">
