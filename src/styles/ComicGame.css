@@ -4,7 +4,7 @@
 
 .comic-main-container {
   width: 100%;
-  max-width: 860px;
+  max-width: 880px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -14,7 +14,7 @@
   position: relative;
   width: 100%;
   min-height: 480px;
-  max-height: 580px;
+  height: 520px;
   border-radius: 18px;
   overflow: hidden;
   background-size: cover;
@@ -26,18 +26,19 @@
   flex-direction: column;
   justify-content: space-between;
   transition: background-image 0.4s ease-in-out;
+  cursor: pointer;
+  user-select: none;
 }
 
-/* Ambient Vignette Overlay */
+/* Ambient Vignette Overlay (Leaves center clearer) */
 .comic-scene-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(6, 15, 30, 0.82) 0%,
-    rgba(4, 10, 22, 0.2) 30%,
-    rgba(4, 10, 22, 0.4) 60%,
-    rgba(3, 8, 18, 0.92) 100%
+  background: radial-gradient(
+    circle at center,
+    rgba(4, 10, 22, 0.15) 0%,
+    rgba(6, 15, 30, 0.45) 60%,
+    rgba(3, 8, 18, 0.85) 100%
   );
   pointer-events: none;
   z-index: 1;
@@ -46,13 +47,13 @@
 /* Top Scenario Header Bar */
 .comic-scene-header {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
-  background: rgba(8, 20, 36, 0.7);
-  backdrop-filter: blur(8px);
+  padding: 10px 16px;
+  background: rgba(8, 20, 36, 0.78);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(184, 255, 249, 0.2);
 }
 
@@ -118,47 +119,97 @@
   color: #ffd166;
 }
 
-/* Dialogue Speech Bubbles Container */
-.comic-dialogues-container {
+/* Dynamic Interactive Speech Stage (No Scroll, Alternating Left/Right) */
+.comic-interactive-stage {
   position: relative;
   z-index: 2;
-  padding: 12px 18px;
-  max-height: 240px;
-  overflow-y: auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(46, 196, 182, 0.5) transparent;
+  justify-content: space-between;
+  padding: 16px 20px;
+  pointer-events: none; /* Allows click through to viewport to advance */
 }
 
-.comic-dialogues-container::-webkit-scrollbar {
-  width: 5px;
-}
-.comic-dialogues-container::-webkit-scrollbar-thumb {
-  background: rgba(46, 196, 182, 0.5);
-  border-radius: 4px;
+/* Top Speech Row (Typically Left Speaker e.g. General) */
+.comic-row-top {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
 }
 
-/* Individual Speech Bubble Item */
-.comic-speech-item {
+/* Middle / Center Row for Narrations or Reactions */
+.comic-row-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Bottom Speech Row (Typically Right Speaker e.g. Leo) */
+.comic-row-bottom {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/* Left-Side Speech Bubble */
+.comic-bubble-left {
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  animation: comicBubblePop 0.3s ease-out forwards;
+  max-width: 48%;
+  animation: popFromLeft 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-@keyframes comicBubblePop {
+/* Right-Side Speech Bubble */
+.comic-bubble-right {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 48%;
+  animation: popFromRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.comic-bubble-dimmed {
+  opacity: 0.55;
+  transform: scale(0.96);
+  filter: grayscale(20%);
+}
+
+.comic-bubble-active {
+  opacity: 1;
+  transform: scale(1);
+  filter: none;
+}
+
+@keyframes popFromLeft {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
+    transform: translateX(-18px) scale(0.92);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(0) scale(1);
   }
 }
 
+@keyframes popFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Character Avatar Circle */
 .comic-avatar-wrap {
   position: relative;
   flex-shrink: 0;
@@ -168,33 +219,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(6, 16, 32, 0.85);
   border: 2px solid var(--speaker-color, #2ec4b6);
-  box-shadow: 0 0 12px var(--speaker-glow, rgba(46, 196, 182, 0.4));
+  box-shadow: 0 0 16px var(--speaker-glow, rgba(46, 196, 182, 0.5));
 }
 
 .comic-avatar-img {
   width: 44px;
   height: 44px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
 }
 
 /* Speech Balloon Box */
 .comic-balloon {
   position: relative;
-  background: rgba(9, 23, 42, 0.88);
-  backdrop-filter: blur(10px);
+  background: rgba(9, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
   border: 1.5px solid var(--speaker-color, #2ec4b6);
   border-radius: 14px;
-  padding: 8px 14px;
-  max-width: 85%;
+  padding: 9px 14px;
   text-align: left;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Small speech bubble pointer triangle */
-.comic-balloon::before {
+/* Pointer Tail for Left Bubble */
+.comic-bubble-left .comic-balloon::before {
   content: "";
   position: absolute;
   top: 16px;
@@ -204,6 +254,19 @@
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
   border-right: 9px solid var(--speaker-color, #2ec4b6);
+}
+
+/* Pointer Tail for Right Bubble */
+.comic-bubble-right .comic-balloon::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: -9px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 9px solid var(--speaker-color, #2ec4b6);
 }
 
 .comic-speaker-meta {
@@ -229,7 +292,7 @@
 }
 
 .comic-balloon-text {
-  font-size: clamp(0.85rem, 1.7vh, 0.95rem);
+  font-size: clamp(0.85rem, 1.7vh, 0.96rem);
   font-weight: 500;
   line-height: 1.35;
   color: #f0fdfa;
@@ -238,29 +301,68 @@
 
 /* Narrative Box */
 .comic-narrator-box {
-  background: rgba(0, 0, 0, 0.75);
-  border: 1px dashed rgba(255, 209, 102, 0.5);
-  border-radius: 10px;
-  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px dashed rgba(255, 209, 102, 0.6);
+  border-radius: 12px;
+  padding: 7px 18px;
   color: #ffd166;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-style: italic;
   text-align: center;
-  margin: 2px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  max-width: 70%;
+  pointer-events: auto;
+}
+
+/* Click to Advance Floating Hint */
+.comic-click-hint {
+  position: absolute;
+  bottom: 60px;
+  right: 18px;
+  z-index: 3;
+  background: rgba(8, 20, 36, 0.75);
+  border: 1px solid rgba(46, 196, 182, 0.4);
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #9be6df;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  animation: pulseHint 2s infinite ease-in-out;
+}
+
+@keyframes pulseHint {
+  0%, 100% {
+    opacity: 0.75;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 /* Bottom Actions & Navigation Bar */
 .comic-scene-footer {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
-  background: rgba(8, 20, 36, 0.85);
+  background: rgba(8, 20, 36, 0.88);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(184, 255, 249, 0.2);
   gap: 10px;
+}
+
+.comic-footer-left,
+.comic-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-comic-nav {
@@ -268,8 +370,8 @@
   border: 1.5px solid #2ec4b6;
   color: #b8fff9;
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 8px 16px;
+  font-size: 0.84rem;
+  padding: 7px 14px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -291,13 +393,25 @@
   border-color: rgba(184, 255, 249, 0.15);
 }
 
+/* Dialogue Counter Badge */
+.comic-dialogue-counter {
+  color: #ffd166;
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 209, 102, 0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.4px;
+}
+
 /* Prominent Quiz Button */
 .btn-launch-quiz {
   background: linear-gradient(135deg, #ffd166 0%, #f77f00 100%);
   color: #0d1b2a;
   font-weight: 900;
   font-size: 0.95rem;
-  padding: 10px 22px;
+  padding: 9px 20px;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -324,4 +438,37 @@
 .btn-launch-quiz:hover {
   filter: brightness(1.1);
   transform: translateY(-2px) scale(1.04);
+}
+
+/* Full Script Modal / Drawer */
+.comic-script-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 16, 32, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.comic-script-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px solid rgba(46, 196, 182, 0.3);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+
+.comic-script-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 8px;
+  scrollbar-width: thin;
 }

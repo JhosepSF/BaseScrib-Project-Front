@@ -200,7 +200,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: "General Bric",
       role: "Commander",
       color: "#ffd166",
-      avatar: getBustEmotion("general", emo) || GeneralAvatar
+      avatar: getBustEmotion("general", emo) || GeneralAvatar,
+      side: "left"
     };
   }
 
@@ -214,7 +215,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: "Leo",
       role: "Recruit",
       color: "#2ec4b6",
-      avatar: getBustEmotion("leo", emo) || ReclutaAvatar
+      avatar: getBustEmotion("leo", emo) || ReclutaAvatar,
+      side: "right"
     };
   }
 
@@ -228,7 +230,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: nameLower.includes("emma") ? "Emma" : "Lia",
       role: "Crewmate",
       color: "#ff6b6b",
-      avatar: getBustEmotion("lia", emo) || LiaAvatar
+      avatar: getBustEmotion("lia", emo) || LiaAvatar,
+      side: "right"
     };
   }
 
@@ -238,7 +241,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: "Grand Boss",
       role: "Authority",
       color: "#00f0ff",
-      avatar: BossAvatar
+      avatar: BossAvatar,
+      side: "left"
     };
   }
 
@@ -248,7 +252,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: "Sparky Bot",
       role: "AI Assistant",
       color: "#48cae4",
-      avatar: RobotAvatar
+      avatar: RobotAvatar,
+      side: "right"
     };
   }
 
@@ -258,7 +263,18 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
       name: "Space Trainer",
       role: "Instructor",
       color: "#a8dadc",
-      avatar: getBustEmotion("general", "feliz") || GeneralAvatar
+      avatar: getBustEmotion("general", "feliz") || GeneralAvatar,
+      side: "left"
+    };
+  }
+
+  if (nameLower.includes("narrat")) {
+    return {
+      name: "Mission Log",
+      role: "Narrator",
+      color: "#ffd166",
+      avatar: null,
+      side: "center"
     };
   }
 
@@ -267,7 +283,8 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
     name: speakerName || "Recruit",
     role: "Explorer",
     color: "#b8fff9",
-    avatar: ReclutaAvatar
+    avatar: ReclutaAvatar,
+    side: "right"
   };
 }
 

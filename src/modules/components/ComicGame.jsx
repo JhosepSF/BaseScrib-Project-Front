@@ -98,6 +98,9 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [viewMode, setViewMode] = useState("reading"); // "reading" | "quiz"
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
+  const [showFullScript, setShowFullScript] = useState(false);
+
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
@@ -115,7 +118,100 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   // Parse structured story scenarios from backend (with offline fallback)
   const scenarios = parseComicStory(activity?.mission_story, dayNum);
   const currentScenario = scenarios[currentScenarioIndex] || scenarios[0];
+  const dialogues = currentScenario?.dialogues || [];
   const sceneImage = getComicSceneImage(dayNum, currentScenarioIndex);
+
+  // Reset dialogue index when scenario changes
+  useEffect(() => {
+    setCurrentDialogueIndex(0);
+  }, [currentScenarioIndex]);
+
+  // Current active dialogue line
+  const currentDialogue = dialogues[currentDialogueIndex] || dialogues[0];
+  const currentMeta = resolveCharacterMeta(currentDialogue?.speaker, currentDialogue?.emotion);
+  const currentSide = currentMeta?.side || "left";
+
+  // Compute active left and right speech items for turn-by-turn comic layout
+  let leftDialogue = null;
+  let leftMeta = null;
+  let rightDialogue = null;
+  let rightMeta = null;
+
+  if (currentSide === "left") {
+    leftDialogue = currentDialogue;
+    leftMeta = currentMeta;
+
+    // Previous right speaker response if available
+    for (let i = currentDialogueIndex - 1; i >= 0; i--) {
+      const prevMeta = resolveCharacterMeta(dialogues[i].speaker, dialogues[i].emotion);
+      if (prevMeta.side === "right") {
+        rightDialogue = dialogues[i];
+        rightMeta = prevMeta;
+        break;
+      }
+    }
+  } else if (currentSide === "right") {
+    rightDialogue = currentDialogue;
+    rightMeta = currentMeta;
+
+    // Previous left speaker prompt if available
+    for (let i = currentDialogueIndex - 1; i >= 0; i--) {
+      const prevMeta = resolveCharacterMeta(dialogues[i].speaker, dialogues[i].emotion);
+      if (prevMeta.side === "left") {
+        leftDialogue = dialogues[i];
+        leftMeta = prevMeta;
+        break;
+      }
+    }
+  }
+
+  // Handle advancing line by line
+  const handleAdvance = () => {
+    if (currentDialogueIndex < dialogues.length - 1) {
+      soundFx.playPop?.();
+      setCurrentDialogueIndex(prev => prev + 1);
+    } else if (currentScenarioIndex < scenarios.length - 1) {
+      soundFx.playWarp?.();
+      setCurrentScenarioIndex(prev => prev + 1);
+      setCurrentDialogueIndex(0);
+    } else {
+      soundFx.playWarp?.();
+      setViewMode("quiz");
+    }
+  };
+
+  // Handle previous line
+  const handlePrevious = () => {
+    if (currentDialogueIndex > 0) {
+      soundFx.playBeep?.();
+      setCurrentDialogueIndex(prev => prev - 1);
+    } else if (currentScenarioIndex > 0) {
+      soundFx.playBeep?.();
+      const prevScenario = scenarios[currentScenarioIndex - 1];
+      setCurrentScenarioIndex(prev => prev - 1);
+      setCurrentDialogueIndex(Math.max(0, (prevScenario?.dialogues?.length || 1) - 1));
+    }
+  };
+
+  // Keyboard navigation for interactive comic reading (Space, ArrowRight, ArrowLeft)
+  useEffect(() => {
+    if (viewMode !== "reading") return;
+
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+      if (e.code === "Space" || e.code === "ArrowRight") {
+        e.preventDefault();
+        handleAdvance();
+      } else if (e.code === "ArrowLeft") {
+        e.preventDefault();
+        handlePrevious();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [viewMode, currentDialogueIndex, currentScenarioIndex, dialogues.length, scenarios.length]);
 
   const lastQRef = useRef(null);
 
@@ -179,14 +275,15 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
     }
   };
 
+  const isScenarioCompleted = currentDialogueIndex >= dialogues.length - 1;
+  const isAllScenariosCompleted = isScenarioCompleted && (currentScenarioIndex >= scenarios.length - 1);
   const correctOption = currentQuestion?.options?.find(o => o.is_correct);
-  const selectedUserOption = currentQuestion?.options?.find(o => o.id === selectedOptionId);
 
   return (
     <div 
       className="glass-console auth-card panel-large animate-fadeIn comic-main-container" 
       style={{ 
-        maxWidth: 860, 
+        maxWidth: 880, 
         width: "100%", 
         padding: "clamp(8px, 1.8vh, 16px) clamp(10px, 2vw, 18px)", 
         position: "relative", 
@@ -201,7 +298,7 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Stage 3: Reading — Illustrated Graphic Comic
+              Stage 3: Reading — Interactive Graphic Comic
             </span>
             <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>
               {activity?.title || `Day ${dayNum} Mission Comic`}
@@ -217,37 +314,58 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <p style={{ color: "#9be6df", fontSize: "clamp(0.78rem, 1.5vh, 0.88rem)", margin: 0, textAlign: "left" }}>
-              📖 Read the illustrated mission comic in English before launching the comprehension quiz.
+              📖 Tap anywhere on the comic or press <kbd style={{ background: "rgba(255,255,255,0.15)", padding: "1px 6px", borderRadius: 4, color: "#fff" }}>Space</kbd> to advance dialogues.
             </p>
-            <button 
-              onClick={() => { soundFx.playWarp(); setViewMode("quiz"); }}
-              style={{
-                background: "transparent",
-                border: "1px solid #ffd166",
-                color: "#ffd166",
-                borderRadius: "8px",
-                padding: "3px 10px",
-                fontSize: "0.75rem",
-                fontWeight: "bold",
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-              title="Skip to Comprehension Quiz"
-            >
-              Skip to Quiz ➔
-            </button>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setShowFullScript(true); }}
+                style={{
+                  background: "rgba(46, 196, 182, 0.15)",
+                  border: "1px solid #2ec4b6",
+                  color: "#b8fff9",
+                  borderRadius: "8px",
+                  padding: "3px 10px",
+                  fontSize: "0.75rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                title="View full script transcript"
+              >
+                📜 Full Script
+              </button>
+              <button 
+                onClick={() => { soundFx.playWarp(); setViewMode("quiz"); }}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #ffd166",
+                  color: "#ffd166",
+                  borderRadius: "8px",
+                  padding: "3px 10px",
+                  fontSize: "0.75rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                title="Skip to Comprehension Quiz"
+              >
+                Skip to Quiz ➔
+              </button>
+            </div>
           </div>
 
-          {/* Full Illustrated Comic Viewport */}
+          {/* Full Illustrated Comic Viewport (Clickable to advance) */}
           <div 
             className="comic-scene-viewport"
             style={{ backgroundImage: `url(${sceneImage})` }}
+            onClick={handleAdvance}
+            title="Click to advance dialogue (or use Next ▶)"
           >
             {/* Ambient Dark Overlay */}
             <div className="comic-scene-overlay" />
 
             {/* Top Scenario Header Bar */}
-            <div className="comic-scene-header">
+            <div className="comic-scene-header" onClick={(e) => e.stopPropagation()}>
               <div className="comic-scene-badge">
                 <span className="comic-kicker-pill">
                   Scenario {currentScenarioIndex + 1} / {scenarios.length}
@@ -264,8 +382,9 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
                     onClick={() => {
                       soundFx.playPop?.();
                       setCurrentScenarioIndex(idx);
+                      setCurrentDialogueIndex(0);
                     }}
-                    title={`Go to Scenario ${idx + 1}`}
+                    title={`Jump to Scenario ${idx + 1}`}
                   >
                     {idx + 1}
                   </button>
@@ -273,86 +392,181 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
               </div>
             </div>
 
-            {/* Dialogue Speech Bubbles */}
-            <div className="comic-dialogues-container">
-              {currentScenario.dialogues.map((item, idx) => {
-                if (item.speaker === "Narrator") {
-                  return (
-                    <div key={idx} className="comic-narrator-box">
-                      "{item.text}"
-                    </div>
-                  );
-                }
-
-                const charMeta = resolveCharacterMeta(item.speaker, item.emotion);
-
-                return (
+            {/* Interactive Turn-by-Turn Speech Stage */}
+            <div className="comic-interactive-stage">
+              {/* Top Row: Left-side speaker (e.g. General, Boss, Trainer) */}
+              <div className="comic-row-top">
+                {leftDialogue && (
                   <div 
-                    key={idx} 
-                    className="comic-speech-item"
+                    className={`comic-bubble-left ${currentSide === "left" ? "comic-bubble-active" : "comic-bubble-dimmed"}`}
                     style={{ 
-                      "--speaker-color": charMeta.color, 
-                      "--speaker-glow": `${charMeta.color}44` 
+                      "--speaker-color": leftMeta.color, 
+                      "--speaker-glow": `${leftMeta.color}44` 
                     }}
                   >
-                    {/* Character Avatar */}
                     <div className="comic-avatar-wrap">
                       <img 
-                        src={charMeta.avatar} 
-                        alt={charMeta.name} 
+                        src={leftMeta.avatar} 
+                        alt={leftMeta.name} 
                         className="comic-avatar-img animate-pop" 
                       />
                     </div>
-
-                    {/* Speech Bubble */}
                     <div className="comic-balloon">
                       <div className="comic-speaker-meta">
-                        <span className="comic-speaker-name">{charMeta.name}</span>
-                        {item.emotion && (
-                          <span className="comic-speaker-emotion">({item.emotion})</span>
+                        <span className="comic-speaker-name">{leftMeta.name}</span>
+                        {leftDialogue.emotion && (
+                          <span className="comic-speaker-emotion">({leftDialogue.emotion})</span>
                         )}
                       </div>
-                      <p className="comic-balloon-text">"{item.text}"</p>
+                      <p className="comic-balloon-text">"{leftDialogue.text}"</p>
                     </div>
                   </div>
-                );
-              })}
+                )}
+              </div>
+
+              {/* Center Row: Narrator action caption if active */}
+              {currentSide === "center" && (
+                <div className="comic-row-center">
+                  <div className="comic-narrator-box animate-pop">
+                    "{currentDialogue.text}"
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Row: Right-side speaker (e.g. Leo, Lia, Recruit) */}
+              <div className="comic-row-bottom">
+                {rightDialogue && (
+                  <div 
+                    className={`comic-bubble-right ${currentSide === "right" ? "comic-bubble-active" : "comic-bubble-dimmed"}`}
+                    style={{ 
+                      "--speaker-color": rightMeta.color, 
+                      "--speaker-glow": `${rightMeta.color}44` 
+                    }}
+                  >
+                    <div className="comic-avatar-wrap">
+                      <img 
+                        src={rightMeta.avatar} 
+                        alt={rightMeta.name} 
+                        className="comic-avatar-img animate-pop" 
+                      />
+                    </div>
+                    <div className="comic-balloon">
+                      <div className="comic-speaker-meta">
+                        <span className="comic-speaker-name">{rightMeta.name}</span>
+                        {rightDialogue.emotion && (
+                          <span className="comic-speaker-emotion">({rightDialogue.emotion})</span>
+                        )}
+                      </div>
+                      <p className="comic-balloon-text">"{rightDialogue.text}"</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Bottom Actions Bar */}
-            <div className="comic-scene-footer">
-              <button 
-                className="btn-comic-nav"
-                disabled={currentScenarioIndex === 0}
-                onClick={() => {
-                  soundFx.playBeep?.();
-                  setCurrentScenarioIndex(prev => Math.max(0, prev - 1));
-                }}
-              >
-                ◀ Previous Scenario
-              </button>
-
-              <button 
-                className="btn-launch-quiz"
-                onClick={() => {
-                  soundFx.playWarp();
-                  setViewMode("quiz");
-                }}
-              >
-                🚀 Iniciar Cuestionario de Acceso ➔
-              </button>
-
-              <button 
-                className="btn-comic-nav"
-                disabled={currentScenarioIndex >= scenarios.length - 1}
-                onClick={() => {
-                  soundFx.playBeep?.();
-                  setCurrentScenarioIndex(prev => Math.min(scenarios.length - 1, prev + 1));
-                }}
-              >
-                Next Scenario ▶
-              </button>
+            {/* Click to Advance Floating Hint */}
+            <div className="comic-click-hint">
+              👆 Click scene or tap Next ▶ ({currentDialogueIndex + 1} / {dialogues.length})
             </div>
+
+            {/* Bottom Controls Bar */}
+            <div className="comic-scene-footer" onClick={(e) => e.stopPropagation()}>
+              <div className="comic-footer-left">
+                <button 
+                  className="btn-comic-nav"
+                  disabled={currentScenarioIndex === 0 && currentDialogueIndex === 0}
+                  onClick={handlePrevious}
+                >
+                  ◀ Prev Line
+                </button>
+                <span className="comic-dialogue-counter">
+                  Line {currentDialogueIndex + 1} / {dialogues.length}
+                </span>
+              </div>
+
+              <div className="comic-footer-right">
+                {isAllScenariosCompleted ? (
+                  <button 
+                    className="btn-launch-quiz"
+                    onClick={() => {
+                      soundFx.playWarp();
+                      setViewMode("quiz");
+                    }}
+                  >
+                    🚀 Iniciar Cuestionario de Acceso ➔
+                  </button>
+                ) : isScenarioCompleted ? (
+                  <button 
+                    className="btn-launch-quiz"
+                    style={{ background: "linear-gradient(135deg, #2ec4b6, #00b4d8)" }}
+                    onClick={() => {
+                      soundFx.playWarp();
+                      setCurrentScenarioIndex(prev => prev + 1);
+                      setCurrentDialogueIndex(0);
+                    }}
+                  >
+                    Next Scenario ({currentScenarioIndex + 2} / {scenarios.length}) ➔
+                  </button>
+                ) : (
+                  <button 
+                    className="btn-comic-nav"
+                    style={{ background: "#2ec4b6", color: "#0d1b2a", fontWeight: "900" }}
+                    onClick={handleAdvance}
+                  >
+                    Next Line ▶
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Full Script Modal Overlay */}
+            {showFullScript && (
+              <div className="comic-script-modal animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                <div className="comic-script-header">
+                  <h3 style={{ margin: 0, color: "#2ec4b6", fontSize: "1.1rem" }}>
+                    📜 Full Mission Script — {currentScenario.title}
+                  </h3>
+                  <button 
+                    className="btn-logout"
+                    style={{ margin: 0, padding: "4px 10px" }}
+                    onClick={() => setShowFullScript(false)}
+                  >
+                    ✕ Close
+                  </button>
+                </div>
+                <div className="comic-script-body">
+                  {dialogues.map((d, idx) => {
+                    const char = resolveCharacterMeta(d.speaker, d.emotion);
+                    return (
+                      <div 
+                        key={idx}
+                        style={{
+                          background: idx === currentDialogueIndex ? "rgba(46, 196, 182, 0.2)" : "rgba(0,0,0,0.35)",
+                          borderLeft: `3px solid ${char.color}`,
+                          borderRadius: "6px",
+                          padding: "8px 12px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 10
+                        }}
+                      >
+                        {char.avatar && (
+                          <img src={char.avatar} alt={char.name} style={{ width: 28, height: 28, objectFit: "contain" }} />
+                        )}
+                        <div>
+                          <strong style={{ color: char.color, fontSize: "0.82rem" }}>
+                            {char.name} {d.emotion ? `(${d.emotion})` : ""}:
+                          </strong>
+                          <span style={{ color: "#e6f7ff", fontSize: "0.88rem", marginLeft: 6 }}>
+                            "{d.text}"
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : (
