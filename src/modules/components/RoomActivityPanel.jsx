@@ -23,6 +23,8 @@ import HoloMonitor from "./HoloMonitor";
 import PortalGateway from "./PortalGateway";
 import { RoomActivityPanel3D } from "./RoomActivityPanel3D";
 import { DailyGameRunner } from "./DailyGameRunner";
+import { VocabularyTrainerModal } from "./VocabularyTrainerModal";
+import { RobotLessonBriefing } from "./RobotLessonBriefing";
 import naveDentro2D from "../../assets/amongus/Nave_dentro_16_9_2D.jpg";
 import "../../styles/SpaceStation.css";
 
@@ -47,6 +49,8 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   const [testType, setTestType] = useState("pre");
   const [unlockingMission, setUnlockingMission] = useState(null);
   const [unlockedMissionIds, setUnlockedMissionIds] = useState([]);
+  const [showRobotLesson, setShowRobotLesson] = useState(false);
+  const [showVocabTrainer, setShowVocabTrainer] = useState(false);
   const [sparkyPhrase, setSparkyPhrase] = useState("¡Buen trabajo, recluta! Continúa con la misión.");
   const [viewMode, setViewMode] = useState("classic"); // "classic" or "3d"
   const [activeRunnerDay, setActiveRunnerDay] = useState(null);
@@ -91,13 +95,14 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
   // Sparky phrases rotation
   useEffect(() => {
     const phrases = [
+      "🤖 ¡Haz clic en mí para ver la lección gramatical de hoy!",
+      "Utilizamos 'I am' para señalar quiénes somos... ¡Tócame!",
+      "I can repair the engine! (¡Yo puedo reparar!) ¡Haz clic en Sparky!",
       "¡Buen trabajo, recluta! Continúa con la misión.",
       "Focus, recruit! You can do it!",
       "Great job, keep going!",
       "La constancia es la clave del éxito espacial.",
-      "¡No te rindas! La dimensión te necesita.",
       "Aprender un nuevo idioma es como descubrir un nuevo planeta.",
-      "¡Estás mejorando muy rápido!",
       "Mantén tu racha activa, recluta."
     ];
 
@@ -505,6 +510,17 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
                   {missionBriefings[selectedDay].grammar}
                 </p>
               </div>
+              {missionBriefings[selectedDay].examples && (
+                <div style={{ marginTop: 10, borderTop: "1px dashed rgba(255,209,102,0.3)", paddingTop: 8 }}>
+                  <span style={{ color: "#00f0ff", fontWeight: "bold", fontSize: "12px" }}>💡 Ejemplos:</span>
+                  {missionBriefings[selectedDay].examples.slice(0, 2).map((ex, i) => (
+                    <div key={i} style={{ fontSize: "11px", marginTop: 4 }}>
+                      <span style={{ color: "#ffffff", fontWeight: "bold" }}>🎯 {ex.en}</span>
+                      <span style={{ color: "#9be6df", display: "block", fontSize: "10px" }}>↳ {ex.es}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </HoloMonitor>
           ) : (
             <HoloMonitor className="station-bitacora-monitor" icon="🛰️" title={`MISIÓN ACTIVA - DÍA ${selectedDay}`}>
@@ -613,6 +629,28 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
                   </span>
                 ))}
               </div>
+              <button
+                onClick={() => {
+                  soundFx.playClick();
+                  setShowVocabTrainer(true);
+                }}
+                style={{
+                  marginTop: "12px",
+                  width: "100%",
+                  padding: "10px 14px",
+                  background: "linear-gradient(135deg, #bf00ff 0%, #7928ca 100%)",
+                  border: "none",
+                  borderRadius: "10px",
+                  color: "#ffffff",
+                  fontWeight: "900",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                  boxShadow: "0 0 12px rgba(191, 0, 255, 0.4)",
+                  transition: "all 0.2s"
+                }}
+              >
+                🎮 Entrenar Vocabulario (3 Pasos) ➔
+              </button>
             </HoloMonitor>
           )}
 
@@ -639,7 +677,15 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
               />
             </div>
 
-            <div className="sparky-container">
+            <div
+              className="sparky-container"
+              onClick={() => {
+                soundFx.playClick();
+                setShowRobotLesson(true);
+              }}
+              style={{ cursor: "pointer" }}
+              title="¡Haz clic en Sparky para ver la lección gramatical de hoy!"
+            >
               <div className="sparky-bubble">
                 {sparkyPhrase}
               </div>
@@ -717,6 +763,35 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
           onUnlocked={(mId) => setUnlockedMissionIds([...unlockedMissionIds, mId])}
         />
       )}
+
+      {/* 3-STEP PROGRESSIVE VOCABULARY TRAINER MODAL */}
+      <VocabularyTrainerModal
+        dayNumber={selectedDay}
+        vocabulary={missionBriefings[selectedDay]?.vocabulary}
+        isOpen={showVocabTrainer}
+        onClose={() => setShowVocabTrainer(false)}
+        onComplete={(reward) => {
+          setShowVocabTrainer(false);
+          if (reward) {
+            setUser(prev => ({
+              ...prev,
+              xp: (prev?.xp || 0) + (reward.xp || 15),
+              coins: (prev?.coins || 0) + (reward.coins || 15)
+            }));
+          }
+        }}
+      />
+
+      {/* SPARKY ROBOT LESSON BRIEFING MODAL */}
+      <RobotLessonBriefing
+        dayNumber={selectedDay}
+        isOpen={showRobotLesson}
+        onClose={() => setShowRobotLesson(false)}
+        onLaunchStage={() => {
+          setShowRobotLesson(false);
+          setActiveRunnerDay(selectedDay);
+        }}
+      />
 
       {/* SEQUENCED DAILY GAME RUNNER OVERLAY */}
       {activeRunnerDay && (

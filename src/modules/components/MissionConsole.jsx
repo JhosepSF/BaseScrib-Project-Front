@@ -8,32 +8,41 @@ import { soundFx } from "../utils/soundEffects";
  */
 
 const STAGE_METAS = {
-  vocabulary: { id: 1, icon: "⚡", name: "Vocabulary", activityName: "Sentence Launch", stage: "Stage 1: Vocabulary", desc: "Connect vocabulary cables to restore ship power.", reward: "10 XP / 10 Coins 🪙" },
-  grammar: { id: 2, icon: "🛠️", name: "Grammar", activityName: "Ship Repair", stage: "Stage 2: Grammar", desc: "Detect technical faults and repair sentence grammar.", reward: "10 XP / 10 Coins 🪙" },
-  reading: { id: 3, icon: "📖", name: "Reading", activityName: "Comic Reading", stage: "Stage 3: Reading", desc: "Read the comic panels and answer comprehension questions.", reward: "10 XP / 10 Coins 🪙" },
-  listening: { id: 4, icon: "🛰️", name: "Listening", activityName: "Word Recovery", stage: "Stage 4: Listening", desc: "Tune audio frequencies and recover vocabulary words.", reward: "10 XP / 10 Coins 🪙" },
-  writing: { id: 5, icon: "✉️", name: "Writing", activityName: "Writing Lab", stage: "Stage 5: Writing", desc: "Compose the mission log report for teacher review.", reward: "15 XP / Transmission" },
+  vocabulary: { id: 1, icon: "⚡", name: "Vocabulary", activityName: "Power Cables (Connect Words)", stage: "Stage 1: Vocabulary", desc: "Connect matching words and vocabulary cables to restore ship power.", reward: "10 XP / 10 Coins 🪙" },
+  grammar: { id: 2, icon: "🛠️", name: "Grammar", activityName: "Ship Repair (Sentence Order)", stage: "Stage 2: Grammar", desc: "Order words into correct grammatical sentences to calibrate the shields.", reward: "10 XP / 10 Coins 🪙" },
+  reading: { id: 3, icon: "📖", name: "Reading", activityName: "Comic Log (Reading & Quiz)", stage: "Stage 3: Reading", desc: "Read the comic panels and answer comprehension questions.", reward: "10 XP / 10 Coins 🪙" },
+  recovery: { id: 4, icon: "🛰️", name: "Word Recovery", activityName: "Reactor Fuel (Fill Blanks)", stage: "Stage 4: Word Recovery", desc: "Complete sentences with missing words to fuel the reactor.", reward: "10 XP / 10 Coins 🪙" },
+  writing: { id: 5, icon: "✉️", name: "Writing", activityName: "Space Mailbox (Writing Lab)", stage: "Stage 5: Writing", desc: "Compose your mission report and transmit it for teacher evaluation.", reward: "15 XP / Transmission" },
 };
 
-function resolveActivityMeta(act, index) {
-  const text = ((act?.title || "") + " " + (act?.description || "")).toLowerCase();
-  if (text.includes("sentence") || text.includes("launch") || text.includes("vocab") || text.includes("cable")) {
-    return STAGE_METAS.vocabulary;
-  }
-  if (text.includes("repair") || text.includes("maintenance") || text.includes("grammar") || text.includes("gramát")) {
-    return STAGE_METAS.grammar;
-  }
-  if (text.includes("comic") || text.includes("reading") || text.includes("lectura") || text.includes("bitácora")) {
-    return STAGE_METAS.reading;
-  }
-  if (text.includes("recovery") || text.includes("word") || text.includes("listen") || text.includes("frecuen")) {
-    return STAGE_METAS.listening;
-  }
-  if (text.includes("writing") || text.includes("informe") || text.includes("redac") || text.includes("log")) {
-    return STAGE_METAS.writing;
-  }
-  const ordered = [STAGE_METAS.vocabulary, STAGE_METAS.grammar, STAGE_METAS.reading, STAGE_METAS.listening, STAGE_METAS.writing];
-  return ordered[index % 5];
+function resolveActivitiesForConsole(dayActivities) {
+  if (!dayActivities || dayActivities.length === 0) return [];
+  const STAGE_CONFIGS = [
+    { key: "vocabulary", meta: STAGE_METAS.vocabulary, matchers: ["cable", "vocab", "vocabulario", "conectar", "launch", "sentence"] },
+    { key: "grammar", meta: STAGE_METAS.grammar, matchers: ["repair", "maintenance", "reparación", "mantenimiento", "grammar", "gramát", "order"] },
+    { key: "reading", meta: STAGE_METAS.reading, matchers: ["comic", "cómic", "reading", "lectura", "bitácora"] },
+    { key: "recovery", meta: STAGE_METAS.recovery, matchers: ["recovery", "reactor", "fuel", "recuperación", "frecuencia", "listen", "word"] },
+    { key: "writing", meta: STAGE_METAS.writing, matchers: ["writing", "mailbox", "informe", "redac", "log", "report"] },
+  ];
+
+  const usedActIds = new Set();
+  return STAGE_CONFIGS.map((stageConfig, index) => {
+    // 1. Try to find an unused activity that specifically matches this stage's keywords
+    let match = dayActivities.find(a => {
+      if (usedActIds.has(a.id)) return false;
+      const t = (a.title || "").toLowerCase();
+      const d = (a.description || "").toLowerCase();
+      return stageConfig.matchers.some(k => t.includes(k) || d.includes(k));
+    });
+
+    // 2. If not matched, grab the first unused activity or fallback to position
+    if (!match) {
+      match = dayActivities.find(a => !usedActIds.has(a.id)) || dayActivities[index] || { id: `virtual-${stageConfig.meta.id}`, title: stageConfig.meta.activityName };
+    }
+
+    if (match?.id) usedActIds.add(match.id);
+    return { act: match, meta: stageConfig.meta };
+  });
 }
 
 export default function MissionConsole({
@@ -63,10 +72,8 @@ export default function MissionConsole({
     );
   }
 
-  // Map and sort activities by stage 1 to 5 order
-  const sortedActivities = [...dayActivities]
-    .map((act, index) => ({ act, meta: resolveActivityMeta(act, index) }))
-    .sort((a, b) => a.meta.id - b.meta.id);
+  // Guaranteed exactly 5 unique slots (1 to 5) with no duplicate Stage 2
+  const sortedActivities = resolveActivitiesForConsole(dayActivities);
 
   return (
     <div className="mission-console">
@@ -76,7 +83,7 @@ export default function MissionConsole({
 
           return (
             <div
-              key={act.id}
+              key={meta.id}
               className={`mission-slot ${isCompleted ? "mission-slot--completed" : "mission-slot--pending"}`}
               onClick={() => {
                 soundFx.playClick();

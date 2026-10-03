@@ -155,35 +155,35 @@ export default function VisualNovelDialogue({
           <div className="vn-game-preview-card">
             <div className="vn-game-preview-header">
               <span className="vn-game-preview-title">
-                🛸 Módulos Diarios de Entrenamiento — Base ONE
+                🛸 Módulos Diarios de Entrenamiento — BaseScrib
               </span>
               <span className="vn-game-preview-badge">5 Juegos por Día 🎮</span>
             </div>
             <div className="vn-game-preview-grid">
               <div className="vn-mini-game-item">
-                <div className="vn-mini-game-icon">🔤</div>
-                <div className="vn-mini-game-name">1. Vocabulario</div>
-                <div className="vn-mini-game-desc">Flashcards & Audio</div>
+                <div className="vn-mini-game-icon">⚡</div>
+                <div className="vn-mini-game-name">1. Vocabulary</div>
+                <div className="vn-mini-game-desc">Power Cables (Connect)</div>
+              </div>
+              <div className="vn-mini-game-item">
+                <div className="vn-mini-game-icon">🛠️</div>
+                <div className="vn-mini-game-name">2. Grammar</div>
+                <div className="vn-mini-game-desc">Ship Repair (Order)</div>
               </div>
               <div className="vn-mini-game-item">
                 <div className="vn-mini-game-icon">📖</div>
-                <div className="vn-mini-game-name">2. Lectura Cómic</div>
-                <div className="vn-mini-game-desc">Diálogos de Escuadrón</div>
+                <div className="vn-mini-game-name">3. Reading</div>
+                <div className="vn-mini-game-desc">Comic Log & Quiz</div>
               </div>
               <div className="vn-mini-game-item">
-                <div className="vn-mini-game-icon">🚀</div>
-                <div className="vn-mini-game-name">3. Lanzamiento</div>
-                <div className="vn-mini-game-desc">Orden de Oraciones</div>
-              </div>
-              <div className="vn-mini-game-item">
-                <div className="vn-mini-game-icon">🌀</div>
-                <div className="vn-mini-game-name">4. Portales</div>
-                <div className="vn-mini-game-desc">Desafío DCN & Coins</div>
+                <div className="vn-mini-game-icon">🛰️</div>
+                <div className="vn-mini-game-name">4. Word Recovery</div>
+                <div className="vn-mini-game-desc">Fill in the Blanks</div>
               </div>
               <div className="vn-mini-game-item" style={{ borderColor: "#ffd166", background: "rgba(255, 209, 102, 0.08)" }}>
-                <div className="vn-mini-game-icon">✍️</div>
-                <div className="vn-mini-game-name" style={{ color: "#ffd166" }}>5. Writing Mailbox</div>
-                <div className="vn-mini-game-desc" style={{ color: "#fef08a" }}>Carta al Profesor</div>
+                <div className="vn-mini-game-icon">✉️</div>
+                <div className="vn-mini-game-name" style={{ color: "#ffd166" }}>5. Writing</div>
+                <div className="vn-mini-game-desc" style={{ color: "#fef08a" }}>Space Mailbox Report</div>
               </div>
             </div>
           </div>
@@ -204,10 +204,10 @@ export default function VisualNovelDialogue({
             </div>
             <div className="vn-mailbox-body">
               <strong style={{ color: "#38bdf8", display: "block", marginBottom: 4 }}>
-                📩 Para: General Bric / Profesor del Curso
+                📩 Para: General / Profesor del Curso
               </strong>
               <p style={{ margin: 0, fontStyle: "italic", color: "#cbd5e1" }}>
-                "Dear General Bric, I am excited to join Base ONE. I am ready to practice my English daily..."
+                "Dear General, I am excited to join BaseScrib. I am ready to practice my English daily..."
               </p>
               <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 8, fontSize: "0.75rem", color: "#ffd166" }}>
                 <span>✨ El alumno redacta y envía su carta en el sistema</span>
@@ -368,7 +368,7 @@ export default function VisualNovelDialogue({
           <span className="vn-speaker-name" style={{ color: speaker?.color || "#60a5fa" }}>
             {speaker?.name || "Command Center"}
           </span>
-          <span className="vn-speaker-role">{speaker?.role || "Base One AI"}</span>
+          <span className="vn-speaker-role">{speaker?.role || "BaseScrib AI"}</span>
         </div>
 
         <div className="vn-text-body">
@@ -409,7 +409,7 @@ export default function VisualNovelDialogue({
               <>COMPLETAR TEXTO ⚡</>
             ) : (
               <>
-                {currentStepIndex + 1 < slides.length ? "CONTINUAR [ENTER] ➔" : "FINALIZAR 🌟"}
+                {currentStepIndex + 1 < slides.length ? "Continuar (Next) ➔" : "FINALIZAR 🌟"}
               </>
             )}
           </button>

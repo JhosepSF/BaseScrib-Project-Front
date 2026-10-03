@@ -33,7 +33,7 @@ import sparkySospecha from "../amongus/ROBOT/ROBOT MIRADA SOSPECHOSA .png";
 export const PERSONAJES_EMOCIONES = {
   leo: {
     name: "Leo",
-    role: "Recluta Base ONE",
+    role: "Recluta BaseScrib",
     color: "#00d2ff",
     feliz: leoFeliz,
     sorprendido: leoSorprendido,
@@ -52,7 +52,7 @@ export const PERSONAJES_EMOCIONES = {
     default: liaFeliz,
   },
   general: {
-    name: "General One",
+    name: "General",
     role: "Comandante Supremo",
     color: "#ffd166",
     feliz: genFeliz,

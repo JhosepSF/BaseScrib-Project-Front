@@ -72,7 +72,7 @@ export default function HolographicRoomSimulator({ onFinishTour, onSkipTour }) {
         {/* HEADER TOP DE PANTALLA HOLOGRÁFICA (AFUERA DE LA IMAGEN) */}
         <div className="holo-sim-header">
           <div className="holo-sim-title-badge">
-            📡 SIMULADOR HOLOGRÁFICO BASE ONE — ENTRENAMIENTO DE CABINA
+            📡 SIMULADOR HOLOGRÁFICO BASESCRIB — ENTRENAMIENTO DE CABINA
           </div>
           <button
             className="holo-sim-btn-skip"

@@ -4,6 +4,11 @@ import LiaAvatar from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import RobotAvatar from "../../assets/amongus/ROBOT/ROBOOOT SORPRENDIDO.png";
 import BossAvatar from "../../assets/emociones/boss/holograma.png";
 import GeneralAvatar from "../../assets/emociones/general/serio.png";
+import TrainerAvatar from "../../assets/avatares para escoger/m_tech.png";
+import ExtraOrange from "../../assets/amongus/PERSONAJES/SKIN BASE COLORES/LEO BASE/leo_orange.png";
+import ExtraGreen from "../../assets/amongus/PERSONAJES/SKIN BASE COLORES/LEO BASE/leo_green.png";
+import ExtraPurple from "../../assets/amongus/PERSONAJES/SKIN BASE COLORES/LIA BASE/lia_purple.png";
+import ExtraRed from "../../assets/amongus/PERSONAJES/SKIN BASE COLORES/LEO BASE/leo_red.png";
 
 // Curricular Structured Story Scenarios for all 14 Days (matching backend populate_all_days.py)
 export const DEFAULT_BACKEND_STORIES = {
@@ -157,9 +162,9 @@ Trainer: (asintiendo contento) Yes, they are! The room is finally organized and 
   11: `Story: Quantum Fuel and Supplies
 
 Escenario 1 - En la bahía de tanques de plasma:
-Dani: (inspeccionando el indicador) How much plasma fuel do we have in the main tanks?
+Leo: (inspeccionando el indicador) How much plasma fuel do we have in the main tanks?
 Engineer: (comprobando el medidor holográfico) We have plenty of fuel! And how many energy cells do we have?
-Dani: (marcando la pantalla) We have a lot of energy cells! The propulsion system is at 100% capacity.`,
+Leo: (marcando la pantalla) We have a lot of energy cells! The propulsion system is at 100% capacity.`,
 
   12: `Story: Meeting Scribtonians
 
@@ -178,9 +183,9 @@ Navigator: (ajustando controles) Understood! Setting course for the safest route
   14: `Story: Graduation Day at BaseScrib
 
 Escenario 1 - En la bóveda central de honor:
-Captain Bric: (frente al podio con medallas de oro) Attention recruits of Base ONE! Today you complete your star academy training.
-Leo: (firme y orgulloso junto a Lia) We are ready for deep space exploration, Captain!
-Captain Bric: (otorgando la insignia dorada) The graduation medal is inside the central vault. Congratulations, you are now officially space commanders!`
+General: (frente al podio con medallas de oro) Attention recruits of BaseScrib! Today you complete your star academy training.
+Leo: (firme y orgulloso junto a Lia) We are ready for deep space exploration, General!
+General: (otorgando la insignia dorada) The graduation medal is inside the central vault. Congratulations, you are now officially space commanders!`
 };
 
 /**
@@ -190,14 +195,14 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
   const nameLower = (speakerName || "").toLowerCase().trim();
   const emotionLower = (emotionText || "").toLowerCase().trim();
 
-  // General / Captain Bric
+  // General
   if (nameLower.includes("general") || nameLower.includes("bric") || nameLower.includes("captain")) {
     let emo = "serio";
     if (emotionLower.includes("feliz") || emotionLower.includes("sonri") || emotionLower.includes("content") || emotionLower.includes("orgull")) emo = "feliz";
     if (emotionLower.includes("sorprend") || emotionLower.includes("asombr")) emo = "sorprendido";
     if (emotionLower.includes("pens") || emotionLower.includes("curio") || emotionLower.includes("enferm")) emo = "pensativo";
     return {
-      name: "General Bric",
+      name: "General",
       role: "Commander",
       color: "#ffd166",
       avatar: getBustEmotion("general", emo) || GeneralAvatar,
@@ -257,13 +262,51 @@ export function resolveCharacterMeta(speakerName, emotionText = "") {
     };
   }
 
-  // Trainer
-  if (nameLower.includes("trainer")) {
+  // Trainer / Entrenador
+  if (nameLower.includes("trainer") || nameLower.includes("entrenador")) {
     return {
-      name: "Space Trainer",
-      role: "Instructor",
-      color: "#a8dadc",
-      avatar: getBustEmotion("general", "feliz") || GeneralAvatar,
+      name: "Entrenador",
+      role: "Instructor de Vuelo",
+      color: "#f59e0b",
+      avatar: TrainerAvatar,
+      side: "left"
+    };
+  }
+
+  // Extras / Minions (Encapuchados que se diferencian por color)
+  if (nameLower.includes("engineer") || nameLower.includes("ingenier")) {
+    return {
+      name: "Engineer",
+      role: "Crew Extra (Mantenimiento)",
+      color: "#ff9f1c",
+      avatar: ExtraOrange,
+      side: "left"
+    };
+  }
+  if (nameLower.includes("navigator") || nameLower.includes("navegant")) {
+    return {
+      name: "Navigator",
+      role: "Crew Extra (Navegación)",
+      color: "#2ec4b6",
+      avatar: ExtraGreen,
+      side: "left"
+    };
+  }
+  if (nameLower.includes("officer") || nameLower.includes("oficial")) {
+    return {
+      name: "Officer",
+      role: "Crew Extra (Operaciones)",
+      color: "#ab47bc",
+      avatar: ExtraPurple,
+      side: "left"
+    };
+  }
+  if (nameLower.includes("explorer") || nameLower.includes("explorad")) {
+    return {
+      name: "Explorer",
+      role: "Crew Extra (Reconocimiento)",
+      color: "#ff6b6b",
+      avatar: ExtraRed,
       side: "left"
     };
   }
@@ -359,6 +402,6 @@ export function parseComicStory(rawStory, dayNum = 1) {
 
   return scenarios.length > 0 ? scenarios : [{
     title: `Mission Briefing — Day ${dayNum}`,
-    dialogues: [{ speaker: "General Bric", emotion: "Welcome", text: "Welcome to Basescrib, recruit!" }]
+    dialogues: [{ speaker: "General", emotion: "Welcome", text: "Welcome to Basescrib, recruit!" }]
   }];
 }

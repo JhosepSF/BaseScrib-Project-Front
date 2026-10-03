@@ -1,11 +1,11 @@
 // BaseScrib Onboarding Story Script & Spotlight Tour Steps (Bilingual EN / ES)
 // Based strictly on BaseScrib_Guion_Cinematica.md and Concept Art images from BaseScrib_Cinematicas folder.
 
-import generalBricImg from "../../../assets/avatares para escoger/m_commander.png";
+import generalImg from "../../../assets/emociones/general/serio.png";
+import trainerImg from "../../../assets/avatares para escoger/m_tech.png";
 import sparkyRobotImg from "../../../assets/amongus/ROBOT/ROBOT EXPRESIONES HABLA/RBOT OJOS ABIERTOS - BOCA ABIERTA.png";
 import liaAvatarImg from "../../../assets/amongus/PERSONAJES/Lia personaje solo.png";
 import leoAvatarImg from "../../../assets/amongus/PERSONAJES/SKIN BASE COLORES/LEO BASE/leo_default.png";
-import daniAvatarImg from "../../../assets/avatares para escoger/f_explorer.png";
 
 // Official Concept Art Backgrounds from BaseScrib_Cinematicas folder
 import bgOrbit from "../../../assets/cinematicas/bg_toma1_orbit.jpg";
@@ -24,39 +24,39 @@ import bgGame4 from "../../../assets/cinematicas/bg_toma14_juego4.jpg";
 import bgGame5 from "../../../assets/cinematicas/bg_toma15_juego5.jpg";
 
 export const SPEAKERS = {
-  GENERAL_BRIC: {
-    name: "General Bric",
-    role: "Commander of Base ONE",
-    avatar: generalBricImg,
+  GENERAL: {
+    name: "General",
+    role: "Comandante de BaseScrib",
+    avatar: generalImg,
     color: "#3b82f6",
     badge: "GENERAL",
   },
+  TRAINER: {
+    name: "Entrenador",
+    role: "Instructor de Vuelo",
+    avatar: trainerImg,
+    color: "#f59e0b",
+    badge: "TRAINER",
+  },
   SPARKY: {
     name: "Sparky Bot",
-    role: "AI Flight Companion",
+    role: "Asistente IA de Vuelo",
     avatar: sparkyRobotImg,
     color: "#06b6d4",
     badge: "ROBOT AI",
   },
   LEO: {
     name: "Recluta Leo",
-    role: "Spacecadet Explorer",
+    role: "Cadete Explorador",
     avatar: leoAvatarImg,
     color: "#10b981",
     badge: "RECRUIT",
   },
   LIA: {
     name: "Recluta Lia",
-    role: "Spacecadet Explorer",
+    role: "Cadete Exploradora",
     avatar: liaAvatarImg,
     color: "#ec4899",
-    badge: "RECRUIT",
-  },
-  DANI: {
-    name: "Recluta Dani",
-    role: "Squadmate",
-    avatar: daniAvatarImg,
-    color: "#8b5cf6",
     badge: "RECRUIT",
   },
 };
@@ -74,29 +74,29 @@ export const INTRO_CUTSCENE_SLIDES = [
     id: 2,
     bg: bgOrbit,
     speaker: SPEAKERS.SPARKY,
-    en: "Welcome aboard, space explorer! I'm Sparky, your AI flight companion. You've been selected to join the crew of Base ONE.",
-    es: "¡Bienvenido a bordo, explorador del espacio! Soy Sparky, tu asistente de vuelo IA. Has sido seleccionado para unirte a la tripulación de la Base ONE.",
+    en: "Welcome aboard, space explorer! I'm Sparky, your AI flight companion. You've been selected to join the crew of BaseScrib.",
+    es: "¡Bienvenido a bordo, explorador del espacio! Soy Sparky, tu asistente de vuelo IA. Has sido seleccionado para unirte a la tripulación de BaseScrib.",
   },
   {
     id: 3,
     bg: bgScribtonia,
     speaker: SPEAKERS.SPARKY,
-    en: "Ahead of us lies Scribtonia — the star kingdom where the finest linguists of the system gather. Here you will master 5 daily mission dimensions!",
-    es: "Frente a nosotros está Scribtonia, el reino estelar donde se forman los mejores lingüistas del sistema. ¡Aquí dominarás 5 dimensiones de entrenamiento diario!",
+    en: "Ahead of us lies Scribtonia! Here you will complete 5 daily missions (different mission every day) to master English!",
+    es: "¡Frente a nosotros está Scribtonia! Aquí completarás 5 misiones diarias (una misión diferente cada día) para dominar el inglés.",
   },
   {
     id: 4,
     bg: bgGeneral,
-    speaker: SPEAKERS.GENERAL_BRIC,
-    en: "Welcome to Base ONE, recruit. We've heard great things about your potential. You will train daily through vocabulary, reading, grammar, and portal challenges, culminating in a daily written dispatch to me.",
-    es: "Bienvenido a la Base ONE, recluta. Hemos oído grandes cosas sobre tu potencial. Entrenarás cada día con vocabulario, lectura, gramática y portales, culminando en un informe escrito diario dirigido a mí.",
+    speaker: SPEAKERS.GENERAL,
+    en: "Welcome to BaseScrib, recruit. We've heard great things about your potential. You will train daily through vocabulary, grammar, reading, word recovery, and writing challenges.",
+    es: "Bienvenido a BaseScrib, recluta. Hemos oído grandes cosas sobre tu potencial. Entrenarás cada día con vocabulario, gramática, lectura, recuperación de palabras y redacción.",
   },
   {
     id: 5,
     bg: bgDorms,
-    speaker: SPEAKERS.DANI,
-    en: "You'll be living here in the dorms with Dino, Ale, Dani, and Captain Bric. Welcome to our squad!",
-    es: "Vivirás aquí en los dormitorios junto a Dino, Ale, Dani y el Capitán Bric. ¡Es un honor tenerte en nuestro escuadrón!",
+    speaker: SPEAKERS.LIA,
+    en: "You'll be living here in the dorms alongside Lia, Leo, the Trainer, and the General. Welcome to our crew!",
+    es: "Vivirás aquí en los dormitorios junto a Lia, Leo, el Entrenador y el General. ¡Es un honor tenerte en nuestra tripulación!",
   },
   {
     id: 6,
@@ -109,7 +109,7 @@ export const INTRO_CUTSCENE_SLIDES = [
   {
     id: 7,
     bg: bgMailbox,
-    speaker: SPEAKERS.GENERAL_BRIC,
+    speaker: SPEAKERS.GENERAL,
     en: "Observe: this is the Space Mailbox. At the end of each day's Writing module, you will send your letter or dispatch here. I will review it at my console, assign your grade, and provide personal feedback.",
     es: "Observa: este es el Buzón Espacial. Al final de cada jornada redactarás tu carta o informe en el módulo de Writing; yo lo recibiré directamente en mi consola para evaluarlo y darte retroalimentación.",
   },
@@ -117,8 +117,8 @@ export const INTRO_CUTSCENE_SLIDES = [
     id: 8,
     bg: bgVallePortales,
     speaker: SPEAKERS.SPARKY,
-    en: "And behold: the Valley of Portals! A cosmic rift where interdimensional vortexes open each day. Step through to conquer time-attack speed trials, defeat linguistic anomalies, and earn stars and coins for Base ONE!",
-    es: "¡Y contempla: el Valle de Portales! Una falla cósmica donde cada día se abren vórtices interdimensionales del Abismo. ¡Entra en ellos para superar desafíos a contrarreloj, vencer anomalías lingüísticas y ganar estrellas y monedas para la Base ONE!",
+    en: "And behold: the Valley of Portals! A cosmic rift where interdimensional vortexes open each day. Step through to conquer time-attack speed trials, defeat linguistic anomalies, and earn stars and coins for BaseScrib!",
+    es: "¡Y contempla: el Valle de Portales! Una falla cósmica donde cada día se abren vórtices interdimensionales del Abismo. ¡Entra en ellos para superar desafíos a contrarreloj, vencer anomalías lingüísticas y ganar estrellas y monedas para BaseScrib!",
   },
   {
     id: 9,
@@ -198,7 +198,7 @@ export const MISSION_1_TUTORIAL_SLIDES = [
   {
     id: "m1_intro",
     bg: bgMission1Intro,
-    speaker: SPEAKERS.GENERAL_BRIC,
+    speaker: SPEAKERS.GENERAL,
     en: "Recruit, your Day 1 mission starts now! Topic: Personal Information & Verb to Be. You will complete all 5 daily game modules.",
     es: "¡Recluta, tu misión del Día 1 inicia ahora! Tema: Información Personal y Verbo to Be. Desarrollarás los 5 módulos de juego del día.",
   },
@@ -206,35 +206,35 @@ export const MISSION_1_TUTORIAL_SLIDES = [
     id: "m1_game1",
     bg: bgGame1,
     speaker: SPEAKERS.SPARKY,
-    en: "Game 1: SENTENCE LAUNCH (Grammar). Arrange scrambled word torpedoes to calibrate the launcher and fire photon energy beams!",
-    es: "Juego 1: LANZAMIENTO DE ORACIONES (Gramática). Ordena los bloques de palabras para calibrar los torpedos y disparar rayos de energía fotónica.",
+    en: "Stage 1: VOCABULARY (Power Cables). Connect matching words and vocabulary cables to restore the ship's communication grid!",
+    es: "Stage 1: VOCABULARIO (Cables de Energía). ¡Conecta las palabras y cables de vocabulario correspondientes para restaurar la red de la nave!",
   },
   {
     id: "m1_game2",
     bg: bgGame2,
-    speaker: SPEAKERS.SPARKY,
-    en: "Game 2: SHIP REPAIR (Vocabulary). Repair damaged ship modules by matching tech gear and vocabulary items with their definitions.",
-    es: "Juego 2: REPARACIÓN DE LA NAVE (Vocabulario). Repara los módulos averiados de la nave emparejando herramientas y vocabulario clave.",
+    speaker: SPEAKERS.TRAINER,
+    en: "Stage 2: GRAMMAR (Ship Repair). Order scrambled words into correct sentence structures to calibrate the hull shields!",
+    es: "Stage 2: GRAMÁTICA (Reparación de Nave). ¡Ordena las palabras en la estructura correcta de la oración para calibrar los escudos!",
   },
   {
     id: "m1_game3",
     bg: bgGame3,
-    speaker: SPEAKERS.DANI,
-    en: "Game 3: COMIC LOG (Reading). Read our squad's illustrated comic log and answer comprehension questions in the speech bubbles!",
-    es: "Juego 3: CÓMIC DE BITÁCORA (Lectura). Lee la historieta ilustrada de nuestro escuadrón y responde las preguntas de comprensión en los globos de diálogo.",
+    speaker: SPEAKERS.LIA,
+    en: "Stage 3: READING (Comic Log). Read our illustrated comic mission log and answer comprehension questions!",
+    es: "Stage 3: LECTURA (Cómic de Bitácora). ¡Lee la historieta ilustrada de la misión y responde las preguntas de comprensión!",
   },
   {
     id: "m1_game4",
     bg: bgGame4,
     speaker: SPEAKERS.SPARKY,
-    en: "Game 4: WORD RECOVERY (Listening). Tune radio frequencies, decode deep space audio signals, and recover missing soundwaves!",
-    es: "Juego 4: RECUPERACIÓN DE FRECUENCIA (Escucha). Sintoniza las frecuencias de radio, decodifica señales de audio del espacio y recupera palabras perdidas.",
+    en: "Stage 4: WORD RECOVERY (Reactor Fuel). Fill in the missing words in each sentence to stabilize the reactor core!",
+    es: "Stage 4: RECUPERACIÓN DE PALABRAS (Combustible del Reactor). ¡Completa las oraciones con las palabras faltantes para estabilizar el reactor!",
   },
   {
     id: "m1_game5",
     bg: bgGame5,
-    speaker: SPEAKERS.GENERAL_BRIC,
-    en: "Game 5: WRITING REPORT. Write your official daily dispatch letter and transmit it via the Space Mailbox for my evaluation!",
-    es: "Juego 5: INFORME ESCRITO (Writing). Redacta tu informe o carta de presentación y transmítelo por el Buzón Espacial para mi evaluación oficial.",
+    speaker: SPEAKERS.GENERAL,
+    en: "Stage 5: WRITING (Space Mailbox). Write your official daily mission report and submit it through the Space Mailbox for my evaluation!",
+    es: "Stage 5: PRODUCCIÓN ESCRITA (Buzón Espacial). ¡Redacta tu informe oficial de misión y envíalo por el Buzón Espacial para mi evaluación!",
   },
 ];

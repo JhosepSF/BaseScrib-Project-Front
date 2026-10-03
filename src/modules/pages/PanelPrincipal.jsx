@@ -28,6 +28,7 @@ export function PanelPrincipal() {
   const [authPassword, setAuthPassword] = useState("");
   const [authEmail, setAuthEmail] = useState("");
   const [registerRole, setRegisterRole] = useState("student");
+  const [selectedRecruit, setSelectedRecruit] = useState("lia");
   const [studentGrade, setStudentGrade] = useState("");
   const [studentSection, setStudentSection] = useState("A");
   const [newRoomName, setNewRoomName] = useState("");
@@ -200,6 +201,9 @@ export function PanelPrincipal() {
         first_name: authUsername,
         last_name: registerRole === "teacher" ? "Teacher" : `Grade ${studentGrade}`,
         role: registerRole,
+        gender: selectedRecruit === "leo" ? "male" : "female",
+        selected_outfit: selectedRecruit === "leo" ? "m_base" : "f_base",
+        avatar: selectedRecruit === "leo" ? "leo" : "lia",
       };
       const res = await fetch(`${API_BASE}/users/`, {
         method: "POST",
@@ -392,6 +396,8 @@ export function PanelPrincipal() {
           setAuthEmail={setAuthEmail}
           registerRole={registerRole}
           setRegisterRole={setRegisterRole}
+          selectedRecruit={selectedRecruit}
+          setSelectedRecruit={setSelectedRecruit}
           studentGrade={studentGrade}
           setStudentGrade={setStudentGrade}
           studentSection={studentSection}

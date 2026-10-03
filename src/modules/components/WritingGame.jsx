@@ -5,25 +5,34 @@ import { soundFx } from "../utils/soundEffects";
 import { fetchWithAuth } from "../utils/apiClient";
 import "../../styles/Panel.css";
 
+// Dynamic glob loader for writing photos: assets/writing/day{N}/foto_{1|2}.jpg
+const writingImages = import.meta.glob("../../assets/writing/**/*.jpg", { eager: true, import: "default" });
+
+const getWritingPhoto = (day, photoIndex) => {
+  const path = `../../assets/writing/day${day}/foto_${photoIndex}.jpg`;
+  return writingImages[path] || writingImages[`../../assets/writing/day1/foto_${photoIndex}.jpg`] || "";
+};
+
 const DEFAULT_WRITING_PROMPTS = {
-  1: "Write a short paragraph (20-50 words) introducing yourself to the crew: your name, age, country, likes, and abilities.",
-  2: "Write a short report describing 4 key items in your space cabin and what they are used for.",
-  3: "Describe your daily routine aboard the starship: what time you wake up, train, and study.",
-  4: "Write about the actions and maintenance tasks the crew members are performing right now.",
-  5: "Write about your habits in the starbase using frequency adverbs (always, usually, sometimes, never).",
-  6: "Describe your mission equipment: list what tools you have and what supplies you don't have.",
-  7: "Write an inquiry report asking 4 Wh- questions about the anomaly and signal origin.",
-  8: "Write an inventory log identifying personal belongings using possessive pronouns (mine, yours, his, hers, ours).",
-  9: "Draft an official communication transmission directed to Earth command and your fellow cadets.",
-  10: "Describe the starship control console using demonstratives (this, that, these, those).",
-  11: "Write a comparison report between two starships or exploration drones using comparative adjectives.",
-  12: "Write a celestial record entry highlighting the fastest, biggest, and brightest cosmic phenomena.",
-  13: "Write a captain's log entry about yesterday's expedition and what your crew discovered.",
-  14: "Write your final graduation speech summarizing your accomplishments and journey as a space pioneer."
+  1: "Mission: Recruit Registration Form — The Great Boss needs your personal information before the next mission. Introduce yourself to the crew: 'My name is ___. I am ___ years old. I am from ___. My favorite ___ is ___. I can ___.'",
+  2: "Mission: Discovery Report — During our tour, photos were taken inside Basescrib. Select Photo 1 (Study Room) or Photo 2 (Spaceship Garden) and describe what you can see using 'There is' and 'There are'.",
+  3: "Mission: Send my schedule to my friend — Tell your friend about your daily routine (In the morning..., In the afternoon..., In the evening...) using Present Simple.",
+  4: "Mission: Report to the General — The General wants to know what the recruits are doing right now and what you are doing. Use the Present Continuous (is / are + verb-ing).",
+  5: "Mission: Crew Habit Survey — Answer how often you perform activities using frequency adverbs (always, usually, sometimes, rarely, never).",
+  6: "Mission: Your Training Backpack — The Trainer wants to know what items you have. Write 5 sentences about the things you have and don't have in your backpack.",
+  7: "Mission: Recruit Interview Report — Imagine you are interviewing a new recruit. Write 4 questions and 4 answers using What, Where, When, and How.",
+  8: "Mission: Lost and Found Report — Several items were found. Write 5 sentences describing the items and their owners using Who, possessive adjectives (my, her, our) and possessive pronouns (mine, hers, ours).",
+  9: "Mission: Lost Item Investigation — Identify the owners of items found in the classroom using Whose, subject pronouns (he, she, they), and object pronouns (him, her, them).",
+  10: "Mission: Training Room Inventory — Look at the training room and write 5 sentences identifying objects using This, That, These, and Those.",
+  11: "Mission: Quantum Fuel & Ship Comparison — Write a comparison report between two starships or devices using comparative adjectives (faster, bigger, lighter).",
+  12: "Mission: Alien Dossier — Describe alien companions and sector environments using descriptive adjectives.",
+  13: "Mission: Planetary Expedition Log — Compare planets and milestones in your logbook using comparative and superlative adjectives.",
+  14: "Mission: Graduation Speech — Write a graduation speech for the General and your crew members summarizing your journey at Basescrib."
 };
 
 export function WritingGame({ activity, userId, onComplete, onClose, hideHeader = false }) {
   const [text, setText] = useState("");
+  const [selectedPhoto, setSelectedPhoto] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,6 +40,8 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
 
   const dayNum = activity?.day_num || activity?.dayNumber || activity?.day || 1;
   const promptText = activity?.questions?.[0]?.text || DEFAULT_WRITING_PROMPTS[dayNum] || DEFAULT_WRITING_PROMPTS[1];
+  const photo1Url = getWritingPhoto(dayNum, 1);
+  const photo2Url = getWritingPhoto(dayNum, 2);
   const minChars = 20;
   const charsRemaining = Math.max(0, minChars - text.trim().length);
   const isValidLength = text.trim().length >= minChars;
@@ -80,6 +91,10 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
 
     try {
       const missionId = activity?.mission || activity?.mission_id || dayNum;
+      const rawText = text.trim();
+      const finalSubmissionText = rawText.startsWith("[Foto")
+        ? rawText
+        : `[Foto seleccionada: Foto ${selectedPhoto}]\n${rawText}`;
 
       const res = await fetchWithAuth(`${API_BASE}/writing-submissions/`, {
         method: "POST",
@@ -90,7 +105,7 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
           student: userId || undefined,
           mission: missionId,
           day_number: dayNum,
-          text: text.trim(),
+          text: finalSubmissionText,
           reviewed: false
         })
       });
@@ -289,6 +304,85 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
             </small>
           </div>
         )}
+
+        {/* TWO-PHOTO SELECTION CARD GRID */}
+        <div
+          style={{
+            background: "rgba(0, 15, 30, 0.65)",
+            border: "1.5px solid rgba(46, 196, 182, 0.4)",
+            borderRadius: 14,
+            padding: "clamp(8px, 1.4vh, 12px) clamp(10px, 1.8vw, 16px)",
+            marginBottom: "clamp(8px, 1.4vh, 12px)",
+            textAlign: "left"
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
+            <span style={{ fontSize: "0.82rem", fontWeight: "900", color: "#39ff14", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: 6 }}>
+              <span>📸</span> FOTOS DE LA MISIÓN — SELECCIONA UNA PARA DESCRIBIR:
+            </span>
+            <span style={{ fontSize: "0.78rem", color: "#ffd166", fontWeight: "bold", background: "rgba(255, 209, 102, 0.15)", padding: "2px 8px", borderRadius: 6 }}>
+              {selectedPhoto === 1 ? "Foto 1 Activa ✔️" : "Foto 2 Activa ✔️"}
+            </span>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            {/* PHOTO 1 CARD */}
+            <div
+              onClick={() => { soundFx.playClick(); setSelectedPhoto(1); }}
+              style={{
+                border: selectedPhoto === 1 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "12px",
+                overflow: "hidden",
+                cursor: "pointer",
+                background: selectedPhoto === 1 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
+                boxShadow: selectedPhoto === 1 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
+                transform: selectedPhoto === 1 ? "scale(1.02)" : "scale(1)",
+                transition: "all 0.2s ease"
+              }}
+            >
+              <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
+                <img
+                  src={photo1Url}
+                  alt={`Foto 1 - Día ${dayNum}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
+                  <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
+                    {dayNum === 2 ? "Foto 1: Sala de Estudios" : "Foto 1"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* PHOTO 2 CARD */}
+            <div
+              onClick={() => { soundFx.playClick(); setSelectedPhoto(2); }}
+              style={{
+                border: selectedPhoto === 2 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "12px",
+                overflow: "hidden",
+                cursor: "pointer",
+                background: selectedPhoto === 2 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
+                boxShadow: selectedPhoto === 2 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
+                transform: selectedPhoto === 2 ? "scale(1.02)" : "scale(1)",
+                transition: "all 0.2s ease"
+              }}
+            >
+              <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
+                <img
+                  src={photo2Url}
+                  alt={`Foto 2 - Día ${dayNum}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
+                  <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
+                    {dayNum === 2 ? "Foto 2: Jardín de la Nave" : "Foto 2"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Text Input Area & Action Button */}
         {!isSuccess ? (

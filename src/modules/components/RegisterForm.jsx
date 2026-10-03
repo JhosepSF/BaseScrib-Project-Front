@@ -1,5 +1,7 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
-import ReclutaPrincipal from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
+import LiaSolo from "../../assets/amongus/PERSONAJES/Lia personaje solo.png";
+import LeoSolo from "../../assets/amongus/PERSONAJES/Leo personaje solo.png";
 
 export function RegisterForm({
   authUsername,
@@ -10,6 +12,8 @@ export function RegisterForm({
   setAuthEmail,
   registerRole,
   setRegisterRole,
+  selectedRecruit = "lia",
+  setSelectedRecruit,
   studentGrade,
   setStudentGrade,
   studentSection,
@@ -19,6 +23,13 @@ export function RegisterForm({
   error,
   setStep,
 }) {
+  const [internalRecruit, setInternalRecruit] = useState("lia");
+  const activeRecruit = selectedRecruit || internalRecruit;
+  const chooseRecruit = setSelectedRecruit || setInternalRecruit;
+
+  const currentAvatarImg = activeRecruit === "leo" ? LeoSolo : LiaSolo;
+  const currentAvatarName = activeRecruit === "leo" ? "Leo" : "Lia";
+
   return (
     <div 
       className="auth-home-container animate-fadeIn" 
@@ -27,7 +38,7 @@ export function RegisterForm({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: "15px",
+        gap: "20px",
         flexWrap: "wrap",
         maxWidth: "1100px",
         width: "100%",
@@ -35,7 +46,7 @@ export function RegisterForm({
         boxSizing: "border-box"
       }}
     >
-      {/* Column 1: Interactive Character */}
+      {/* Column 1: Interactive Character & Live Photo Preview */}
       <div 
         className="character-side" 
         style={{
@@ -44,33 +55,39 @@ export function RegisterForm({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          flex: "1 1 540px",
-          minWidth: "400px"
+          flex: "1 1 480px",
+          minWidth: "340px"
         }}
       >
         {/* Interactive Speech Bubble */}
         <div 
           style={{
             position: "absolute",
-            top: "20px",
+            top: "10px",
             left: "50%",
             transform: "translateX(-50%)",
             background: "rgba(4, 10, 18, 0.95)",
-            border: "2.5px solid #2ec4b6",
+            border: `2.5px solid ${activeRecruit === "leo" ? "#3a86ff" : "#2ec4b6"}`,
             borderRadius: "14px",
             padding: "12px 18px",
-            color: "#b8fff9",
+            color: activeRecruit === "leo" ? "#c2dcff" : "#b8fff9",
             fontSize: "0.9rem",
             fontWeight: "bold",
-            boxShadow: "0 0 20px rgba(46, 196, 182, 0.4)",
-            width: "220px",
+            boxShadow: `0 0 20px ${activeRecruit === "leo" ? "rgba(58, 134, 255, 0.4)" : "rgba(46, 196, 182, 0.4)"}`,
+            width: "250px",
             zIndex: 100,
             textAlign: "center",
             lineHeight: "1.3",
             animation: "fadeIn 0.3s ease-out"
           }}
         >
-          {loading ? "Registrando cadete..." : (error ? "⚠️ Revisa los datos de registro" : "Registra tus datos de tripulante")}
+          {loading
+            ? "Registrando cadete..."
+            : error
+            ? "⚠️ Revisa los datos de registro"
+            : activeRecruit === "leo"
+            ? "¡Saludos! Soy Leo. ¡Mantendremos todos los sistemas y reactores a punto!"
+            : "¡Hola! Soy Lia. ¡Exploraremos los confines de BaseScrib juntos!"}
           {/* Arrow pointing down at the crewmate */}
           <div style={{
             position: "absolute",
@@ -81,23 +98,43 @@ export function RegisterForm({
             height: 0,
             borderLeft: "10px solid transparent",
             borderRight: "10px solid transparent",
-            borderTop: "10px solid #2ec4b6"
+            borderTop: `10px solid ${activeRecruit === "leo" ? "#3a86ff" : "#2ec4b6"}`
           }} />
         </div>
 
         <img 
-          src={ReclutaPrincipal} 
-          alt="Recluta Principal" 
+          src={currentAvatarImg} 
+          alt={`Cadete ${currentAvatarName}`} 
           className="recluta-main-avatar floating-crewmate" 
           style={{ 
-            width: "540px", 
-            height: "540px", 
+            width: "clamp(260px, 32vw, 480px)", 
+            height: "clamp(260px, 32vw, 480px)", 
+            objectFit: "contain",
             filter: loading 
               ? "hue-rotate(90deg) brightness(1.2) drop-shadow(0 0 15px #2ec4b6)" 
-              : "drop-shadow(0 0 15px rgba(46, 196, 182, 0.5))",
-            transition: "all 0.3s ease"
+              : activeRecruit === "leo"
+              ? "drop-shadow(0 0 20px rgba(58, 134, 255, 0.6))"
+              : "drop-shadow(0 0 20px rgba(46, 196, 182, 0.6))",
+            transition: "all 0.35s ease"
           }} 
         />
+
+        {/* Live Photo Badge */}
+        <div style={{
+          marginTop: "-15px",
+          background: activeRecruit === "leo" ? "rgba(58, 134, 255, 0.2)" : "rgba(46, 196, 182, 0.2)",
+          border: `1.5px solid ${activeRecruit === "leo" ? "#3a86ff" : "#2ec4b6"}`,
+          borderRadius: "20px",
+          padding: "6px 18px",
+          color: activeRecruit === "leo" ? "#c2dcff" : "#b8fff9",
+          fontWeight: "800",
+          fontSize: "0.85rem",
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+          boxShadow: `0 0 15px ${activeRecruit === "leo" ? "rgba(58, 134, 255, 0.4)" : "rgba(46, 196, 182, 0.4)"}`
+        }}>
+          {activeRecruit === "leo" ? "🧑‍🚀 Foto: Cadete Leo (Sistemas)" : "👩‍🚀 Foto: Cadete Lia (Exploración)"}
+        </div>
       </div>
 
       {/* Column 2: The Deck Access Console Box */}
@@ -107,7 +144,7 @@ export function RegisterForm({
           flex: "1 1 450px", 
           maxWidth: "520px", 
           minWidth: "320px",
-          padding: "40px 30px", 
+          padding: "35px 28px", 
           position: "relative",
           margin: "0"
         }}
@@ -161,6 +198,108 @@ export function RegisterForm({
             >
               Estudiante
             </button>
+          </div>
+
+          {/* Recruit Photo / Identity Selection */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", marginBottom: 2 }}>
+            <label style={{ color: "#ffd166", fontSize: "0.85rem", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
+              <span>📸</span> FOTO / TRIPULANTE (Haz clic para seleccionar tu foto):
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {/* Lia Photo Card */}
+              <div
+                type="button"
+                onClick={() => chooseRecruit("lia")}
+                style={{
+                  cursor: "pointer",
+                  background: activeRecruit === "lia" ? "rgba(46, 196, 182, 0.22)" : "rgba(10, 25, 45, 0.6)",
+                  border: activeRecruit === "lia" ? "2.5px solid #2ec4b6" : "1.5px solid rgba(255, 255, 255, 0.12)",
+                  boxShadow: activeRecruit === "lia" ? "0 0 15px rgba(46, 196, 182, 0.5)" : "none",
+                  borderRadius: "12px",
+                  padding: "8px 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  background: "rgba(46, 196, 182, 0.15)",
+                  border: "1.5px solid #2ec4b6",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0
+                }}>
+                  <img
+                    src={LiaSolo}
+                    alt="Lia"
+                    style={{ width: "60px", height: "60px", objectFit: "contain", marginTop: "4px" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                  <span style={{ color: "#b8fff9", fontWeight: "800", fontSize: "0.95rem" }}>Lia</span>
+                  <span style={{
+                    fontSize: "0.72rem",
+                    color: activeRecruit === "lia" ? "#2ec4b6" : "#718096",
+                    fontWeight: "700"
+                  }}>
+                    {activeRecruit === "lia" ? "✓ SELECCIONADA" : "Elegir foto"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Leo Photo Card */}
+              <div
+                type="button"
+                onClick={() => chooseRecruit("leo")}
+                style={{
+                  cursor: "pointer",
+                  background: activeRecruit === "leo" ? "rgba(58, 134, 255, 0.22)" : "rgba(10, 25, 45, 0.6)",
+                  border: activeRecruit === "leo" ? "2.5px solid #3a86ff" : "1.5px solid rgba(255, 255, 255, 0.12)",
+                  boxShadow: activeRecruit === "leo" ? "0 0 15px rgba(58, 134, 255, 0.5)" : "none",
+                  borderRadius: "12px",
+                  padding: "8px 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  background: "rgba(58, 134, 255, 0.15)",
+                  border: "1.5px solid #3a86ff",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0
+                }}>
+                  <img
+                    src={LeoSolo}
+                    alt="Leo"
+                    style={{ width: "60px", height: "60px", objectFit: "contain", marginTop: "4px" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                  <span style={{ color: "#c2dcff", fontWeight: "800", fontSize: "0.95rem" }}>Leo</span>
+                  <span style={{
+                    fontSize: "0.72rem",
+                    color: activeRecruit === "leo" ? "#3a86ff" : "#718096",
+                    fontWeight: "700"
+                  }}>
+                    {activeRecruit === "leo" ? "✓ SELECCIONADO" : "Elegir foto"}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 6, textAlign: "left" }}>
@@ -289,6 +428,8 @@ RegisterForm.propTypes = {
   setAuthEmail: PropTypes.func.isRequired,
   registerRole: PropTypes.string.isRequired,
   setRegisterRole: PropTypes.func.isRequired,
+  selectedRecruit: PropTypes.string,
+  setSelectedRecruit: PropTypes.func,
   studentGrade: PropTypes.string.isRequired,
   setStudentGrade: PropTypes.func.isRequired,
   studentSection: PropTypes.string.isRequired,

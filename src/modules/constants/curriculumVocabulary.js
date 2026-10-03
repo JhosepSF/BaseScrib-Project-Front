@@ -338,71 +338,142 @@ export const MISSION_BRIEFINGS = {
   1: {
     grammar: "Verb To Be (am/is/are), Preferences (like/favorite), Abilities (can)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[1],
-    objective: "Presentarte ante la tripulación estelar: comparte tu nombre, edad, país de origen, tus preferencias y tus habilidades clave."
+    objective: "Presentarte ante la tripulación estelar: comparte tu nombre, edad, país de origen, tus preferencias y tus habilidades clave.",
+    examples: [
+      { en: "I am a recruit on BaseScrib.", es: "Yo soy un recluta en BaseScrib." },
+      { en: "He is an engineer in the spaceship.", es: "Él es un ingeniero en la nave espacial." },
+      { en: "We are ready for mission launch.", es: "Nosotros estamos listos para el lanzamiento de la misión." },
+      { en: "I like robots and science.", es: "Me gustan los robots y la ciencia." },
+      { en: "I can repair the engine coils.", es: "Yo puedo reparar las bobinas del motor." }
+    ]
   },
   2: {
     grammar: "There is / There are (singular vs plural, articles a / an)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[2],
-    objective: "Explorar la base Basescrib: recorre los módulos de estudio y la cabina espacial para identificar objetos y suministros."
+    objective: "Explorar la base Basescrib: recorre los módulos de estudio y la cabina espacial para identificar objetos y suministros.",
+    examples: [
+      { en: "There is a computer on the desk.", es: "Hay una computadora en el escritorio." },
+      { en: "There are three sensors in the cabin.", es: "Hay tres sensores en la cabina." },
+      { en: "There are two seats near the control screen.", es: "Hay dos asientos cerca de la pantalla de control." }
+    ]
   },
   3: {
     grammar: "Present Simple (Routines, He/She/It + verb + s/es)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[3],
-    objective: "Inspeccionar rutinas de la tripulación en Base ONE: descubre qué hacen los tripulantes cada día y organiza tu horario espacial."
+    objective: "Inspeccionar rutinas de la tripulación en BaseScrib: descubre qué hacen los tripulantes cada día y organiza tu horario espacial.",
+    examples: [
+      { en: "He cleans the shield panels every morning.", es: "Él limpia los paneles de escudo cada mañana." },
+      { en: "The squad does not sleep during patrol.", es: "El escuadrón no duerme durante el patrullaje." },
+      { en: "She travels across the planetary system.", es: "Ella viaja a través del sistema planetario." }
+    ]
   },
   4: {
     grammar: "Present Continuous (Actions right now, am/is/are + verb-ing)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[4],
-    objective: "Diagnosticar operaciones en curso: reporta qué sistemas y tripulantes están activos durante la alerta de mantenimiento."
+    objective: "Diagnosticar operaciones en curso: reporta qué sistemas y tripulantes están activos durante la alerta de mantenimiento.",
+    examples: [
+      { en: "Sparky is repairing the engine coil right now.", es: "Sparky está reparando la bobina del motor ahora mismo." },
+      { en: "We are calibrating the stellar radar.", es: "Estamos calibrando el radar estelar." },
+      { en: "They are exploring sector seven.", es: "Ellos están explorando el sector siete." }
+    ]
   },
   5: {
     grammar: "Adverbs of Frequency (always, usually, sometimes, rarely, never)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[5],
-    objective: "Evaluar los protocolos de seguridad de la estación: analiza la frecuencia con la que se ejecutan los mantenimientos críticos."
+    objective: "Evaluar los protocolos de seguridad de la estación: analiza la frecuencia con la que se ejecutan los mantenimientos críticos.",
+    examples: [
+      { en: "We always check the oxygen levels.", es: "Nosotros siempre revisamos los niveles de oxígeno." },
+      { en: "Cadets usually wear their space helmets.", es: "Los cadetes usualmente usan sus cascos espaciales." },
+      { en: "The ship never leaves without clearance.", es: "La nave nunca sale sin autorización." }
+    ]
   },
   6: {
     grammar: "Have / Has (Possessions, equipment, tools)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[6],
-    objective: "Inventario del hangar técnico: verifica qué herramientas y suministros tienen los tripulantes para la próxima expedición."
+    objective: "Inventario del hangar técnico: verifica qué herramientas y suministros tienen los tripulantes para la próxima expedición.",
+    examples: [
+      { en: "Leo has a laser scanner kit.", es: "Leo tiene un kit de escáner láser." },
+      { en: "We have plenty of energy cells.", es: "Tenemos muchas celdas de energía." },
+      { en: "The engineer has the master key.", es: "El ingeniero tiene la llave maestra." }
+    ]
   },
   7: {
     grammar: "Wh- Questions (What, Where, When, Who, Why, How)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[7],
-    objective: "Interrogar las señales de radio anómalas: formula preguntas precisas para descubrir el origen del mensaje del espacio profundo."
+    objective: "Interrogar las señales de radio anómalas: formula preguntas precisas para descubrir el origen del mensaje del espacio profundo.",
+    examples: [
+      { en: "Where is the starship coming from?", es: "¿De dónde viene la nave espacial?" },
+      { en: "Who sends the emergency dispatch?", es: "¿Quién envía el despacho de emergencia?" },
+      { en: "What did the probe detect?", es: "¿Qué detectó la sonda?" }
+    ]
   },
   8: {
     grammar: "Possessive Adjectives & Pronouns (my/mine, your/yours, his, her/hers)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[8],
-    objective: "Clasificar las credenciales y equipo personal: identifica las pertenencias de cada cadete en los casilleros de la nave."
+    objective: "Clasificar las credenciales y equipo personal: identifica las pertenencias de cada cadete en los casilleros de la nave.",
+    examples: [
+      { en: "That blue visor belongs to Lia. It is hers.", es: "Ese visor azul pertenece a Lia. Es de ella." },
+      { en: "These are our official star academy badges.", es: "Estas son nuestras insignias oficiales de la academia." },
+      { en: "This notebook is mine and that tablet is yours.", es: "Este cuaderno es mío y esa tableta es tuya." }
+    ]
   },
   9: {
     grammar: "Object Pronouns (me, you, him, her, it, us, them) & Communication",
     vocabulary: CURRICULUM_VOCABULARY_DATA[9],
-    objective: "Transmitir órdenes a las naves aliadas: envía coordenadas e instrucciones claras usando los canales de radio galácticos."
+    objective: "Transmitir órdenes a las naves aliadas: envía coordenadas e instrucciones claras usando los canales de radio galácticos.",
+    examples: [
+      { en: "The General called us to the briefing deck.", es: "El General nos llamó a la cubierta de instrucciones." },
+      { en: "Please send him the coordinates immediately.", es: "Por favor envíale las coordenadas de inmediato." },
+      { en: "Our team heard them loud and clear.", es: "Nuestro equipo los escuchó fuerte y claro." }
+    ]
   },
   10: {
     grammar: "Demonstratives (This / That / These / Those) & Panel Controls",
     vocabulary: CURRICULUM_VOCABULARY_DATA[10],
-    objective: "Operar la consola central de mando: señala y activa los interruptores, palancas y pantallas correctas de la nave."
+    objective: "Operar la consola central de mando: señala y activa los interruptores, palancas y pantallas correctas de la nave.",
+    examples: [
+      { en: "This lever activates the shields, but that switch shuts down plasma.", es: "Esta palanca activa los escudos, pero ese interruptor apaga el plasma." },
+      { en: "These documents are for the commander, and those capsules are for analysis.", es: "Estos documentos son para el comandante, y aquellas cápsulas son para análisis." }
+    ]
   },
   11: {
     grammar: "Comparatives (-er / more than), Speed and Propulsion",
     vocabulary: CURRICULUM_VOCABULARY_DATA[11],
-    objective: "Comparar sistemas de propulsión y astronaves: evalúa el rendimiento y especificaciones de vuelo."
+    objective: "Comparar sistemas de propulsión y astronaves: evalúa el rendimiento y especificaciones de vuelo.",
+    examples: [
+      { en: "The ion thruster is faster than the chemical rocket.", es: "El propulsor de iones es más rápido que el cohete químico." },
+      { en: "Scribtonia is larger than our home planet.", es: "Scribtonia es más grande que nuestro planeta natal." },
+      { en: "This radar is more precise than the old antenna.", es: "Este radar es más preciso que la antena antigua." }
+    ]
   },
   12: {
     grammar: "Superlatives (-est / most), Galactic Wonders and Records",
     vocabulary: CURRICULUM_VOCABULARY_DATA[12],
-    objective: "Investigar los fenómenos cósmicos más extremos de la galaxia: documenta récords y maravillas estelares."
+    objective: "Investigar los fenómenos cósmicos más extremos de la galaxia: documenta récords y maravillas estelares.",
+    examples: [
+      { en: "This is the brightest star in the quadrant.", es: "Esta es la estrella más brillante del cuadrante." },
+      { en: "BaseScrib is the most powerful base in the galaxy.", es: "BaseScrib es la base más poderosa de la galaxia." },
+      { en: "Jupiter is the largest planet in our solar system.", es: "Júpiter es el planeta más grande de nuestro sistema solar." }
+    ]
   },
   13: {
     grammar: "Past Simple (Regular & Irregular verbs, Time Expressions: yesterday, last night)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[13],
-    objective: "Completar el cuaderno de bitácora histórico de expedición: documenta los hitos y descubrimientos del viaje."
+    objective: "Completar el cuaderno de bitácora histórico de expedición: documenta los hitos y descubrimientos del viaje.",
+    examples: [
+      { en: "Yesterday the squad discovered a luminous asteroid.", es: "Ayer el escuadrón descubrió un asteroide luminoso." },
+      { en: "The captain landed safely on the planetary surface.", es: "El capitán aterrizó a salvo en la superficie planetaria." },
+      { en: "We saw a strange beacon in sector four.", es: "Vimos una baliza extraña en el sector cuatro." }
+    ]
   },
   14: {
     grammar: "Present Perfect & Final Graduation Review (Achievements, Milestones)",
     vocabulary: CURRICULUM_VOCABULARY_DATA[14],
-    objective: "Ceremonia de graduación estelar en Basescrib: pronuncia tu discurso final y recibe las insignias de comandante."
+    objective: "Ceremonia de graduación estelar en Basescrib: pronuncia tu discurso final y recibe las insignias de comandante.",
+    examples: [
+      { en: "We have mastered all communication protocols on BaseScrib.", es: "Hemos dominado todos los protocolos de comunicación en BaseScrib." },
+      { en: "The science officer has already completed the scans.", es: "El oficial científico ya ha completado los escaneos." },
+      { en: "You have achieved the rank of Space Commander.", es: "Has alcanzado el rango de Comandante Espacial." }
+    ]
   }
 };

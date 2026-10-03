@@ -17,7 +17,7 @@ function shuffle(array) {
 // Curricular Shield Diagnostics for all 14 Days
 const DEFAULT_REPAIR_QUESTIONS = {
   1: [
-    { id: "r1-1", text: "Diagnóstico: 'I is a recruit on Base ONE.'", options: [{ id: "o1-1", text: "I am a recruit on Base ONE.", is_correct: true }, { id: "o1-2", text: "I be a recruit on Base ONE.", is_correct: false }, { id: "o1-3", text: "I are a recruit on Base ONE.", is_correct: false }] },
+    { id: "r1-1", text: "Diagnóstico: 'I is a recruit on BaseScrib.'", options: [{ id: "o1-1", text: "I am a recruit on BaseScrib.", is_correct: true }, { id: "o1-2", text: "I be a recruit on BaseScrib.", is_correct: false }, { id: "o1-3", text: "I are a recruit on BaseScrib.", is_correct: false }] },
     { id: "r1-2", text: "Diagnóstico: 'We is ready for mission launch.'", options: [{ id: "o1-4", text: "We are ready for mission launch.", is_correct: true }, { id: "o1-5", text: "We am ready for mission launch.", is_correct: false }, { id: "o1-6", text: "We be ready for mission launch.", is_correct: false }] }
   ],
   2: [
@@ -42,7 +42,7 @@ const DEFAULT_REPAIR_QUESTIONS = {
   ],
   7: [
     { id: "r7-1", text: "Diagnóstico: 'We seen a strange alien beacon in sector 4.'", options: [{ id: "o7-1", text: "We saw a strange alien beacon in sector 4.", is_correct: true }, { id: "o7-2", text: "We seed a strange alien beacon in sector 4.", is_correct: false }, { id: "o7-3", text: "We seen a strange beacon.", is_correct: false }] },
-    { id: "r7-2", text: "Diagnóstico: 'Dani sented an emergency dispatch to Base ONE.'", options: [{ id: "o7-4", text: "Dani sent an emergency dispatch to Base ONE.", is_correct: true }, { id: "o7-5", text: "Dani send an emergency dispatch to Base ONE.", is_correct: false }, { id: "o7-6", text: "Dani was sented an emergency dispatch.", is_correct: false }] }
+    { id: "r7-2", text: "Diagnóstico: 'Leo sented an emergency dispatch to BaseScrib.'", options: [{ id: "o7-4", text: "Leo sent an emergency dispatch to BaseScrib.", is_correct: true }, { id: "o7-5", text: "Leo send an emergency dispatch to BaseScrib.", is_correct: false }, { id: "o7-6", text: "Leo was sented an emergency dispatch.", is_correct: false }] }
   ],
   8: [
     { id: "r8-1", text: "Diagnóstico: 'Scribtonia is more large than our home planet.'", options: [{ id: "o8-1", text: "Scribtonia is larger than our home planet.", is_correct: true }, { id: "o8-2", text: "Scribtonia is more large than our home planet.", is_correct: false }, { id: "o8-3", text: "Scribtonia is largest than our home planet.", is_correct: false }] },
@@ -50,7 +50,7 @@ const DEFAULT_REPAIR_QUESTIONS = {
   ],
   9: [
     { id: "r9-1", text: "Diagnóstico: 'This is the most bright star in the galaxy.'", options: [{ id: "o9-1", text: "This is the brightest star in the galaxy.", is_correct: true }, { id: "o9-2", text: "This is the most bright star in the galaxy.", is_correct: false }, { id: "o9-3", text: "This is the brighter star in the galaxy.", is_correct: false }] },
-    { id: "r9-2", text: "Diagnóstico: 'Base ONE is the most powerful base in the quadrant.'", options: [{ id: "o9-4", text: "Base ONE is the most powerful base in the quadrant.", is_correct: true }, { id: "o9-5", text: "Base ONE is the powerfullest base in the quadrant.", is_correct: false }, { id: "o9-6", text: "Base ONE is most powerful base.", is_correct: false }] }
+    { id: "r9-2", text: "Diagnóstico: 'BaseScrib is the most powerful base in the quadrant.'", options: [{ id: "o9-4", text: "BaseScrib is the most powerful base in the quadrant.", is_correct: true }, { id: "o9-5", text: "BaseScrib is the powerfullest base in the quadrant.", is_correct: false }, { id: "o9-6", text: "BaseScrib is most powerful base.", is_correct: false }] }
   ],
   10: [
     { id: "r10-1", text: "Diagnóstico: 'Tomorrow we will to navigate through the nebula.'", options: [{ id: "o10-1", text: "Tomorrow we will navigate through the nebula.", is_correct: true }, { id: "o10-2", text: "Tomorrow we will navigating through the nebula.", is_correct: false }, { id: "o10-3", text: "Tomorrow we will to navigate.", is_correct: false }] },
@@ -69,13 +69,12 @@ const DEFAULT_REPAIR_QUESTIONS = {
     { id: "r13-2", text: "Diagnóstico: 'Cosmic samples must be store in containment pods.'", options: [{ id: "o13-4", text: "Cosmic samples must be stored in containment pods.", is_correct: true }, { id: "o13-5", text: "Cosmic samples must be store in containment pods.", is_correct: false }, { id: "o13-6", text: "Cosmic samples must being stored in pods.", is_correct: false }] }
   ],
   14: [
-    { id: "r14-1", text: "Diagnóstico: 'We has mastered all communication protocols on Base ONE.'", options: [{ id: "o14-1", text: "We have mastered all communication protocols on Base ONE.", is_correct: true }, { id: "o14-2", text: "We has mastered all communication protocols on Base ONE.", is_correct: false }, { id: "o14-3", text: "We having mastered all protocols.", is_correct: false }] },
+    { id: "r14-1", text: "Diagnóstico: 'We has mastered all communication protocols on BaseScrib.'", options: [{ id: "o14-1", text: "We have mastered all communication protocols on BaseScrib.", is_correct: true }, { id: "o14-2", text: "We has mastered all communication protocols on BaseScrib.", is_correct: false }, { id: "o14-3", text: "We having mastered all protocols.", is_correct: false }] },
     { id: "r14-2", text: "Diagnóstico: 'The expedition team are ready for deep space exploration.'", options: [{ id: "o14-4", text: "The expedition team is ready for deep space exploration.", is_correct: true }, { id: "o14-5", text: "The expedition team are ready for deep space exploration.", is_correct: false }, { id: "o14-6", text: "The expedition team be ready.", is_correct: false }] }
   ]
 };
 
 export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = false }) {
-  const [currentQIndex, setCurrentQIndex] = useState(0);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
@@ -93,16 +92,22 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const [selectedOptionId, setSelectedOptionId] = useState(null);
 
   const dayNum = activity?.dayNumber || activity?.day_num || 1;
-  const questions = (activity?.questions && activity.questions.length > 0)
+  const initialQuestions = (activity?.questions && activity.questions.length > 0)
     ? activity.questions
     : (DEFAULT_REPAIR_QUESTIONS[dayNum] || DEFAULT_REPAIR_QUESTIONS[1]);
-  const currentQuestion = questions[currentQIndex];
+
+  // Spaced Repetition Queue: Failed questions get re-queued to the end
+  const [questionQueue, setQuestionQueue] = useState(() => [...initialQuestions]);
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [requeuedNotice, setRequeuedNotice] = useState(false);
+  const currentQuestion = questionQueue[currentQIndex] || questionQueue[0];
 
   const lastQuestionKeyRef = useRef(null);
 
   // Helper to extract scrambled words from question text or target correct option
   useEffect(() => {
-    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (!currentQuestion) return;
+    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion.id || currentQuestion.text}`;
     if (lastQuestionKeyRef.current === qKey && availableWords.length > 0) return;
     lastQuestionKeyRef.current = qKey;
 
@@ -112,8 +117,6 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
     setSelectedOptionId(null);
     setAssembledWords([]);
     setFailedUserText("");
-
-    if (!currentQuestion) return;
 
     // Shuffle options so correct answer is NEVER locked to index 0 / left side!
     if (currentQuestion.options && currentQuestion.options.length > 0) {
@@ -218,15 +221,20 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
       soundFx.playLaser();
       soundFx.playSuccess();
       setIsSuccess(true);
+      setRequeuedNotice(false);
+
       setTimeout(() => {
-        if (currentQIndex < questions.length - 1) {
-          setCurrentQIndex(currentQIndex + 1);
-        } else {
+        const nextQueue = questionQueue.filter((_, idx) => idx !== currentQIndex);
+
+        if (nextQueue.length === 0) {
           soundFx.playCoin();
           soundFx.playStreakBonus();
           onComplete(15, 15, mistakes);
+        } else {
+          setQuestionQueue(nextQueue);
+          setCurrentQIndex(0);
         }
-      }, 1500);
+      }, 1400);
     } else {
       setMistakes((prev) => prev + 1);
       soundFx.playError();
@@ -239,12 +247,19 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
   const handleNextAfterError = () => {
     setShowSolution(false);
     setIsError(false);
-    if (currentQIndex < questions.length - 1) {
-      setCurrentQIndex(prev => prev + 1);
+    setAssembledWords([]);
+    setFailedUserText("");
+    setSelectedOptionId(null);
+
+    // Spaced repetition: requeue failed question to end of queue
+    const failedQ = questionQueue[currentQIndex];
+    if (questionQueue.length > 1) {
+      const remaining = questionQueue.filter((_, idx) => idx !== currentQIndex);
+      setQuestionQueue([...remaining, failedQ]);
+      setCurrentQIndex(0);
+      setRequeuedNotice(true);
     } else {
-      soundFx.playCoin();
-      soundFx.playStreakBonus();
-      onComplete(15, 15, mistakes);
+      setCurrentQIndex(0);
     }
   };
 
@@ -274,10 +289,10 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
       {!hideHeader && (
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
-            <span className="dashboard-kicker" style={{ color: "#2ec4b6", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Stage 1: Vocabulary & Ship Repair
+            <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
+              Stage 2: Grammar — Ship Repair (Sentence Order)
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Ship Repair & Module Vocabulary"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Ship Repair & Grammar Structure"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Close ✕
@@ -288,12 +303,28 @@ export function ShipRepairGame({ activity, onComplete, onClose, hideHeader = fal
       {currentQuestion ? (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
-            <span>Sección de Escudos: {currentQIndex + 1} de {questions.length}</span>
-            <span>Estabilidad de Escudo: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
+            <span>Sección de Escudos: {Math.min(initialQuestions.length, initialQuestions.length - questionQueue.length + 1)} de {initialQuestions.length}</span>
+            <span>Estabilidad de Escudo: {Math.round(((initialQuestions.length - questionQueue.length) / initialQuestions.length) * 100)}%</span>
           </div>
 
+          {requeuedNotice && (
+            <div style={{
+              background: "rgba(255, 209, 102, 0.15)",
+              border: "1px solid #ffd166",
+              color: "#ffd166",
+              borderRadius: 8,
+              padding: "6px 12px",
+              fontSize: "0.82rem",
+              marginBottom: "8px",
+              textAlign: "center",
+              animation: "fadeIn 0.3s ease"
+            }}>
+              🔁 Diagnóstico en cola de refuerzo: lo volverás a intentar al final para dominar la regla.
+            </div>
+          )}
+
           <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>
-            ⚡ Instructions / Instrucciones: {isSentenceMode ? "Selecciona y ordena las palabras clave para construir la oración gramatical correcta." : "Selecciona el nodo con el diagnóstico de corrección gramatical adecuado."}
+            ⚡ Instrucciones: {isSentenceMode ? "Selecciona y ordena las palabras para construir la oración gramatical correcta." : "Selecciona la opción con la corrección gramatical adecuada."}
           </h3>
 
           {/* Shield Status Deck */}

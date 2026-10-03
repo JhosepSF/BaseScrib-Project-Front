@@ -21,6 +21,8 @@ import cofreEtapa5 from "../../assets/amongus/COFRE/COFRE ABRIENDOSE ETAPA 5.png
 import cofreAbierto from "../../assets/amongus/COFRE/COFRE ABIERTO.png";
 import "../../styles/SpaceStation.css";
 import "../../styles/RoomActivityPanel3D.css";
+import { VocabularyTrainerModal } from "./VocabularyTrainerModal";
+import { RobotLessonBriefing } from "./RobotLessonBriefing";
 
 import { MISSION_BRIEFINGS as missionBriefings } from "../constants/curriculumVocabulary";
 
@@ -78,6 +80,8 @@ export function RoomActivityPanel3D({
   const [sparkyPhrase, setSparkyPhrase] = useState("¡Buen trabajo, recluta! Continúa con la misión.");
   const [showCalibrator, setShowCalibrator] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showRobotLesson, setShowRobotLesson] = useState(false);
+  const [showVocabTrainer, setShowVocabTrainer] = useState(false);
   const [activeModal, setActiveModal] = useState(null); // 'bitacora' | 'misiones' | 'vocabulario' | 'racha' | 'monedas'
   const [dayPage, setDayPage] = useState(0); // 0 = D1-D4, 1 = D5-D8, 2 = D9-D10
   const [isPortalHovered, setIsPortalHovered] = useState(false);
@@ -150,6 +154,9 @@ export function RoomActivityPanel3D({
   const [isTalking, setIsTalking] = useState(false);
 
   const sparkyPhrases = [
+    "🤖 ¡Tócame para ver la lección gramatical de hoy!",
+    "Utilizamos 'I am' para señalar quiénes somos... ¡Tócame para repasar!",
+    "I can repair the engine! (¡Yo puedo reparar!) ¡Haz clic en mí para ver ejemplos!",
     "¡Buen trabajo, recluta! Continúa con la misión.",
     "Focus, recruit! You can do it!",
     "Great job! La constancia te llevará a la victoria.",
@@ -173,7 +180,8 @@ export function RoomActivityPanel3D({
 
   const handleRobotClick = (e) => {
     if (e) e.stopPropagation();
-    changeRobotPhrase(true);
+    soundFx.playClick();
+    setShowRobotLesson(true);
   };
 
   // 1. Phrase Rotation Timer (Every 12 seconds - SILENT, paused while game runner is open)
@@ -334,6 +342,19 @@ export function RoomActivityPanel3D({
                     {missionBriefings[selectedDay]?.grammar}
                   </p>
                 </div>
+                {missionBriefings[selectedDay]?.examples && (
+                  <div style={{ margin: "16px 0" }}>
+                    <strong style={{ color: "#00f0ff", fontSize: "18px" }}>💡 Ejemplos Clave de la Misión:</strong>
+                    <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {missionBriefings[selectedDay].examples.map((ex, idx) => (
+                        <div key={idx} style={{ background: "rgba(255,255,255,0.05)", padding: "10px 14px", borderRadius: "10px", borderLeft: "4px solid #00f0ff" }}>
+                          <div style={{ color: "#ffffff", fontWeight: "bold", fontSize: "15px" }}>🎯 {ex.en}</div>
+                          <div style={{ color: "#9be6df", fontSize: "13px", marginTop: "2px" }}>↳ {ex.es}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -341,11 +362,11 @@ export function RoomActivityPanel3D({
             {activeModal === "misiones" && (() => {
               const lockStatus = getDayLockStatus(selectedDay);
               const stages = [
-                { icon: "⚡", name: "Sentence Launch", type: "Vocabulary", desc: "Connect vocabulary cables and restore ship power." },
-                { icon: "🛠️", name: "Ship Repair", type: "Grammar", desc: "Diagnostic technical checks and grammar repairs." },
-                { icon: "📖", name: "Comic Reading", type: "Reading", desc: "Read interactive mission log panels and answer comprehension questions." },
-                { icon: "🛰️", name: "Word Recovery", type: "Listening", desc: "Audio frequency tuning and vocabulary word recovery." },
-                { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Compose the mission report for teacher review." }
+                { icon: "⚡", name: "Sentence Launch", type: "Vocabulary", desc: "Conecta cables de vocabulario clave y energiza la nave." },
+                { icon: "🛠️", name: "Ship Repair", type: "Grammar", desc: "Ordena palabras y oraciones para reparar los sistemas." },
+                { icon: "📖", name: "Comic Reading", type: "Reading", desc: "Lee el cómic interactivo de la tripulación y responde preguntas." },
+                { icon: "🛰️", name: "Word Recovery", type: "Recovery", desc: "Recupera frecuencias completando palabras clave letra a letra (T R A I N)." },
+                { icon: "✍️", name: "Writing Lab", type: "Writing", desc: "Redacta tu informe estelar para revisión y retroalimentación docente." }
               ];
 
               return (
@@ -354,10 +375,10 @@ export function RoomActivityPanel3D({
                     🚀 DAY {selectedDay} MISSION & BRIEFING
                   </h2>
                   <p style={{ fontSize: "15px", color: "#e6f7ff", lineHeight: "1.5", margin: "10px 0 18px 0" }}>
-                    In this mission you will complete 5 continuous stages in pedagogical sequence:
+                    En esta misión completarás 5 etapas continuas en orden pedagógico:
                   </p>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginBottom: "20px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px", marginBottom: "16px" }}>
                     {stages.map((st, idx) => (
                       <div
                         key={idx}
@@ -383,10 +404,27 @@ export function RoomActivityPanel3D({
                     ))}
                   </div>
 
+                  {/* EJEMPLOS GRAMATICALES EN EL BRIEFING */}
+                  {missionBriefings[selectedDay]?.examples && (
+                    <div style={{ background: "rgba(0, 240, 255, 0.08)", border: "1.5px solid rgba(0, 240, 255, 0.3)", borderRadius: "14px", padding: "14px", marginBottom: "18px", textAlign: "left" }}>
+                      <div style={{ fontSize: "14px", fontWeight: "900", color: "#ffd166", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span>💡</span> EJEMPLOS DE LA MISIÓN (GRAMMAR FOCUS):
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        {missionBriefings[selectedDay].examples.map((ex, idx) => (
+                          <div key={idx} style={{ background: "rgba(255, 255, 255, 0.04)", padding: "8px 12px", borderRadius: "8px", borderLeft: "3px solid #2ec4b6" }}>
+                            <div style={{ color: "#ffffff", fontWeight: "bold", fontSize: "14px" }}>🎯 {ex.en}</div>
+                            <div style={{ color: "#9be6df", fontSize: "12px", marginTop: "2px" }}>↳ {ex.es}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {lockStatus.isUnlocked ? (
                     <div style={{ background: "rgba(46, 196, 182, 0.12)", border: "1.5px dashed #2ec4b6", borderRadius: "18px", padding: "20px", margin: "10px 0" }}>
                       <p style={{ fontSize: "13px", color: "#b8fff9", margin: "0 0 14px 0" }}>
-                        💡 <strong>Grading Mechanics:</strong> Graded 0 to 20 with deductions for incorrect attempts. The final Writing report is submitted to the teacher.
+                        💡 <strong>Mecánica de Evaluación:</strong> Nota sobre 20. Si fallas un ejercicio, recibirás retroalimentación y volverá a aparecer más adelante para que lo domines.
                       </p>
                       <button
                         onClick={() => {
@@ -428,7 +466,7 @@ export function RoomActivityPanel3D({
                 <h2 style={{ margin: "0 0 16px 0", color: "#9be6df", fontSize: "24px", display: "flex", alignItems: "center", gap: 10, borderBottom: "2px solid rgba(155, 230, 223, 0.4)", paddingBottom: "10px" }}>
                   🔤 VOCABULARIO CLAVE DÍA {selectedDay}
                 </h2>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", margin: "20px 0", maxHeight: "360px", overflowY: "auto" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", margin: "16px 0", maxHeight: "280px", overflowY: "auto" }}>
                   {missionBriefings[selectedDay]?.vocabulary.map((vocab, idx) => (
                     <div key={idx} style={{ background: "rgba(255, 255, 255, 0.08)", padding: "10px 14px", borderRadius: "10px", border: "1px solid rgba(155, 230, 223, 0.3)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <strong style={{ fontSize: "16px", color: "#ffffff" }}>{vocab.en}</strong>
@@ -436,6 +474,27 @@ export function RoomActivityPanel3D({
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={() => {
+                    setActiveModal(null);
+                    setShowVocabTrainer(true);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "14px",
+                    background: "linear-gradient(135deg, #bf00ff 0%, #7928ca 100%)",
+                    border: "none",
+                    borderRadius: "14px",
+                    color: "#ffffff",
+                    fontWeight: "900",
+                    fontSize: "1.05rem",
+                    cursor: "pointer",
+                    boxShadow: "0 0 20px rgba(191, 0, 255, 0.5)",
+                    marginTop: "10px"
+                  }}
+                >
+                  🎮 ENTRENADOR DE VOCABULARIO (JUEGO 3 PASOS) ➔
+                </button>
               </div>
             )}
 
@@ -489,7 +548,7 @@ export function RoomActivityPanel3D({
           height="1440"
         />
 
-        {/* 2. AVATAR EN EL SUELO (TAPETE BASE ONE ENTRADA) - POSICIÓN Y TAMAÑO EXACTO */}
+        {/* 2. AVATAR EN EL SUELO (TAPETE BASESCRIB ENTRADA) - POSICIÓN Y TAMAÑO EXACTO */}
         <foreignObject x="750" y="450" width="850" height="860" style={{ overflow: "visible", pointerEvents: "none" }}>
           <div
             className="mapped-avatar-wrapper"
@@ -736,7 +795,7 @@ export function RoomActivityPanel3D({
           </div>
         </foreignObject>
 
-        {/* TABS DIAS (Consola Izquierda - BASE ONE - 2x2 GRID CON NAVEGACIÓN) */}
+        {/* TABS DIAS (Consola Izquierda - BASESCRIB - 2x2 GRID CON NAVEGACIÓN) */}
         <foreignObject x="408" y="660" width="256.5" height="145" style={{ overflow: "visible", pointerEvents: "none" }}>
           <div
             className="mapped-screen mapped-console-left"
@@ -986,8 +1045,8 @@ export function RoomActivityPanel3D({
           <foreignObject x="2000" y="150" width="380" height="425" style={{ overflow: "visible", pointerEvents: "none" }}>
             <div
               className="mapped-screen mapped-vocab-right"
-              onClick={(e) => { e.stopPropagation(); if (!showCalibrator) setActiveModal("vocabulario"); }}
-              title="Haz Clic para Expandir Vocabulario Clave"
+              onClick={(e) => { e.stopPropagation(); if (!showCalibrator) setShowVocabTrainer(true); }}
+              title="Haz Clic para Entrenar Vocabulario (Juego de 3 Pasos)"
               style={{
                 width: "100%",
                 height: "100%",
@@ -1041,6 +1100,35 @@ export function RoomActivityPanel3D({
         <RoomCalibratorTool active={showCalibrator} zones={ROOM_ZONES} />
 
       </svg>
+
+      {/* 3-STEP PROGRESSIVE VOCABULARY TRAINER MODAL */}
+      <VocabularyTrainerModal
+        dayNumber={selectedDay}
+        vocabulary={missionBriefings[selectedDay]?.vocabulary}
+        isOpen={showVocabTrainer}
+        onClose={() => setShowVocabTrainer(false)}
+        onComplete={(reward) => {
+          setShowVocabTrainer(false);
+          if (onUserUpdated && reward) {
+            onUserUpdated(prev => ({
+              ...prev,
+              xp: (prev?.xp || 0) + (reward.xp || 15),
+              coins: (prev?.coins || 0) + (reward.coins || 15)
+            }));
+          }
+        }}
+      />
+
+      {/* SPARKY ROBOT LESSON BRIEFING MODAL */}
+      <RobotLessonBriefing
+        dayNumber={selectedDay}
+        isOpen={showRobotLesson}
+        onClose={() => setShowRobotLesson(false)}
+        onLaunchStage={() => {
+          setShowRobotLesson(false);
+          setActiveRunnerDay(selectedDay);
+        }}
+      />
 
       {/* SEQUENCED DAILY GAME RUNNER OVERLAY */}
       {activeRunnerDay && (

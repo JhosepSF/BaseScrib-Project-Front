@@ -30,7 +30,7 @@ const DEFAULT_RECOVERY_QUESTIONS = {
     { id: "rq3-2", text: "The captain ___ the daily report.", options: [{ id: "ro3-4", text: "writes", is_correct: true }, { id: "ro3-5", text: "write", is_correct: false }, { id: "ro3-6", text: "writing", is_correct: false }] }
   ],
   4: [
-    { id: "rq4-1", text: "Dani ___ calibrating the stellar radar.", options: [{ id: "ro4-1", text: "is", is_correct: true }, { id: "ro4-2", text: "are", is_correct: false }, { id: "ro4-3", text: "am", is_correct: false }] },
+    { id: "rq4-1", text: "Leo ___ calibrating the stellar radar.", options: [{ id: "ro4-1", text: "is", is_correct: true }, { id: "ro4-2", text: "are", is_correct: false }, { id: "ro4-3", text: "am", is_correct: false }] },
     { id: "rq4-2", text: "The robots ___ repairing the engine.", options: [{ id: "ro4-4", text: "are", is_correct: true }, { id: "ro4-5", text: "is", is_correct: false }, { id: "ro4-6", text: "am", is_correct: false }] }
   ],
   5: [
@@ -50,7 +50,7 @@ const DEFAULT_RECOVERY_QUESTIONS = {
     { id: "rq8-2", text: "Scribtonia has a ___ atmosphere than the Moon.", options: [{ id: "ro8-4", text: "denser", is_correct: true }, { id: "ro8-5", text: "dense", is_correct: false }, { id: "ro8-6", text: "densest", is_correct: false }] }
   ],
   9: [
-    { id: "rq9-1", text: "Base ONE is the ___ advanced station.", options: [{ id: "ro9-1", text: "most", is_correct: true }, { id: "ro9-2", text: "more", is_correct: false }, { id: "ro9-3", text: "much", is_correct: false }] },
+    { id: "rq9-1", text: "BaseScrib is the ___ advanced station.", options: [{ id: "ro9-1", text: "most", is_correct: true }, { id: "ro9-2", text: "more", is_correct: false }, { id: "ro9-3", text: "much", is_correct: false }] },
     { id: "rq9-2", text: "Nova Scrib is the ___ star in the sky.", options: [{ id: "ro9-4", text: "brightest", is_correct: true }, { id: "ro9-5", text: "brighter", is_correct: false }, { id: "ro9-6", text: "bright", is_correct: false }] }
   ],
   10: [
@@ -76,24 +76,29 @@ const DEFAULT_RECOVERY_QUESTIONS = {
 };
 
 export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = false }) {
+  const dayNum = activity?.dayNumber || activity?.day_num || activity?.day || 1;
+  const initialQuestions = (activity?.questions && activity.questions.length > 0)
+    ? activity.questions
+    : (DEFAULT_RECOVERY_QUESTIONS[dayNum] || DEFAULT_RECOVERY_QUESTIONS[1]);
+
+  // Spaced Repetition Queue: Failed questions get re-queued to the end
+  const [questionQueue, setQuestionQueue] = useState(() => [...initialQuestions]);
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [selectedOptionId, setSelectedOptionId] = useState(null);
-  const [filledWords, setFilledWords] = useState([]); // e.g. ["is", "is"]
+  const [filledWords, setFilledWords] = useState([]); // e.g. ["am"]
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [mistakes, setMistakes] = useState(0);
+  const [requeuedNotice, setRequeuedNotice] = useState(false);
 
-  const dayNum = activity?.dayNumber || activity?.day_num || activity?.day || 1;
-  const questions = (activity?.questions && activity.questions.length > 0)
-    ? activity.questions
-    : (DEFAULT_RECOVERY_QUESTIONS[dayNum] || DEFAULT_RECOVERY_QUESTIONS[1]);
-  const currentQuestion = questions[currentQIndex];
+  const currentQuestion = questionQueue[currentQIndex] || questionQueue[0];
   const lastQRef = useRef(null);
 
   useEffect(() => {
-    const qKey = `${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (!currentQuestion) return;
+    const qKey = `${currentQIndex}-${currentQuestion.id || currentQuestion.text}`;
     if (lastQRef.current === qKey && shuffledOptions.length > 0) return;
     lastQRef.current = qKey;
 
@@ -116,7 +121,6 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     setIsError(false);
     setIsSuccess(false);
 
-    // Split the option text by "/" to get the individual words for the blanks
     const parts = option.text.split(" / ").map(p => p.trim());
     setFilledWords(parts);
   };
@@ -131,15 +135,21 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
       soundFx.playLaser();
       soundFx.playSuccess();
       setIsSuccess(true);
+      setRequeuedNotice(false);
+
       setTimeout(() => {
-        if (currentQIndex < questions.length - 1) {
-          setCurrentQIndex(currentQIndex + 1);
-        } else {
+        // Remove correctly answered question from queue
+        const nextQueue = questionQueue.filter((_, idx) => idx !== currentQIndex);
+
+        if (nextQueue.length === 0) {
           soundFx.playCoin();
           soundFx.playStreakBonus();
-          onComplete(15, 15, mistakes); // 15 XP, 15 Coins, mistakes
+          onComplete(15, 15, mistakes);
+        } else {
+          setQuestionQueue(nextQueue);
+          setCurrentQIndex(0);
         }
-      }, 1500);
+      }, 1400);
     } else {
       soundFx.playError();
       setMistakes((prev) => prev + 1);
@@ -153,37 +163,43 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
     setIsError(false);
     setSelectedOptionId(null);
     setFilledWords([]);
-    if (currentQIndex < questions.length - 1) {
-      setCurrentQIndex(prev => prev + 1);
+
+    // Spaced repetition: move failed question to the end of the queue
+    const failedQ = questionQueue[currentQIndex];
+    if (questionQueue.length > 1) {
+      const remaining = questionQueue.filter((_, idx) => idx !== currentQIndex);
+      setQuestionQueue([...remaining, failedQ]);
+      setCurrentQIndex(0);
+      setRequeuedNotice(true);
     } else {
-      soundFx.playCoin();
-      soundFx.playStreakBonus();
-      onComplete(15, 15, mistakes);
+      // If only 1 question remains, retry it
+      setCurrentQIndex(0);
     }
   };
 
   const correctOption = currentQuestion?.options?.find(o => o.is_correct);
-  const selectedUserOption = currentQuestion?.options?.find(o => o.id === selectedOptionId);
 
-  // Helper to render the sentence with highlighted blanks
+  // Helper to render letter boxes like [ T ] [ R ] [ A ] [ I ] [ N ]
   const renderSentenceWithBlanks = (text, filled) => {
     const parts = text.split("___");
-    
+    const targetWord = correctOption?.text || "word";
+
     return (
       <div 
         style={{ 
           fontSize: "1.15rem", 
-          lineHeight: "1.8", 
+          lineHeight: "2.2", 
           color: "#e6f7ff", 
           textAlign: "center",
           fontWeight: "600",
-          margin: "10px 0"
+          margin: "12px 0"
         }}
       >
         {parts.map((part, index) => {
           const isLast = index === parts.length - 1;
-          const word = filled[index] || "____";
-          const isEmpty = !filled[index];
+          const userWord = filled[index];
+          const hasWord = !!userWord;
+          const displayLetters = hasWord ? userWord.split("") : Array.from({ length: Math.max(2, targetWord.length) });
 
           return (
             <span key={index}>
@@ -191,22 +207,48 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
               {!isLast && (
                 <span 
                   style={{ 
-                    borderBottom: isEmpty ? "2.5px dashed #ffd166" : showSolution ? "2.5px solid #ef4444" : "2.5px solid #2ec4b6",
-                    background: isEmpty ? "rgba(255, 209, 102, 0.08)" : showSolution ? "rgba(239, 68, 68, 0.18)" : "rgba(46, 196, 182, 0.18)",
-                    color: isEmpty ? "#ffd166" : showSolution ? "#fca5a5" : "#b8fff9",
-                    padding: "3px 12px",
-                    borderRadius: 6,
-                    margin: "0 6px",
-                    fontWeight: "800",
-                    display: "inline-block",
-                    minWidth: 60,
-                    textAlign: "center",
-                    boxShadow: isEmpty ? "none" : "0 0 10px rgba(46, 196, 182, 0.3)",
-                    transition: "all 0.3s ease"
+                    display: "inline-flex", 
+                    gap: "4px", 
+                    verticalAlign: "middle", 
+                    margin: "0 8px" 
                   }}
-                  className={isEmpty ? "pulse-blank" : ""}
+                  title="Casillas para la palabra requerida"
                 >
-                  {word}
+                  {displayLetters.map((char, cIdx) => (
+                    <span
+                      key={cIdx}
+                      style={{
+                        width: "30px",
+                        height: "38px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: showSolution 
+                          ? "2px solid #ef4444" 
+                          : isSuccess 
+                            ? "2px solid #2ec4b6" 
+                            : hasWord 
+                              ? "2px solid #00f0ff" 
+                              : "2px dashed #ffd166",
+                        background: showSolution 
+                          ? "rgba(239, 68, 68, 0.25)" 
+                          : isSuccess 
+                            ? "rgba(46, 196, 182, 0.25)" 
+                            : hasWord 
+                              ? "rgba(0, 240, 255, 0.15)" 
+                              : "rgba(255, 209, 102, 0.1)",
+                        borderRadius: "8px",
+                        color: showSolution ? "#fca5a5" : isSuccess ? "#b8fff9" : hasWord ? "#00f0ff" : "#ffd166",
+                        fontWeight: "900",
+                        fontSize: "1.1rem",
+                        boxShadow: hasWord ? "0 0 10px rgba(0, 240, 255, 0.3)" : "none",
+                        textTransform: "uppercase",
+                        transition: "all 0.2s ease"
+                      }}
+                    >
+                      {hasWord ? char : "·"}
+                    </span>
+                  ))}
                 </span>
               )}
             </span>
@@ -235,9 +277,9 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Stage 4: Listening - Word Recovery & Frequency
+              Stage 4: Word Recovery — Reactor Fuel
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Word Recovery & Audio Frequency"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Reactor Fuel & Word Recovery"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Close ✕
@@ -248,12 +290,28 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
       {currentQuestion ? (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
-            <span>Energy Cell: {currentQIndex + 1} of {questions.length}</span>
-            <span>Combustion Stability: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
+            <span>Energy Cell: {Math.min(initialQuestions.length, initialQuestions.length - questionQueue.length + 1)} de {initialQuestions.length}</span>
+            <span>Estabilidad del Reactor: {Math.round(((initialQuestions.length - questionQueue.length) / initialQuestions.length) * 100)}%</span>
           </div>
 
+          {requeuedNotice && (
+            <div style={{
+              background: "rgba(255, 209, 102, 0.15)",
+              border: "1px solid #ffd166",
+              color: "#ffd166",
+              borderRadius: 8,
+              padding: "6px 12px",
+              fontSize: "0.82rem",
+              marginBottom: "8px",
+              textAlign: "center",
+              animation: "fadeIn 0.3s ease"
+            }}>
+              🔁 Pregunta en cola de refuerzo: la volverás a intentar al final para dominarla.
+            </div>
+          )}
+
           <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>
-            Instrucciones: Selecciona la combinación de celdas de combustible correcta para estabilizar el reactor.
+            Instrucciones: Selecciona la palabra correcta para completar el espacio y estabilizar el reactor.
           </h3>
 
           {/* Reactor Chamber Visual Zone */}
@@ -313,7 +371,9 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
           {/* Answer Combinations Grid */}
           <div style={{ marginTop: 14, textAlign: "left" }}>
-            <h4 style={{ color: "#9be6df", marginBottom: 8, fontSize: "0.88rem", fontWeight: "bold" }}>Opciones de Combustible Disponibles:</h4>
+            <h4 style={{ color: "#9be6df", marginBottom: 8, fontSize: "0.88rem", fontWeight: "bold" }}>
+              🎯 Selecciona la única palabra correcta para completar el espacio:
+            </h4>
             <div 
               style={{ 
                 display: "grid", 

@@ -94,7 +94,7 @@ export default function OnboardingModal({ isOpen, onClose, onComplete }) {
               ¡ENTRENAMIENTO COMPLETADO!
             </h2>
             <p style={{ color: "#cbd5e1", fontSize: "1rem", lineHeight: "1.5" }}>
-              Has recibido tu kit de inicio de recluta de Base ONE:
+              Has recibido tu kit de inicio de recluta de BaseScrib:
             </p>
             <div
               style={{

@@ -5,15 +5,16 @@ import { ShipRepairGame } from "./ShipRepairGame";
 import { ComicGame } from "./ComicGame";
 import { WordRecoveryGame } from "./WordRecoveryGame";
 import { WritingGame } from "./WritingGame";
+import RobotLessonBriefing from "./RobotLessonBriefing";
 import { soundFx } from "../utils/soundEffects";
 import "../../styles/DailyGameRunner.css";
 
 const STAGES = [
-  { id: 1, type: "vocabulary", title: "Stage 1: Vocabulary", icon: "⚡", component: SentenceLaunchGame, desc: "Sentence Launch & Vocabulary Cables" },
-  { id: 2, type: "grammar", title: "Stage 2: Grammar", icon: "🛠️", component: ShipRepairGame, desc: "Ship Repair & Grammar Diagnostics" },
+  { id: 1, type: "vocabulary", title: "Stage 1: Vocabulary", icon: "⚡", component: SentenceLaunchGame, desc: "Power Cables & Word Connect" },
+  { id: 2, type: "grammar", title: "Stage 2: Grammar", icon: "🛠️", component: ShipRepairGame, desc: "Ship Repair & Sentence Order" },
   { id: 3, type: "reading", title: "Stage 3: Reading", icon: "📖", component: ComicGame, desc: "Comic Reading & Log Comprehension" },
-  { id: 4, type: "listening", title: "Stage 4: Listening", icon: "🛰️", component: WordRecoveryGame, desc: "Audio Frequency & Word Recovery" },
-  { id: 5, type: "writing", title: "Stage 5: Writing", icon: "✉️", component: WritingGame, desc: "Final Mission Report to Teacher" },
+  { id: 4, type: "listening", title: "Stage 4: Word Recovery", icon: "🛰️", component: WordRecoveryGame, desc: "Reactor Fuel & Fill in the Blanks" },
+  { id: 5, type: "writing", title: "Stage 5: Writing", icon: "✉️", component: WritingGame, desc: "Space Mailbox & Final Mission Report" },
 ];
 
 class StageErrorBoundary extends React.Component {
@@ -83,6 +84,20 @@ export function DailyGameRunner({
   const [showTransition, setShowTransition] = useState(false);
   const [completedAutoScore, setCompletedAutoScore] = useState(null);
   const [resumedNotice, setResumedNotice] = useState(false);
+  const [showRobotLesson, setShowRobotLesson] = useState(() => {
+    try {
+      return !sessionStorage.getItem(`basescrib_sparky_seen_day_${dayNumber}`);
+    } catch {
+      return false;
+    }
+  });
+
+  const handleCloseRobotLesson = () => {
+    try {
+      sessionStorage.setItem(`basescrib_sparky_seen_day_${dayNumber}`, "true");
+    } catch (_) {}
+    setShowRobotLesson(false);
+  };
 
   const currentStage = STAGES[stageIndex];
   const cacheKey = `basescrib_daily_progress_${userId || 'guest'}_day_${dayNumber}`;
@@ -276,6 +291,13 @@ export function DailyGameRunner({
         </div>
       )}
 
+      {/* Sparky's Pedagogical Micro-Lesson Briefing */}
+      <RobotLessonBriefing
+        dayNumber={dayNumber}
+        isOpen={showRobotLesson}
+        onClose={handleCloseRobotLesson}
+      />
+
       {/* Top Banner Progress Bar */}
       <div className="daily-runner-hud">
         <div className="runner-hud-left">
@@ -317,9 +339,18 @@ export function DailyGameRunner({
           })}
         </div>
 
-        <button className="runner-close-btn" onClick={onClose} title="Save and Exit to Station">
-          ✕
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+          <button
+            className="runner-robot-btn"
+            onClick={() => setShowRobotLesson(true)}
+            title="Ver lección interactiva de Sparky"
+          >
+            🤖 Lección
+          </button>
+          <button className="runner-close-btn" onClick={onClose} title="Save and Exit to Station">
+            ✕
+          </button>
+        </div>
       </div>
 
       {/* Main Game Stage Area */}

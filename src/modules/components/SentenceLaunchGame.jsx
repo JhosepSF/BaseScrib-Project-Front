@@ -62,8 +62,9 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   const containerRef = useRef(null);
   const lastBuiltQIndexRef = useRef(-1);
 
-  // Determine rounds/questions
-  const questions = (activity?.questions && activity.questions.length > 0) ? activity.questions : [1, 2];
+  // Determine rounds/questions (with spaced repetition extension on mistakes)
+  const [roundsList, setRoundsList] = useState(() => (activity?.questions && activity.questions.length > 0) ? activity.questions : [1, 2]);
+  const [retryNotice, setRetryNotice] = useState(false);
 
   // Wire Colors
   const colors = ["#ff6b6b", "#2ec4b6", "#ffd166", "#ab47bc", "#ff6b35", "#00ff87"];
@@ -246,7 +247,18 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
   };
 
   const handleNextRound = () => {
-    if (currentQIndex < questions.length - 1) {
+    if (showSolution) {
+      // Mistake occurred: Add a retry round to master the vocabulary!
+      setRoundsList(prev => [...prev, prev.length + 1]);
+      setRetryNotice(true);
+      setTimeout(() => setRetryNotice(false), 3500);
+      setShowSolution(false);
+      setIsError(false);
+      setCurrentQIndex(prev => prev + 1);
+      return;
+    }
+
+    if (currentQIndex < roundsList.length - 1) {
       setCurrentQIndex(prev => prev + 1);
     } else {
       soundFx.playCoin();
@@ -270,13 +282,29 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
       {/* Scanline Overlay */}
       <div className="scan-line" />
 
+      {retryNotice && (
+        <div style={{
+          background: "rgba(255, 209, 102, 0.18)",
+          border: "1.5px solid #ffd166",
+          borderRadius: "10px",
+          padding: "6px 12px",
+          color: "#ffd166",
+          fontSize: "0.85rem",
+          fontWeight: "700",
+          textAlign: "center",
+          marginBottom: "10px"
+        }} className="animate-fadeIn">
+          🔁 Ronda de refuerzo añadida: ¡Conecta las palabras correctamente para dominar este vocabulario!
+        </div>
+      )}
+
       {!hideHeader && (
         <div className="panel-title-row" style={{ display: "flex", justifyContent: "space-between", marginBottom: "clamp(6px, 1.2vh, 10px)", borderBottom: "1.5px solid rgba(184, 255, 249, 0.2)", paddingBottom: "clamp(4px, 1vh, 8px)" }}>
           <div style={{ textAlign: "left" }}>
             <span className="dashboard-kicker" style={{ color: "#ffd166", textTransform: "uppercase", fontSize: "clamp(0.7rem, 1.4vh, 0.78rem)", fontWeight: "bold" }}>
-              Stage 2: Grammar - Sentence Launch
+              Stage 1: Vocabulary — Power Cables (Connect Words)
             </span>
-            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Sentence Launch & Grammar"}</h2>
+            <h2 style={{ margin: "2px 0 0 0", color: "#b8fff9", fontSize: "clamp(1.1rem, 2.2vh, 1.35rem)" }}>{activity?.title || "Vocabulary & Word Connect"}</h2>
           </div>
           <button onClick={onClose} className="btn-logout" style={{ margin: 0, padding: "4px 12px", fontSize: "0.82rem" }}>
             Close ✕
@@ -286,8 +314,8 @@ export function SentenceLaunchGame({ activity, onComplete, onClose, hideHeader =
 
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "clamp(0.72rem, 1.4vh, 0.82rem)", marginBottom: "clamp(4px, 1vh, 8px)" }}>
-          <span>Power Relays: {currentQIndex + 1} of {questions.length}</span>
-          <span>Energy Restored: {Math.round(((currentQIndex) / questions.length) * 100)}%</span>
+          <span>Power Relays: {currentQIndex + 1} of {roundsList.length}</span>
+          <span>Energy Restored: {Math.round(((currentQIndex) / roundsList.length) * 100)}%</span>
         </div>
 
         <h3 style={{ color: "#ffd166", marginBottom: "clamp(6px, 1.2vh, 10px)", fontSize: "clamp(0.78rem, 1.6vh, 0.92rem)", textAlign: "left", lineHeight: "1.3" }}>

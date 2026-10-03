@@ -20,7 +20,7 @@ function shuffle(array) {
 // Curricular Comic Comprehension Questions for all 14 Days (Fallback & Database Sync)
 const DEFAULT_COMIC_QUESTIONS = {
   1: [
-    { id: "cq1-1", text: "Where has the spaceship arrived?", options: [{ id: "co1-1", text: "Base ONE", is_correct: true }, { id: "co1-2", text: "Mars", is_correct: false }, { id: "co1-3", text: "Earth", is_correct: false }] },
+    { id: "cq1-1", text: "Where has the spaceship arrived?", options: [{ id: "co1-1", text: "BaseScrib", is_correct: true }, { id: "co1-2", text: "Mars", is_correct: false }, { id: "co1-3", text: "Earth", is_correct: false }] },
     { id: "cq1-2", text: "What is the recruit's name?", options: [{ id: "co1-4", text: "Leo", is_correct: true }, { id: "co1-5", text: "Tom", is_correct: false }, { id: "co1-6", text: "Emma", is_correct: false }] },
     { id: "cq1-3", text: "Where is the recruit from?", options: [{ id: "co1-7", text: "Peru", is_correct: true }, { id: "co1-8", text: "Brazil", is_correct: false }, { id: "co1-9", text: "Mexico", is_correct: false }] },
     { id: "cq1-4", text: "What does the recruit like?", options: [{ id: "co1-10", text: "Robots and science", is_correct: true }, { id: "co1-11", text: "Football and music", is_correct: false }, { id: "co1-12", text: "Space guide books", is_correct: false }] },
@@ -34,18 +34,18 @@ const DEFAULT_COMIC_QUESTIONS = {
     { id: "cq2-5", text: "How many books are in the study room?", options: [{ id: "co2-13", text: "Thirteen books", is_correct: true }, { id: "co2-14", text: "Five books", is_correct: false }, { id: "co2-15", text: "One book", is_correct: false }] }
   ],
   3: [
-    { id: "cq3-1", text: "What does the Trainer do every morning?", options: [{ id: "co3-1", text: "Eats fruit and takes a shower", is_correct: true }, { id: "co3-2", text: "Sleeps all morning", is_correct: false }, { id: "co3-3", text: "Flies away", is_correct: false }] },
-    { id: "cq3-2", text: "What does the recruit do in the afternoon?", options: [{ id: "co3-4", text: "Has lunch and checks the computers", is_correct: true }, { id: "co3-5", text: "Goes to bed", is_correct: false }, { id: "co3-6", text: "Draws pictures", is_correct: false }] },
-    { id: "cq3-3", text: "What does the other recruit do in the evening?", options: [{ id: "co3-7", text: "Studies English and sleeps at 9:00 pm", is_correct: true }, { id: "co3-8", text: "Cleans the outside hull", is_correct: false }, { id: "co3-9", text: "Plays video games all night", is_correct: false }] },
-    { id: "cq3-4", text: "Who greets the Trainer in the morning?", options: [{ id: "co3-10", text: "General Bric", is_correct: true }, { id: "co3-11", text: "An alien", is_correct: false }, { id: "co3-12", text: "A pirate", is_correct: false }] },
-    { id: "cq3-5", text: "What gesture does the General give the recruit?", options: [{ id: "co3-13", text: "A thumbs up", is_correct: true }, { id: "co3-14", text: "A red flag", is_correct: false }, { id: "co3-15", text: "A medal", is_correct: false }] }
+    { id: "cq3-1", text: "Where does the General meet the Trainer?", options: [{ id: "co3-1", text: "In the main hall", is_correct: true }, { id: "co3-2", text: "In the study room", is_correct: false }, { id: "co3-3", text: "In the cafeteria", is_correct: false }, { id: "co3-4", text: "In the garden", is_correct: false }] },
+    { id: "cq3-2", text: "What does the Trainer do every morning?", options: [{ id: "co3-5", text: "He eats fruit and takes a shower", is_correct: true }, { id: "co3-6", text: "He has lunch and checks the computers", is_correct: false }, { id: "co3-7", text: "He studies English and sleeps", is_correct: false }, { id: "co3-8", text: "He reads a book and writes a report", is_correct: false }] },
+    { id: "cq3-3", text: "What does the recruit study?", options: [{ id: "co3-9", text: "English", is_correct: true }, { id: "co3-10", text: "Science", is_correct: false }, { id: "co3-11", text: "Math", is_correct: false }, { id: "co3-12", text: "History", is_correct: false }] },
+    { id: "cq3-4", text: "What does the recruit do after lunch?", options: [{ id: "co3-13", text: "He checks the computers", is_correct: true }, { id: "co3-14", text: "He takes a shower", is_correct: false }, { id: "co3-15", text: "He eats fruit", is_correct: false }, { id: "co3-16", text: "He goes to sleep", is_correct: false }] },
+    { id: "cq3-5", text: "Where does the General meet the last recruit?", options: [{ id: "co3-17", text: "In the study room", is_correct: true }, { id: "co3-18", text: "In the main hall", is_correct: false }, { id: "co3-19", text: "In the hallway", is_correct: false }, { id: "co3-20", text: "In the cafeteria", is_correct: false }] }
   ],
   4: [
-    { id: "cq4-1", text: "Why does the General ask you to supervise the crew?", options: [{ id: "co4-1", text: "Because he does not feel well today", is_correct: true }, { id: "co4-2", text: "Because he is on vacation", is_correct: false }, { id: "co4-3", text: "Because the base is empty", is_correct: false }] },
-    { id: "cq4-2", text: "What is Recruit 1 doing in the control room?", options: [{ id: "co4-4", text: "Studying English", is_correct: true }, { id: "co4-5", text: "Sleeping", is_correct: false }, { id: "co4-6", text: "Cooking", is_correct: false }] },
-    { id: "cq4-3", text: "What is Leo doing?", options: [{ id: "co4-7", text: "Writing a mission report", is_correct: true }, { id: "co4-8", text: "Eating lunch", is_correct: false }, { id: "co4-9", text: "Watching TV", is_correct: false }] },
-    { id: "cq4-4", text: "What is Lia doing before the mission?", options: [{ id: "co4-10", text: "Eating her lunch", is_correct: true }, { id: "co4-11", text: "Drawing maps", is_correct: false }, { id: "co4-12", text: "Reading a novel", is_correct: false }] },
-    { id: "cq4-5", text: "How does the General communicate with you?", options: [{ id: "co4-13", text: "Via holographic video call", is_correct: true }, { id: "co4-14", text: "By paper letter", is_correct: false }, { id: "co4-15", text: "Through a megaphone", is_correct: false }] }
+    { id: "cq4-1", text: "Why are you supervising the recruits?", options: [{ id: "co4-1", text: "Because the General doesn't feel well", is_correct: true }, { id: "co4-2", text: "Because the General is training", is_correct: false }, { id: "co4-3", text: "Because the recruits are sleeping", is_correct: false }, { id: "co4-4", text: "Because there is a new mission", is_correct: false }] },
+    { id: "cq4-2", text: "What is Recruit 1 doing?", options: [{ id: "co4-5", text: "He is studying English", is_correct: true }, { id: "co4-6", text: "He is eating lunch", is_correct: false }, { id: "co4-7", text: "He is writing a report", is_correct: false }, { id: "co4-8", text: "He is reading a book", is_correct: false }] },
+    { id: "cq4-3", text: "What does the General ask the recruit to do?", options: [{ id: "co4-9", text: "Supervise the crew", is_correct: true }, { id: "co4-10", text: "Clean the spaceship", is_correct: false }, { id: "co4-11", text: "Prepare lunch", is_correct: false }, { id: "co4-12", text: "Write a report", is_correct: false }] },
+    { id: "cq4-4", text: "What is Leo doing?", options: [{ id: "co4-13", text: "He is writing a report", is_correct: true }, { id: "co4-14", text: "He is reading a book", is_correct: false }, { id: "co4-15", text: "He is studying English", is_correct: false }, { id: "co4-16", text: "He is eating lunch", is_correct: false }] },
+    { id: "cq4-5", text: "What is Lia doing before the mission?", options: [{ id: "co4-17", text: "She is eating her lunch", is_correct: true }, { id: "co4-18", text: "She is studying English", is_correct: false }, { id: "co4-19", text: "She is writing a report", is_correct: false }, { id: "co4-20", text: "She is reading a book", is_correct: false }] }
   ],
   5: [
     { id: "cq5-1", text: "Where is the crew eating lunch?", options: [{ id: "co5-1", text: "In the spaceship garden", is_correct: true }, { id: "co5-2", text: "In the control room", is_correct: false }, { id: "co5-3", text: "In the dormitory", is_correct: false }] },
@@ -67,7 +67,7 @@ const DEFAULT_COMIC_QUESTIONS = {
   ],
   8: [
     { id: "cq8-1", text: "What item did someone leave in the meeting room?", options: [{ id: "co8-1", text: "A notebook", is_correct: true }, { id: "co8-2", text: "A space helmet", is_correct: false }, { id: "co8-3", text: "A telescope", is_correct: false }] },
-    { id: "cq8-2", text: "Whose blue backpack did General Bric find?", options: [{ id: "co8-4", text: "Lia's backpack", is_correct: true }, { id: "co8-5", text: "The alien's backpack", is_correct: false }, { id: "co8-6", text: "The robot's backpack", is_correct: false }] }
+    { id: "cq8-2", text: "Whose blue backpack did the General find?", options: [{ id: "co8-4", text: "Lia's backpack", is_correct: true }, { id: "co8-5", text: "The alien's backpack", is_correct: false }, { id: "co8-6", text: "The robot's backpack", is_correct: false }] }
   ],
   9: [
     { id: "cq9-1", text: "Whose tablet is found on the desk?", options: [{ id: "co9-1", text: "Emma's tablet", is_correct: true }, { id: "co9-2", text: "The General's tablet", is_correct: false }, { id: "co9-3", text: "The pilot's tablet", is_correct: false }] },
@@ -109,11 +109,14 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const [showStatusText, setShowStatusText] = useState("SISTEMA OK");
 
   const dayNum = activity?.dayNumber || activity?.day_num || activity?.day || 1;
-  const questions = (activity?.questions && activity.questions.length > 0)
+  const initialQuestions = (activity?.questions && activity.questions.length > 0)
     ? activity.questions
     : (DEFAULT_COMIC_QUESTIONS[dayNum] || DEFAULT_COMIC_QUESTIONS[1]);
 
-  const currentQuestion = questions[currentQIndex];
+  // Spaced Repetition Queue: Failed questions get re-queued to the end
+  const [questionQueue, setQuestionQueue] = useState(() => [...initialQuestions]);
+  const [requeuedNotice, setRequeuedNotice] = useState(false);
+  const currentQuestion = questionQueue[currentQIndex] || questionQueue[0];
 
   // Parse structured story scenarios from backend (with offline fallback)
   const scenarios = parseComicStory(activity?.mission_story, dayNum);
@@ -182,7 +185,8 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
   const lastQRef = useRef(null);
 
   useEffect(() => {
-    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion?.id || currentQuestion?.text || 'def'}`;
+    if (!currentQuestion) return;
+    const qKey = `${dayNum}-${currentQIndex}-${currentQuestion.id || currentQuestion.text}`;
     if (lastQRef.current === qKey && shuffledOptions.length > 0) return;
     lastQRef.current = qKey;
 
@@ -207,15 +211,20 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
       soundFx.playLaser();
       soundFx.playSuccess();
       setShowStatusText("VERIFICACIÓN EXITOSA");
+      setRequeuedNotice(false);
+
       setTimeout(() => {
-        if (currentQIndex < questions.length - 1) {
-          setCurrentQIndex(currentQIndex + 1);
-          setSelectedOptionId(null);
-          setShowStatusText("SISTEMA OK");
-        } else {
+        const nextQueue = questionQueue.filter((_, idx) => idx !== currentQIndex);
+
+        if (nextQueue.length === 0) {
           soundFx.playCoin();
           soundFx.playStreakBonus();
-          onComplete(10, 10, mistakes); // 10 XP, 10 Coins, mistakes
+          onComplete(10, 10, mistakes);
+        } else {
+          setQuestionQueue(nextQueue);
+          setCurrentQIndex(0);
+          setSelectedOptionId(null);
+          setShowStatusText("SISTEMA OK");
         }
       }, 1200);
     } else {
@@ -232,12 +241,15 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
     setIsError(false);
     setSelectedOptionId(null);
     setShowStatusText("SISTEMA OK");
-    if (currentQIndex < questions.length - 1) {
-      setCurrentQIndex(prev => prev + 1);
+
+    const failedQ = questionQueue[currentQIndex];
+    if (questionQueue.length > 1) {
+      const remaining = questionQueue.filter((_, idx) => idx !== currentQIndex);
+      setQuestionQueue([...remaining, failedQ]);
+      setCurrentQIndex(0);
+      setRequeuedNotice(true);
     } else {
-      soundFx.playCoin();
-      soundFx.playStreakBonus();
-      onComplete(10, 10, mistakes);
+      setCurrentQIndex(0);
     }
   };
 
@@ -518,9 +530,25 @@ export function ComicGame({ activity, onComplete, onClose, hideHeader = false })
           {currentQuestion ? (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", color: "#9be6df", fontSize: "0.82rem", marginBottom: 10 }}>
-                <span>QUESTION: {currentQIndex + 1} of {questions.length}</span>
+                <span>PREGUNTA: {Math.min(initialQuestions.length, initialQuestions.length - questionQueue.length + 1)} de {initialQuestions.length}</span>
                 <span>STATUS: <strong style={{ color: showSolution ? "#ef4444" : isError ? "#ff6b6b" : "#2ec4b6" }}>{showStatusText}</strong></span>
               </div>
+
+              {requeuedNotice && (
+                <div style={{
+                  background: "rgba(255, 209, 102, 0.15)",
+                  border: "1px solid #ffd166",
+                  color: "#ffd166",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: "0.82rem",
+                  marginBottom: "10px",
+                  textAlign: "center",
+                  animation: "fadeIn 0.3s ease"
+                }}>
+                  🔁 Pregunta en cola de refuerzo: la volverás a intentar al final para dominar la lectura.
+                </div>
+              )}
 
               {/* Question Box */}
               <div 

@@ -194,6 +194,30 @@
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
 }
 
+.runner-robot-btn {
+  background: rgba(0, 240, 255, 0.15);
+  border: 1.5px solid #00f0ff;
+  color: #00f0ff;
+  padding: clamp(3px, 0.8vh, 6px) clamp(8px, 1.2vw, 12px);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: clamp(0.7rem, 1.4vh, 0.8rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.runner-robot-btn:hover {
+  background: #00f0ff;
+  color: #050d1a;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+  transform: translateY(-1px);
+}
+
 /* MAIN CONTENT CONTAINER */
 .daily-runner-content {
   flex: 1 1 auto;
