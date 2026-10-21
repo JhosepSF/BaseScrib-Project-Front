@@ -1152,6 +1152,14 @@ export function RoomActivityPanel3D({
             if (onActivityComplete) {
               onActivityComplete(1, runnerData.totalXP, runnerData.totalCoins);
             }
+            // Auto-advance to next enabled day if available
+            const nextDay = runnerData.dayNumber + 1;
+            if (nextDay <= 14) {
+              const nextLock = getDayLockStatus(nextDay);
+              if (nextLock.isUnlocked && setSelectedDay) {
+                setSelectedDay(nextDay);
+              }
+            }
           }}
           onClose={() => setActiveRunnerDay(null)}
         />

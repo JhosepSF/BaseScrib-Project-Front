@@ -235,35 +235,50 @@ export function VocabularyTrainerModal({
 
         {/* 3-Step Process Stepper */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "20px" }}>
-          <div style={{
-            background: step === 1 ? "rgba(46, 196, 182, 0.25)" : step > 1 ? "rgba(46, 196, 182, 0.1)" : "rgba(255, 255, 255, 0.05)",
-            border: step === 1 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "12px",
-            padding: "8px 10px",
-            textAlign: "center"
-          }}>
+          <div 
+            onClick={() => { soundFx.playClick(); setStep(1); }}
+            style={{
+              background: step === 1 ? "rgba(46, 196, 182, 0.25)" : step > 1 ? "rgba(46, 196, 182, 0.1)" : "rgba(255, 255, 255, 0.05)",
+              border: step === 1 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "12px",
+              padding: "8px 10px",
+              textAlign: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
             <span style={{ fontSize: "0.75rem", color: step === 1 ? "#ffd166" : "#a0aec0", fontWeight: "bold", display: "block" }}>PASO 1</span>
             <span style={{ fontSize: "0.82rem", color: "#e6f7ff", fontWeight: "700" }}>👁️ Imagen + Palabra</span>
           </div>
 
-          <div style={{
-            background: step === 2 ? "rgba(46, 196, 182, 0.25)" : step > 2 ? "rgba(46, 196, 182, 0.1)" : "rgba(255, 255, 255, 0.05)",
-            border: step === 2 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "12px",
-            padding: "8px 10px",
-            textAlign: "center"
-          }}>
+          <div 
+            onClick={() => { soundFx.playClick(); setStep(2); }}
+            style={{
+              background: step === 2 ? "rgba(46, 196, 182, 0.25)" : step > 2 ? "rgba(46, 196, 182, 0.1)" : "rgba(255, 255, 255, 0.05)",
+              border: step === 2 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "12px",
+              padding: "8px 10px",
+              textAlign: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
             <span style={{ fontSize: "0.75rem", color: step === 2 ? "#ffd166" : "#a0aec0", fontWeight: "bold", display: "block" }}>PASO 2</span>
             <span style={{ fontSize: "0.82rem", color: "#e6f7ff", fontWeight: "700" }}>🔗 Relaciona (EN ➔ ES)</span>
           </div>
 
-          <div style={{
-            background: step === 3 ? "rgba(46, 196, 182, 0.25)" : "rgba(255, 255, 255, 0.05)",
-            border: step === 3 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "12px",
-            padding: "8px 10px",
-            textAlign: "center"
-          }}>
+          <div 
+            onClick={() => { soundFx.playClick(); setStep(3); }}
+            style={{
+              background: step === 3 ? "rgba(46, 196, 182, 0.25)" : "rgba(255, 255, 255, 0.05)",
+              border: step === 3 ? "2px solid #2ec4b6" : "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "12px",
+              padding: "8px 10px",
+              textAlign: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
             <span style={{ fontSize: "0.75rem", color: step === 3 ? "#ffd166" : "#a0aec0", fontWeight: "bold", display: "block" }}>PASO 3</span>
             <span style={{ fontSize: "0.82rem", color: "#e6f7ff", fontWeight: "700" }}>🎯 Imagen ➔ EN (100%)</span>
           </div>
@@ -421,8 +436,8 @@ export function VocabularyTrainerModal({
                       disabled={isMatched}
                       style={{
                         padding: "12px 14px",
-                        background: isMatched ? "rgba(46, 196, 182, 0.3)" : isSelected ? "rgba(255, 209, 102, 0.3)" : "rgba(10, 25, 45, 0.7)",
-                        border: isMatched ? "2px solid #2ec4b6" : isSelected ? "2.5px solid #ffd166" : "1.5px solid rgba(255, 255, 255, 0.15)",
+                        background: isMatched ? "rgba(46, 196, 182, 0.3)" : "rgba(10, 25, 45, 0.7)",
+                        border: isMatched ? "2px solid #2ec4b6" : "1.5px solid rgba(255, 255, 255, 0.15)",
                         borderRadius: "12px",
                         color: isMatched ? "#2ec4b6" : "#ffd166",
                         fontWeight: "bold",

@@ -89,6 +89,18 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
     };
   };
 
+  // Auto-select the first unlocked and unfinished day or highest unlocked day
+  useEffect(() => {
+    const unlockedDays = joinedRoom?.unlocked_days || [1];
+    const nextUnfinished = unlockedDays.find(d => !localStorage.getItem(`basescrib_day_${d}_completed_at`));
+    if (nextUnfinished) {
+      setSelectedDay(nextUnfinished);
+    } else if (unlockedDays.length > 0) {
+      const maxUnlocked = Math.max(...unlockedDays);
+      setSelectedDay(maxUnlocked);
+    }
+  }, [joinedRoom?.unlocked_days]);
+
   const navigate = useNavigate();
   const token = getAccessToken();
 
@@ -811,6 +823,15 @@ export function RoomActivityPanel({ joinedRoom, onBack }) {
             localStorage.setItem(`basescrib_day_${runnerData.dayNumber}_completed_at`, new Date().toISOString());
             setActiveRunnerDay(null);
             handleGameComplete(1, runnerData.totalXP, runnerData.totalCoins);
+
+            // Auto-advance to next enabled day if available
+            const nextDay = runnerData.dayNumber + 1;
+            if (nextDay <= 14) {
+              const nextLock = getDayLockStatus(nextDay);
+              if (nextLock.isUnlocked) {
+                setSelectedDay(nextDay);
+              }
+            }
           }}
           onClose={() => setActiveRunnerDay(null)}
         />

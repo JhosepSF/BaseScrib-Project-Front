@@ -39,6 +39,7 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
   const [prevSubmission, setPrevSubmission] = useState(null);
 
   const dayNum = activity?.day_num || activity?.dayNumber || activity?.day || 1;
+  const hasPhotoComparison = dayNum === 2 || dayNum === 11;
   const promptText = activity?.questions?.[0]?.text || DEFAULT_WRITING_PROMPTS[dayNum] || DEFAULT_WRITING_PROMPTS[1];
   const photo1Url = getWritingPhoto(dayNum, 1);
   const photo2Url = getWritingPhoto(dayNum, 2);
@@ -92,9 +93,9 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
     try {
       const missionId = activity?.mission || activity?.mission_id || dayNum;
       const rawText = text.trim();
-      const finalSubmissionText = rawText.startsWith("[Foto")
-        ? rawText
-        : `[Foto seleccionada: Foto ${selectedPhoto}]\n${rawText}`;
+      const finalSubmissionText = hasPhotoComparison
+        ? (rawText.startsWith("[Foto") ? rawText : `[Foto seleccionada: Foto ${selectedPhoto}]\n${rawText}`)
+        : rawText;
 
       const res = await fetchWithAuth(`${API_BASE}/writing-submissions/`, {
         method: "POST",
@@ -305,84 +306,86 @@ export function WritingGame({ activity, userId, onComplete, onClose, hideHeader 
           </div>
         )}
 
-        {/* TWO-PHOTO SELECTION CARD GRID */}
-        <div
-          style={{
-            background: "rgba(0, 15, 30, 0.65)",
-            border: "1.5px solid rgba(46, 196, 182, 0.4)",
-            borderRadius: 14,
-            padding: "clamp(8px, 1.4vh, 12px) clamp(10px, 1.8vw, 16px)",
-            marginBottom: "clamp(8px, 1.4vh, 12px)",
-            textAlign: "left"
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
-            <span style={{ fontSize: "0.82rem", fontWeight: "900", color: "#39ff14", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: 6 }}>
-              <span>📸</span> FOTOS DE LA MISIÓN — SELECCIONA UNA PARA DESCRIBIR:
-            </span>
-            <span style={{ fontSize: "0.78rem", color: "#ffd166", fontWeight: "bold", background: "rgba(255, 209, 102, 0.15)", padding: "2px 8px", borderRadius: 6 }}>
-              {selectedPhoto === 1 ? "Foto 1 Activa ✔️" : "Foto 2 Activa ✔️"}
-            </span>
-          </div>
+        {/* TWO-PHOTO SELECTION CARD GRID (Only active for days with explicit image comparison/selection) */}
+        {hasPhotoComparison && (
+          <div
+            style={{
+              background: "rgba(0, 15, 30, 0.65)",
+              border: "1.5px solid rgba(46, 196, 182, 0.4)",
+              borderRadius: 14,
+              padding: "clamp(8px, 1.4vh, 12px) clamp(10px, 1.8vw, 16px)",
+              marginBottom: "clamp(8px, 1.4vh, 12px)",
+              textAlign: "left"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
+              <span style={{ fontSize: "0.82rem", fontWeight: "900", color: "#39ff14", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: 6 }}>
+                <span>📸</span> FOTOS DE LA MISIÓN — SELECCIONA UNA PARA DESCRIBIR:
+              </span>
+              <span style={{ fontSize: "0.78rem", color: "#ffd166", fontWeight: "bold", background: "rgba(255, 209, 102, 0.15)", padding: "2px 8px", borderRadius: 6 }}>
+                {selectedPhoto === 1 ? "Foto 1 Activa ✔️" : "Foto 2 Activa ✔️"}
+              </span>
+            </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            {/* PHOTO 1 CARD */}
-            <div
-              onClick={() => { soundFx.playClick(); setSelectedPhoto(1); }}
-              style={{
-                border: selectedPhoto === 1 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "12px",
-                overflow: "hidden",
-                cursor: "pointer",
-                background: selectedPhoto === 1 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
-                boxShadow: selectedPhoto === 1 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
-                transform: selectedPhoto === 1 ? "scale(1.02)" : "scale(1)",
-                transition: "all 0.2s ease"
-              }}
-            >
-              <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
-                <img
-                  src={photo1Url}
-                  alt={`Foto 1 - Día ${dayNum}`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
-                  <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
-                    {dayNum === 2 ? "Foto 1: Sala de Estudios" : "Foto 1"}
-                  </span>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              {/* PHOTO 1 CARD */}
+              <div
+                onClick={() => { soundFx.playClick(); setSelectedPhoto(1); }}
+                style={{
+                  border: selectedPhoto === 1 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  background: selectedPhoto === 1 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
+                  boxShadow: selectedPhoto === 1 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
+                  transform: selectedPhoto === 1 ? "scale(1.02)" : "scale(1)",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
+                  <img
+                    src={photo1Url}
+                    alt={`Foto 1 - Día ${dayNum}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
+                    <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
+                      {dayNum === 2 ? "Foto 1: Sala de Estudios" : "Foto 1"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* PHOTO 2 CARD */}
+              <div
+                onClick={() => { soundFx.playClick(); setSelectedPhoto(2); }}
+                style={{
+                  border: selectedPhoto === 2 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  background: selectedPhoto === 2 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
+                  boxShadow: selectedPhoto === 2 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
+                  transform: selectedPhoto === 2 ? "scale(1.02)" : "scale(1)",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
+                  <img
+                    src={photo2Url}
+                    alt={`Foto 2 - Día ${dayNum}`}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
+                    <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
+                      {dayNum === 2 ? "Foto 2: Jardín de la Nave" : "Foto 2"}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* PHOTO 2 CARD */}
-            <div
-              onClick={() => { soundFx.playClick(); setSelectedPhoto(2); }}
-              style={{
-                border: selectedPhoto === 2 ? "2.5px solid #39ff14" : "1.5px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "12px",
-                overflow: "hidden",
-                cursor: "pointer",
-                background: selectedPhoto === 2 ? "rgba(57, 255, 20, 0.12)" : "rgba(0, 0, 0, 0.4)",
-                boxShadow: selectedPhoto === 2 ? "0 0 18px rgba(57, 255, 20, 0.4)" : "none",
-                transform: selectedPhoto === 2 ? "scale(1.02)" : "scale(1)",
-                transition: "all 0.2s ease"
-              }}
-            >
-              <div style={{ height: "135px", overflow: "hidden", position: "relative" }}>
-                <img
-                  src={photo2Url}
-                  alt={`Foto 2 - Día ${dayNum}`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.85))", padding: "6px 8px" }}>
-                  <span style={{ color: "#ffffff", fontSize: "0.75rem", fontWeight: "bold" }}>
-                    {dayNum === 2 ? "Foto 2: Jardín de la Nave" : "Foto 2"}
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
+        )}
 
         {/* Text Input Area & Action Button */}
         {!isSuccess ? (

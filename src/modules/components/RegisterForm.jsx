@@ -368,6 +368,7 @@ export function RegisterForm({
                   <option value="A" style={{ background: "#08101c" }}>Sección A</option>
                   <option value="B" style={{ background: "#08101c" }}>Sección B</option>
                   <option value="C" style={{ background: "#08101c" }}>Sección C</option>
+                  <option value="D" style={{ background: "#08101c" }}>Sección D</option>
                 </select>
               </div>
             </div>

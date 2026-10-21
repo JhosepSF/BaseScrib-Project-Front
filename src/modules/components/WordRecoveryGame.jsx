@@ -181,7 +181,7 @@ export function WordRecoveryGame({ activity, onComplete, onClose, hideHeader = f
 
   // Helper to render letter boxes like [ T ] [ R ] [ A ] [ I ] [ N ]
   const renderSentenceWithBlanks = (text, filled) => {
-    const parts = text.split("___");
+    const parts = (text || "").split(/_{2,}|\{blank\}/);
     const targetWord = correctOption?.text || "word";
 
     return (
